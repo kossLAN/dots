@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Widgets
 import QtQuick
+import QtQuick.Effects
 import "../.."
 
 PopupWindow {
@@ -28,7 +29,7 @@ PopupWindow {
     property var content
 
     function set(item, content) {
-        isOpen = false;
+        // isOpen = false;
         root.item = item;
         root.content = content;
         popupContent.data = content;
@@ -86,6 +87,15 @@ PopupWindow {
         }
     }
 
+    RectangularShadow {
+        radius: popupContainer.radius
+        anchors.fill: popupContainer
+        opacity: popupContainer.opacity
+        visible: popupContainer.visible
+        blur: 10
+        spread: 2
+    }
+
     WrapperRectangle {
         id: popupContainer
 
@@ -95,6 +105,7 @@ PopupWindow {
         clip: true
         opacity: 0
         visible: opacity > 0
+        x: root.bar.width
 
         // spooky, likely to cause problems lol
         width: implicitWidth
@@ -102,7 +113,8 @@ PopupWindow {
 
         // needed to handle occurences where items are resized while open
         onImplicitWidthChanged: {
-            if (root.isOpen) {
+            if (root.isOpen && popupContent.data !== []) {
+                console.log("repositioning popup");
                 let itemPos = root.item.mapToItem(root.bar.contentItem, 0, root.bar.height, root.item.width, 0).x;
                 root.position(itemPos);
             }
@@ -110,7 +122,7 @@ PopupWindow {
 
         Item {
             id: popupContent
-            implicitWidth: Math.max(childrenRect.width, 120)
+            implicitWidth: Math.max(root.content?.width, 120)
             implicitHeight: Math.max(childrenRect.height, 60)
 
             Behavior on opacity {
@@ -141,6 +153,7 @@ PopupWindow {
         }
 
         Behavior on width {
+            enabled: root.isOpen
             SmoothedAnimation {
                 duration: 200
                 easing.type: Easing.Linear
@@ -155,7 +168,7 @@ PopupWindow {
         }
 
         Behavior on x {
-            enabled: root.visible
+            enabled: root.isOpen
             SmoothedAnimation {
                 duration: 200
                 easing.type: Easing.OutQuad

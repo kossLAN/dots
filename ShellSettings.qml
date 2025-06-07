@@ -8,7 +8,6 @@ Singleton {
     property alias settings: jsonAdapter
 
     FileView {
-        // todo change to Quickshell.dataPath("quickshell/settings.json")
         path: `${Quickshell.env("XDG_DATA_HOME")}/quickshell/settings.json`
         watchChanges: true
         // onFileChanged: reload()
