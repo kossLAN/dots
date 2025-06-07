@@ -1,0 +1,122 @@
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Widgets
+import "../.."
+
+PopupWindow {  
+  id: root; 
+  width: 500
+  height: 500
+  color: "transparent";
+  visible: false;
+  anchor.rect.x: parentWindow.width / 2 - width / 2
+  anchor.rect.y: parentWindow.height + 5;
+  
+  Rectangle {
+    color: ShellGlobals.colors.window;
+    radius:5;
+    border.color: mouse.hovered 
+      ? ShellGlobals.colors.highlight 
+      : ShellGlobals.colors.light;
+    border.width: 2;
+    anchors.fill: parent;
+
+    // NOTE: You cannot stack mouseArea's that have hovered enabled. 
+    // This is the workaround for panel hover detection. 
+    HoverHandler {
+      id: mouse
+      enabled: true;
+      acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad;
+      onHoveredChanged: {
+        if (hovered == false) {
+          root.visible = false;
+        }
+      }
+    }
+
+    ColumnLayout {
+      spacing: 5;
+
+      anchors {
+        horizontalCenter: parent.horizontalCenter;
+        top: parent.top; 
+        margins: 20;
+      }
+
+      Image {
+        Layout.alignment: Qt.AlignHCenter
+        Layout.preferredWidth: 300 
+        Layout.preferredHeight: 300
+        source: Media.trackedPlayer.trackArtUrl
+        fillMode: Image.PreserveAspectFit
+
+        sourceSize {
+          width: 512
+          height: 512
+        }
+      }
+
+      Text {
+        text: truncate(Media.trackedPlayer.trackArtist);
+        color: ShellGlobals.colors.text;
+        font.pointSize: 13;
+        Layout.alignment: Qt.AlignHCenter;
+        Layout.topMargin: 20;
+      }
+
+      Text {
+        text: truncate(Media.trackedPlayer.trackTitle);
+        color: ShellGlobals.colors.text;
+        font.pointSize: 13;
+        Layout.alignment: Qt.AlignHCenter;
+      }
+
+      RowLayout {
+        spacing: 20;
+        Layout.alignment: Qt.AlignHCenter;
+        Layout.topMargin: 10;
+
+        IconButton { 
+          implicitSize: 32
+          source: Qt.resolvedUrl("../../resources/mpris/previous.svg");
+          onClicked: {
+            Media.trackedPlayer.previous();
+          }
+        }
+        
+        IconButton { 
+          implicitSize: 36;
+          source: Media.trackedPlayer?.isPlaying
+            ? Qt.resolvedUrl("../../resources/mpris/pause.svg") 
+            : Qt.resolvedUrl("../../resources/mpris/play.svg");
+          onClicked: {
+            if (!Media.trackedPlayer.canPlay || Media.trackedPlayer == null)
+              return; 
+
+            if (Media.trackedPlayer.isPlaying) 
+              Media.trackedPlayer.pause();
+            else 
+              Media.trackedPlayer.play(); 
+          }
+        }
+
+        IconButton {
+          implicitSize: 32;
+          source: Qt.resolvedUrl("../../resources/mpris/next.svg");
+          onClicked: {
+            Media.trackedPlayer.next();
+          }
+        }
+      }
+    }
+  }
+
+  // TODO: make this some sort of global function 
+  function truncate(text) {
+    if (text?.length > 60) {
+        return text.substring(0, 60) + " ..."
+    }
+    return text
+  }
+}
