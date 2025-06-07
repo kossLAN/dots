@@ -22,71 +22,72 @@ PopupWindow {
     }
 
     required property var bar
+    property var isOpen: false
+    property var padding: 5
+    property var item
+    property var content
 
     function set(item, content) {
-        content.visible = true;
-
-        let itemPos = item.mapToItem(bar.contentItem, 0, bar.height, item.width, 0).x;
-        // let contentWidth = content.width;
-
-        popupContainer.x = itemPos;
+        isOpen = false;
+        root.item = item;
+        root.content = content;
         popupContent.data = content;
 
-        // popupContent.opacity = 0;
-        // popupContainer.opacity = 0;
-        popupContainer.opacity = 1;
-        popupContent.opacity = 1;
-        root.visible = true;
-    }
+        let itemPos = item.mapToItem(root.bar.contentItem, 0, root.bar.height, item.width, 0).x;
+        position(itemPos);
 
-    // function set(item, content) {
-    //     content.visible = true;
-    //
-    //     let itemPos = item.mapToItem(bar.contentItem, 0, bar.height, item.width, 0).x;
-    //     let contentWidth = content.width;
-    //     let padding = 5;
-    //     let xPos = itemPos;
-    //     let idealX = xPos;
-    //     let idealRightEdge = idealX + contentWidth;
-    //
-    //     // check if touching right edge
-    //     let maxRightEdge = root.width - padding;
-    //     let isTouchingRightEdge = idealRightEdge > maxRightEdge;
-    //
-    //     if (isTouchingRightEdge) {
-    //         // touching right edge
-    //         let constrainedX = maxRightEdge - contentWidth;
-    //         constrainedX = Math.max(0, constrainedX);
-    //
-    //         popupContainer.x = constrainedX;
-    //         popupContainer.implicitWidth = 0;
-    //         popupContent.data = content;
-    //         // popupContent.implicitWidth = contentWidth;
-    //     } else {
-    //         // not touching any edge
-    //         // popupContent.implicitWidth = contentWidth;
-    //         popupContainer.x = idealX;
-    //         popupContent.data = content;
-    //     }
-    //
-    //     popupContainer.y = padding;
-    //
-    //     popupContent.opacity = 0;
-    //     popupContainer.opacity = 0;
-    //     popupContainer.opacity = 1;
-    //     popupContent.opacity = 1;
-    //     root.visible = true;
-    // }
-
-    function clear() {
         popupContainer.opacity = 0;
         popupContent.opacity = 0;
+    }
+
+    function position(itemPos) {
+        if (itemPos === undefined)
+            return;
+
+        let rightEdge = itemPos + popupContainer.implicitWidth;
+        let maxRightEdge = root.width - padding;
+        let isTouchingRightEdge = rightEdge > maxRightEdge;
+
+        if (isTouchingRightEdge) {
+            // touching right edge, reposition
+            // console.log("touching right edge");
+            popupContainer.x = maxRightEdge - popupContainer.implicitWidth;
+            popupContainer.y = padding;
+        } else {
+            // not touching right edge
+            popupContainer.x = itemPos;
+            popupContainer.y = padding;
+        }
+    }
+
+    function show() {
+        isOpen = true;
+        root.visible = true; // set and leave open
+        root.content.visible = true;
+        popupContainer.opacity = 1;
+        popupContent.opacity = 1;
+    }
+
+    function hide() {
+        isOpen = false;
+        popupContainer.opacity = 0;
+        popupContent.opacity = 0;
+
+        root.item = undefined;
+        root.content = undefined;
         popupContent.data = [];
+    }
+
+    function toggle() {
+        if (isOpen) {
+            hide();
+        } else {
+            show();
+        }
     }
 
     WrapperRectangle {
         id: popupContainer
-        property real targetX: 0
 
         color: ShellSettings.settings.colors["surface"]
         radius: 12
@@ -95,9 +96,15 @@ PopupWindow {
         opacity: 0
         visible: opacity > 0
 
-        onVisibleChanged: {
-            if (!visible) {
-                root.visible = false;
+        // spooky, likely to cause problems lol
+        width: implicitWidth
+        height: implicitHeight
+
+        // needed to handle occurences where items are resized while open
+        onImplicitWidthChanged: {
+            if (root.isOpen) {
+                let itemPos = root.item.mapToItem(root.bar.contentItem, 0, root.bar.height, root.item.width, 0).x;
+                root.position(itemPos);
             }
         }
 
@@ -105,17 +112,15 @@ PopupWindow {
             id: popupContent
             implicitWidth: Math.max(childrenRect.width, 120)
             implicitHeight: Math.max(childrenRect.height, 60)
-            opacity: 1
 
-            // Behavior on opacity {
-            //     NumberAnimation {
-            //         id: contentOpacity
-            //         duration: 350
-            //         easing.type: Easing.Linear
-            //         from: 0
-            //         to: 1
-            //     }
-            // }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.Linear
+                    from: 0
+                    to: 1
+                }
+            }
         }
 
         HoverHandler {
@@ -124,38 +129,37 @@ PopupWindow {
             acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
             onHoveredChanged: {
                 if (hovered == false)
-                    root.clear();
+                    root.hide();
             }
         }
 
-        // Behavior on opacity {
-        //     NumberAnimation {
-        //         duration: 500
-        //         easing.type: Easing.InOutQuad
-        //     }
-        // }
-        //
-        // Behavior on x {
-        //     enabled: root.visible
-        //     SmoothedAnimation {
-        //         duration: 300
-        //         easing.type: Easing.OutQuad
-        //     }
-        // }
-        //
-        // Behavior on implicitWidth {
-        //     enabled: root.visible
-        //     SmoothedAnimation {
-        //         duration: 300
-        //         easing.type: Easing.OutQuad
-        //     }
-        // }
-        //
-        // Behavior on implicitHeight {
-        //     SmoothedAnimation {
-        //         duration: 200
-        //         easing.type: Easing.Linear
-        //     }
-        // }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.Linear
+            }
+        }
+
+        Behavior on width {
+            SmoothedAnimation {
+                duration: 200
+                easing.type: Easing.Linear
+            }
+        }
+
+        Behavior on height {
+            SmoothedAnimation {
+                duration: 200
+                easing.type: Easing.Linear
+            }
+        }
+
+        Behavior on x {
+            enabled: root.visible
+            SmoothedAnimation {
+                duration: 200
+                easing.type: Easing.OutQuad
+            }
+        }
     }
 }

@@ -31,7 +31,14 @@ RowLayout {
                 onClicked: {
                     // trayText.width =  sysTrayContent.width - trayIcon.width - trayContainer.spacing;
                     // trayText.visible = true;
+                    // root.popup.set(this, trayMenu);
+                    if (root.popup.content == trayMenu) {
+                        root.popup.toggle()
+                        return;
+                    }
+
                     root.popup.set(this, trayMenu);
+                    root.popup.show();
                 }
             }
 

@@ -67,7 +67,6 @@ PanelWindow {
         SysTray.SysTray {
             id: sysTray
             popup: root.popup
-            Layout.rightMargin: 300
         }
 
         // Notifications.NotificationButton {
