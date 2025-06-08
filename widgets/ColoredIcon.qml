@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 import Quickshell.Widgets
 import ".."
 
@@ -15,11 +15,13 @@ Item {
     implicitWidth: implicitSize
     implicitHeight: implicitSize
 
-    layer.enabled: true
-    layer.effect: OpacityMask {
-        maskSource: IconImage {
-            implicitSize: root.actualSize
-            source: root.source
+    IconImage {
+        anchors.fill: parent
+        source: root.source
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            colorization: 1
+            colorizationColor: root.color
         }
     }
 
