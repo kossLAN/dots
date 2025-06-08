@@ -12,3 +12,6 @@ The idea is to eventually be minimal but also use material 3 design language, lo
 - [ ] REDO Launcher (wallpaper picker, calculator, commands, etc...)
 - [ ] Integrate wallpaper picker into launcher
 - [ ] Music Player Popup V4 lol
+
+### Optionals
+- [ ] Add toggle for floating or screen corners
