@@ -111,6 +111,8 @@ PopupWindow {
         width: implicitWidth
         height: implicitHeight
 
+        onVisibleChanged: root.visible = visible
+
         // needed to handle occurences where items are resized while open
         onImplicitWidthChanged: {
             if (root.isOpen && popupContent.data !== []) {
