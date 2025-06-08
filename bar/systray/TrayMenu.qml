@@ -6,6 +6,7 @@ import "../.."
 ColumnLayout {
     id: root
     required property QsMenuEntry modelData
+    signal interacted
 
     Rectangle {
         visible: (root.modelData?.isSeparator ?? false)
@@ -20,5 +21,6 @@ ColumnLayout {
         visible: !root.modelData?.isSeparator
         menuData: root.modelData
         Layout.fillWidth: true
+        onInteracted: root.interacted()
     }
 }

@@ -29,11 +29,10 @@ RowLayout {
                 hoverEnabled: true
                 anchors.fill: parent
                 onClicked: {
-                    // trayText.width =  sysTrayContent.width - trayIcon.width - trayContainer.spacing;
-                    // trayText.visible = true;
-                    // root.popup.set(this, trayMenu);
+                    menuOpener.menu = trayField.modelData.menu;
+
                     if (root.popup.content == trayMenu) {
-                        root.popup.toggle()
+                        root.popup.hide();
                         return;
                     }
 
@@ -44,7 +43,6 @@ RowLayout {
 
             QsMenuOpener {
                 id: menuOpener
-                menu: trayField.modelData.menu
             }
 
             WrapperItem {
@@ -62,6 +60,7 @@ RowLayout {
                             id: sysTrayContent
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+                            onInteracted: menuOpener.menu = null
                         }
                     }
                 }

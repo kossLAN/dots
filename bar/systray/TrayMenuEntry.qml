@@ -8,6 +8,7 @@ import "../.."
 ColumnLayout {
     id: root
     required property var menuData
+    signal interacted
 
     WrapperRectangle {
         Layout.fillWidth: true
@@ -31,10 +32,13 @@ ColumnLayout {
                 if (!root.menuData?.enabled)
                     return;
 
-                if (root.menuData?.hasChildren)
+                if (root.menuData?.hasChildren) {
                     subTrayMenu.visible = !subTrayMenu.visible;
+                    return;
+                }
 
                 root.menuData?.triggered();
+                root.interacted();
             }
 
             RowLayout {
@@ -72,7 +76,7 @@ ColumnLayout {
 
                 Text {
                     id: text
-                    text: (root.menuData?.text) ?? ""
+                    text: root.menuData?.text ?? ""
                     verticalAlignment: Text.AlignVCenter
                     color: {
                         let color = Qt.color(ShellSettings.settings.colors["inverse_surface"]);
@@ -88,6 +92,14 @@ ColumnLayout {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+
+                    Connections {
+                        target: root.menuData
+
+                        function onTextChanged() {
+                            console.log("Hi");
+                        }
+                    }
                 }
 
                 Item {
