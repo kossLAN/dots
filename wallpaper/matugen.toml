@@ -25,3 +25,7 @@ output_path = "~/.config/qt6ct/colors/BreezeDark.colors"
 input_path = 'templates/hyprland-colors.conf'
 output_path = '~/.config/hypr/colors.conf'
 post_hook = 'hyprctl reload'
+
+[templates.foot]
+input_path = 'templates/foot.ini'
+output_path = '~/.config/foot/foot.ini'
