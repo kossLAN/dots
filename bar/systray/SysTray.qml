@@ -60,7 +60,11 @@ RowLayout {
                             id: sysTrayContent
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            onInteracted: menuOpener.menu = null
+
+                            onInteracted: {
+                                root.popup.hide();
+                                menuOpener.menu = null;
+                            }
                         }
                     }
                 }
