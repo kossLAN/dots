@@ -49,6 +49,9 @@ RowLayout {
                 id: trayMenu
                 visible: false
 
+                property var leftItem: false
+                property var rightItem: false
+
                 ColumnLayout {
                     id: menuContainer
                     spacing: 2
@@ -56,10 +59,12 @@ RowLayout {
                     Repeater {
                         model: menuOpener.children
 
-                        delegate: TrayMenu {
+                        delegate: TrayMenuItem {
                             id: sysTrayContent
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
+                            rootMenu: trayMenu
 
                             onInteracted: {
                                 root.popup.hide();

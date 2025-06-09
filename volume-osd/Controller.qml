@@ -4,8 +4,8 @@ import QtQuick
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Quickshell
+import Quickshell.Widgets
 import Quickshell.Services.Pipewire
-import "../widgets" as Widgets
 import ".."
 
 Scope {
@@ -40,14 +40,10 @@ Scope {
         active: root.shouldShowOsd
 
         PanelWindow {
-            // Since the panel's screen is unset, it will be picked by the compositor
-            // when the window is created. Most compositors pick the current active monitor.
-
-            anchors.bottom: true
-            margins.bottom: 300
-
-            implicitWidth: 400
-            implicitHeight: 50
+            anchors.right: true
+            margins.right: 5
+            implicitWidth: 50
+            implicitHeight: 275
             color: "transparent"
 
             // An empty click mask prevents the window from blocking mouse events.
@@ -55,65 +51,110 @@ Scope {
 
             Rectangle {
                 anchors.fill: parent
-                radius: 8
-                color: {
-                    let color = ShellSettings.settings.colors["surface"];
-                    return Qt.rgba(color.r, color.g, color.b, 0.8);
-                }
+                radius: width / 2
+                color: ShellSettings.settings.colors["surface"]
 
-                RowLayout {
-                    anchors {
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 15
+                Item {
+                    id: sliderContainer
+                    layer.enabled: true
+                    layer.effect: OpacityMask {
+                        source: Rectangle {
+                            width: sliderContainer.width
+                            height: sliderContainer.height
+                            radius: sliderContainer.width / 2
+                            color: "white"
+                        }
+
+                        maskSource: Rectangle {
+                            width: sliderContainer.width
+                            height: sliderContainer.height
+                            radius: sliderContainer.width / 2
+                            color: "black"
+                        }
                     }
 
-                    Widgets.ColoredIcon {
-                        implicitSize: 30
-                        source: "root:resources/volume/volume-full.svg"
-                        color: ShellSettings.settings.colors["inverse_surface"]
+                    anchors {
+                        fill: parent
+                        margins: 8
                     }
 
                     Rectangle {
-                        id: sliderBackground
-                        Layout.fillWidth: true
-                        implicitHeight: 10
-                        radius: 20
-                        color: {
-                            let color = ShellSettings.settings.colors["inverse_surface"];
-                            return Qt.rgba(color.r, color.g, color.b, 0.5);
+                        radius: width / 2
+                        color: ShellSettings.settings.colors["primary"]
+                        implicitHeight: Math.max(parent.width, parent.height * (Pipewire.defaultAudioSink?.audio.volume ?? 0))
+
+                        anchors {
+                            bottom: parent.bottom
+                            left: parent.left
+                            right: parent.right
                         }
 
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            source: Rectangle {
-                                width: sliderBackground.width
-                                height: sliderBackground.height
-                                radius: sliderBackground.radius
-                                color: "white"
-                            }
-
-                            maskSource: Rectangle {
-                                width: sliderBackground.width
-                                height: sliderBackground.height
-                                radius: sliderBackground.radius
-                                color: "black"
-                            }
-                        }
-
-                        Rectangle {
-                            color: ShellSettings.settings.colors["primary"]
-                            anchors {
-                                left: parent.left
-                                top: parent.top
-                                bottom: parent.bottom
-                            }
-
-                            implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
-                        }
+                        // replace with material icon
+                        // IconImage {
+                        //     implicitSize: parent.width - 4
+                        //     source: "root:resources/volume/volume-full.svg"
+                        //
+                        //     anchors {
+                        //         horizontalCenter: parent.horizontalCenter
+                        //     }
+                        // }
                     }
                 }
             }
+
+            // Rectangle {
+            //     anchors.fill: parent
+            //     radius: 8
+            //     color: {
+            //         let color = ShellSettings.settings.colors["surface"];
+            //         return Qt.rgba(color.r, color.g, color.b, 0.8);
+            //     }
+            //
+            //     RowLayout {
+            //         anchors {
+            //             fill: parent
+            //             leftMargin: 10
+            //             rightMargin: 15
+            //         }
+            //
+            //         IconImage {
+            //             implicitSize: 30
+            //             source: "root:resources/volume/volume-full.svg"
+            //         }
+            //
+            //         Rectangle {
+            //             id: sliderBackground
+            //             Layout.fillWidth: true
+            //             implicitHeight: 10
+            //             radius: 20
+            //             color: {
+            //                 let color = ShellSettings.settings.colors["inverse_surface"];
+            //                 return Qt.rgba(color.r, color.g, color.b, 0.5);
+            //             }
+            //
+            //             layer.enabled: true
+            //             layer.effect: OpacityMask {
+            //                 maskSource: Rectangle {
+            //                     width: sliderBackground.width
+            //                     height: sliderBackground.height
+            //                     radius: sliderBackground.radius
+            //                     color: "black"
+            //                 }
+            //             }
+            //
+            //             Rectangle {
+            //                 color: ShellSettings.settings.colors["primary"]
+            //                 anchors {
+            //                     left: parent.left
+            //                     top: parent.top
+            //                     bottom: parent.bottom
+            //                 }
+            //
+            //                 implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
+            //             }
+            //         }
+            //     }
+            // }
         }
     }
 }

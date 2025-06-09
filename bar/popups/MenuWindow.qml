@@ -119,7 +119,7 @@ PopupWindow {
         // needed to handle occurences where items are resized while open
         onImplicitWidthChanged: {
             if (root.isOpen && popupContent.data !== []) {
-                console.log("repositioning popup");
+                // console.log("repositioning popup");
                 let itemPos = root.item.mapToItem(root.bar.contentItem, 0, root.bar.height, root.item.width, 0).x;
                 root.position(itemPos);
             }

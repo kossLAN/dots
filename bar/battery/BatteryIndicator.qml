@@ -21,27 +21,38 @@ Item {
         hoverEnabled: true
         anchors.fill: parent
         onClicked: {
+            if (root.popup.content == powerMenu) {
+                root.popup.hide();
+                return;
+            }
+
             root.popup.set(this, powerMenu);
             root.popup.show();
         }
     }
 
-    WrapperItem {
+    Item {
         id: powerMenu
         visible: false
+        implicitWidth: 250
+        implicitHeight: 80
 
-        ColumnLayout {
-            RowLayout {
-                id: powerProfiles
-                implicitWidth: 300
-                implicitHeight: 60
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                console.log("why this work");
+                powerMenu.implicitWidth = 300;
+            }
+        }
 
-                // place holder until I figured out what I want to do with material
-                ComboBox {
-                    model: ["Power Save", "Balanced", "Performance"]
-                    currentIndex: PowerProfiles.profile
-                    onCurrentIndexChanged: PowerProfiles.profile = currentIndex
-                }
+        RowLayout {
+            anchors.fill: parent
+
+            // placeholder for now
+            ComboBox {
+                model: ["Power Save", "Balanced", "Performance"]
+                currentIndex: PowerProfiles.profile
+                onCurrentIndexChanged: PowerProfiles.profile = currentIndex
             }
         }
     }

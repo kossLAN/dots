@@ -9,7 +9,18 @@ import "../.."
 ColumnLayout {
     id: root
     required property QsMenuEntry menuData
+    required property var rootMenu
     signal interacted
+
+    Component.onCompleted: {
+        if (menuData?.buttonType !== QsMenuButtonType.None || menuData?.icon != "") {
+            rootMenu.leftItem = true;
+        }
+
+        if (!menuData?.hasChildren) {
+            rootMenu.rightItem = false;
+        }
+    }
 
     WrapperRectangle {
         Layout.fillWidth: true
@@ -48,6 +59,7 @@ ColumnLayout {
                 Layout.fillWidth: true
 
                 Item {
+                    visible: root.rootMenu.leftItem
                     Layout.preferredWidth: 20
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignVCenter
@@ -96,13 +108,14 @@ ColumnLayout {
                 }
 
                 Item {
+                    visible: root.rootMenu.rightItem
                     Layout.preferredHeight: 20
                     Layout.preferredWidth: 20
                     Layout.rightMargin: 5
 
                     Widgets.IconButton {
                         id: arrowButton
-                        visible: root.menuData?.hasChildren
+                        visible: root.menuData?.hasChildren ?? false
                         activeRectangle: false
                         source: "root:resources/general/right-arrow.svg"
                         rotation: subTrayMenu.visible ? 90 : 0
@@ -146,9 +159,10 @@ ColumnLayout {
 
                 delegate: BoundComponent {
                     id: subMenuEntry
-                    source: "TrayMenu.qml"
+                    source: "TrayMenuItem.qml"
                     Layout.fillWidth: true
                     required property var modelData
+                    property var rootMenu: root.rootMenu
                 }
             }
         }
