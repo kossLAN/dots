@@ -3,11 +3,12 @@ import Quickshell.Widgets
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../../widgets" as Widgets
 import "../.."
 
 ColumnLayout {
     id: root
-    required property var menuData
+    required property QsMenuEntry menuData
     signal interacted
 
     WrapperRectangle {
@@ -92,24 +93,32 @@ ColumnLayout {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-
-                    Connections {
-                        target: root.menuData
-
-                        function onTextChanged() {
-                            console.log("Hi");
-                        }
-                    }
-                }
-
-                Item {
-                    Layout.fillWidth: true
                 }
 
                 Item {
                     Layout.preferredHeight: 20
                     Layout.preferredWidth: 20
                     Layout.rightMargin: 5
+
+                    Widgets.IconButton {
+                        id: arrowButton
+                        visible: root.menuData?.hasChildren
+                        activeRectangle: false
+                        source: "root:resources/general/right-arrow.svg"
+                        rotation: subTrayMenu.visible ? 90 : 0
+                        anchors.fill: parent
+
+                        Behavior on rotation {
+                            NumberAnimation {
+                                duration: 150
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+
+                        onClicked: {
+                            root.expanded = !root.expanded;
+                        }
+                    }
                 }
             }
         }

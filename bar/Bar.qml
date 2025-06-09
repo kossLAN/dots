@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import "battery"
 import "control" as Control
 import "systray" as SysTray
 import "notifications" as Notifications
@@ -55,7 +56,7 @@ PanelWindow {
 
     // Right
     RowLayout {
-        spacing: 15
+        spacing: 10
 
         anchors {
             top: parent.top
@@ -76,6 +77,7 @@ PanelWindow {
 
         BatteryIndicator {
             id: batteryIndicator
+            popup: root.popup
         }
 
         // Control.Button {

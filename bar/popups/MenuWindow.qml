@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
 import QtQuick.Effects
@@ -62,6 +63,7 @@ PopupWindow {
     }
 
     function show() {
+        grab.active = true;
         isOpen = true;
         root.visible = true; // set and leave open
         root.content.visible = true;
@@ -70,6 +72,7 @@ PopupWindow {
     }
 
     function hide() {
+        grab.active = false;
         isOpen = false;
         popupContainer.opacity = 0;
         popupContent.opacity = 0;
@@ -137,13 +140,22 @@ PopupWindow {
             }
         }
 
-        HoverHandler {
-            id: hover
-            enabled: true
-            acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-            onHoveredChanged: {
-                if (hovered == false)
-                    root.hide();
+        // broken for elements in the popup that have hover/mousearea's
+        // HoverHandler {
+        //     id: hover
+        //     enabled: true
+        //     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        //     onHoveredChanged: {
+        //         if (hovered == false)
+        //             root.hide();
+        //     }
+        // }
+
+        HyprlandFocusGrab {
+            id: grab
+            windows: [root, root.bar]
+            onCleared: {
+                root.hide();
             }
         }
 
