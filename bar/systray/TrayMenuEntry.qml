@@ -105,6 +105,8 @@ ColumnLayout {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.leftMargin: 6
+                    Layout.rightMargin: 6
                 }
 
                 Item {

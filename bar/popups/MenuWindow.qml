@@ -127,7 +127,7 @@ PopupWindow {
 
         Item {
             id: popupContent
-            implicitWidth: Math.max(root.content?.width, 120)
+            implicitWidth: Math.max(root.content?.width, 60)
             implicitHeight: Math.max(childrenRect.height, 60)
 
             Behavior on opacity {
