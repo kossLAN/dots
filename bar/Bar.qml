@@ -39,6 +39,7 @@ PanelWindow {
         }
 
         HyprWorkspaces {
+            screen: root.screen
             Layout.fillWidth: false
             Layout.preferredHeight: parent.height
             Layout.margins: 4
@@ -98,7 +99,9 @@ PanelWindow {
         //     screen: root
         // }
 
-        Widgets.Separator {}
+        Widgets.Separator {
+            Layout.leftMargin: 10
+        }
 
         Clock {
             id: clock

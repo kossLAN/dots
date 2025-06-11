@@ -1,23 +1,23 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Hyprland
 import ".."
 
 RowLayout {
-    property var sortedWorkspaces: {
-        let values = Hyprland.workspaces.values.slice();
-        values.sort(function (a, b) {
-            return a.id - b.id;
-        });
-
-        return values;
-    }
-
     spacing: 6
     visible: Hyprland.monitors.values.length != 0
 
+    required property var screen 
+
     Repeater {
-        model: parent.sortedWorkspaces
+        model: ScriptModel {
+            values: Hyprland.workspaces.values.slice().filter(
+                workspace => workspace.monitor === Hyprland.monitorFor(screen)
+            ).sort((a,b) => {
+                return a.id - b.id;
+            });
+        }
 
         Rectangle {
             required property var modelData
