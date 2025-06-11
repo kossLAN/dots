@@ -18,7 +18,7 @@ Singleton {
         JsonAdapter {
             id: jsonAdapter
 
-            property QtObject settings: QtObject {
+            property JsonObject settings: JsonObject {
                 property int barHeight: 25
                 property string wallpaperUrl: Qt.resolvedUrl("root:resources/wallpapers/pixelart0.jpg")
                 property string colorScheme: "scheme-fruit-salad"

@@ -29,7 +29,7 @@ PanelWindow {
 
     // Left
     RowLayout {
-        spacing: 15
+        spacing: 10
 
         anchors {
             top: parent.top
@@ -42,11 +42,13 @@ PanelWindow {
             screen: root.screen
             Layout.fillWidth: false
             Layout.preferredHeight: parent.height
-            Layout.margins: 4
+            Layout.leftMargin: 4
         }
 
         Widgets.Separator {
             visible: activeWindow.visible
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
         }
 
         ActiveWindow {
@@ -63,7 +65,7 @@ PanelWindow {
             top: parent.top
             bottom: parent.bottom
             right: parent.right
-            rightMargin: 10
+            rightMargin: 4
         }
 
         SysTray.SysTray {
@@ -76,31 +78,27 @@ PanelWindow {
         //     bar: root
         // }
 
-        // Text {
-        //     text: "home"
-        //     color: "white"
-        //     font.family: "Material Symbols Rounded"
-        //     renderType: Text.NativeRendering
-        //     textFormat: Text.PlainText
-        //     font.pointSize: 12
-        //
-        //     font.variableAxes: {
-        //         "FILL": 1
-        //     }
-        // }
+        Text {
+            text: "home"
+            color: "white"
+            font.family: "Material Symbols Rounded"
+            renderType: Text.NativeRendering
+            textFormat: Text.PlainText
+            font.pointSize: 14
+
+            font.variableAxes: {
+                "FILL": 0
+            }
+        }
 
         BatteryIndicator {
             id: batteryIndicator
             popup: root.popup
         }
 
-        // Control.Button {
-        //     bar: root
-        //     screen: root
-        // }
-
         Widgets.Separator {
-            Layout.leftMargin: 10
+            Layout.leftMargin: 5
+            Layout.rightMargin: 5
         }
 
         Clock {
