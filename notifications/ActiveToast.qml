@@ -19,7 +19,7 @@ Item {
     Rectangle {
         id: container
         radius: 10
-        color: ShellSettings.settings.colors["surface_container"]
+        color: ShellSettings.colors["surface_container"]
         anchors.fill: parent
 
         Item {
@@ -110,7 +110,7 @@ Item {
                         Text {
                             id: appName
                             text: root.notification.appName
-                            color: ShellSettings.settings.colors["inverse_surface"]
+                            color: ShellSettings.colors["inverse_surface"]
                             font.pointSize: 11
                             font.bold: true
                             elide: Text.ElideRight
@@ -124,7 +124,7 @@ Item {
                         Text {
                             id: summaryText
                             text: root.notification.summary
-                            color: ShellSettings.settings.colors["inverse_surface"]
+                            color: ShellSettings.colors["inverse_surface"]
                             font.pointSize: 11
                             elide: Text.ElideRight
                             maximumLineCount: 1
@@ -156,7 +156,7 @@ Item {
 
                                 ctx.beginPath();
                                 ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
-                                ctx.strokeStyle = ShellSettings.settings.colors["primary"];
+                                ctx.strokeStyle = ShellSettings.colors["primary"];
                                 ctx.lineWidth = 2;
                                 ctx.stroke();
                             }
@@ -204,7 +204,7 @@ Item {
                     Text {
                         id: bodyText
                         text: root.notification.body
-                        color: ShellSettings.settings.colors["inverse_surface"]
+                        color: ShellSettings.colors["inverse_surface"]
                         font.pointSize: 11
                         wrapMode: Text.Wrap
                         elide: Text.ElideRight

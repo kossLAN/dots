@@ -9,7 +9,7 @@ Rectangle {
     id: root
     required property PwNode node
     required property var isSink
-    color: ShellSettings.settings.colors["surface_container_high"]
+    color: ShellSettings.colors["surface_container_high"]
 
     PwObjectTracker {
         id: defaultSourceTracker
@@ -27,7 +27,7 @@ Rectangle {
             spacing: 10
 
             Text {
-                color: ShellSettings.settings.colors["inverse_surface"]
+                color: ShellSettings.colors["inverse_surface"]
                 text: {
 
                     // Taken from quickshell-examples

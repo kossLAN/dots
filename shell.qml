@@ -1,5 +1,6 @@
 //@ pragma UseQApplication
 //@ pragma IconTheme Papirus-Dark
+
 import Quickshell
 import QtQuick
 import "bar" as Bar

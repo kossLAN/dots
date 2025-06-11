@@ -19,7 +19,7 @@ Item {
     }
 
     Rectangle {
-        color: mouseArea.containsMouse ? ShellSettings.settings.colors["primary"] : "transparent"
+        color: mouseArea.containsMouse ? ShellSettings.colors["primary"] : "transparent"
         radius: 5
 
         anchors {
@@ -61,7 +61,7 @@ Item {
         }
 
         Rectangle {
-            color: mouseArea.containsMouse ? ShellSettings.settings.colors["inverse_primary"] : ShellSettings.settings.colors["inverse_surface"]
+            color: mouseArea.containsMouse ? ShellSettings.colors["inverse_primary"] : ShellSettings.colors["inverse_surface"]
             anchors.fill: parent
         }
     }

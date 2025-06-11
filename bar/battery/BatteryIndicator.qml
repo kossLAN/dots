@@ -59,7 +59,7 @@ Item {
 
     Rectangle {
         id: highlight
-        color: batteryButton.containsMouse ? ShellSettings.settings.colors["primary"] : "transparent"
+        color: batteryButton.containsMouse ? ShellSettings.colors["primary"] : "transparent"
         // radius: width / 2
         radius: 10
 
@@ -96,7 +96,7 @@ Item {
 
         Rectangle {
             id: batteryBackground
-            color: Qt.color(ShellSettings.settings.colors["surface"]).lighter(4)
+            color: Qt.color(ShellSettings.colors["surface"]).lighter(4)
             opacity: 0.75
             anchors {
                 fill: parent
@@ -107,7 +107,7 @@ Item {
         Rectangle {
             id: batteryPercentage
             width: (parent.width - 4) * UPower.displayDevice.percentage
-            color: ShellSettings.settings.colors["inverse_surface"]
+            color: ShellSettings.colors["inverse_surface"]
 
             anchors {
                 left: batteryBackground.left

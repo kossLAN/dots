@@ -44,7 +44,7 @@ Singleton {
 
             Rectangle {
                 id: container
-                color: ShellSettings.settings.colors["surface"]
+                color: ShellSettings.colors["surface"]
                 radius: 18
 
                 anchors {
@@ -71,8 +71,8 @@ Singleton {
                         Layout.fillWidth: true
                         implicitHeight: searchbox.implicitHeight + 15
                         radius: 10
-                        color: ShellSettings.settings.colors["surface_container"]
-                        border.color: ShellSettings.settings.colors["secondary"]
+                        color: ShellSettings.colors["surface_container"]
+                        border.color: ShellSettings.colors["secondary"]
 
                         RowLayout {
                             id: searchbox
@@ -82,7 +82,7 @@ Singleton {
                             TextInput {
                                 id: search
                                 Layout.fillWidth: true
-                                color: ShellSettings.settings.colors["inverse_surface"]
+                                color: ShellSettings.colors["inverse_surface"]
 
                                 focus: true
                                 Keys.forwardTo: [list]
@@ -256,7 +256,7 @@ Singleton {
 
                         highlight: Rectangle {
                             radius: 12
-                            color: ShellSettings.settings.colors["primary"]
+                            color: ShellSettings.colors["primary"]
                         }
 
                         keyNavigationEnabled: true
@@ -297,7 +297,7 @@ Singleton {
                                 }
                                 Text {
                                     text: modelData.name
-                                    color: ShellSettings.settings.colors["inverse_surface"]
+                                    color: ShellSettings.colors["inverse_surface"]
                                     Layout.alignment: Qt.AlignVCenter
                                 }
                             }

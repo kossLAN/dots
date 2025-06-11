@@ -12,7 +12,7 @@ ColumnLayout {
 
     Rectangle {
         visible: (root.modelData?.isSeparator ?? false)
-        color: ShellSettings.settings.colors["surface_container_high"]
+        color: ShellSettings.colors["surface_container_high"]
         Layout.fillWidth: true
         Layout.preferredHeight: 2
         Layout.leftMargin: 8

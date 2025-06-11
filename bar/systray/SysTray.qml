@@ -77,7 +77,7 @@ RowLayout {
 
             Rectangle {
                 id: trayContainer
-                color: trayButton.containsMouse ? ShellSettings.settings.colors["primary"] : "transparent"
+                color: trayButton.containsMouse ? ShellSettings.colors["primary"] : "transparent"
                 radius: width / 2
                 implicitHeight: parent.height - 2
                 implicitWidth: parent.height - 2

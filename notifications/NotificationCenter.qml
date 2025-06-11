@@ -140,7 +140,7 @@ Singleton {
                                         required property int index
                                         Layout.fillWidth: true
                                         Layout.preferredHeight: groupContent.implicitHeight + 24
-                                        color: ShellSettings.settings.colors["surface_container"]
+                                        color: ShellSettings.colors["surface_container"]
                                         antialiasing: true
 
                                         topLeftRadius: index === 0 ? 25 : 5
@@ -207,7 +207,7 @@ Singleton {
                                                             text: summaryGroup.modelData.summary
                                                             font.pixelSize: 16
                                                             font.weight: Font.Medium
-                                                            color: ShellSettings.settings.colors["on_surface"]
+                                                            color: ShellSettings.colors["on_surface"]
                                                             wrapMode: Text.WordWrap
                                                             maximumLineCount: 2
                                                             elide: Text.ElideRight
@@ -218,7 +218,7 @@ Singleton {
                                                         Text {
                                                             text: "now"
                                                             font.pixelSize: 14
-                                                            color: ShellSettings.settings.colors["on_surface_variant"]
+                                                            color: ShellSettings.colors["on_surface_variant"]
                                                             Layout.alignment: Qt.AlignVCenter
                                                         }
                                                     }
@@ -242,7 +242,7 @@ Singleton {
                                                                     Layout.fillWidth: true
                                                                     text: bodyDelegate.modelData.body
                                                                     font.pixelSize: 14
-                                                                    color: ShellSettings.settings.colors["on_surface_variant"]
+                                                                    color: ShellSettings.colors["on_surface_variant"]
                                                                     wrapMode: Text.WordWrap
                                                                     maximumLineCount: 4
                                                                     elide: Text.ElideRight

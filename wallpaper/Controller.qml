@@ -61,7 +61,7 @@ Scope {
                     onRead: data => {
                         console.log(ShellSettings.settings.colorScheme);
                         try {
-                            ShellSettings.settings.colors = JSON.parse(data)['colors']['dark'];
+                            ShellSettings.colors = JSON.parse(data)['colors']['dark'];
                         } catch (e) {}
                     }
                 }

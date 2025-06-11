@@ -102,7 +102,7 @@ PopupWindow {
     WrapperRectangle {
         id: popupContainer
 
-        color: ShellSettings.settings.colors["surface"]
+        color: ShellSettings.colors["surface"]
         radius: 12
         margin: 8
         clip: true

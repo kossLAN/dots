@@ -5,7 +5,8 @@ import Quickshell
 import Quickshell.Io
 
 Singleton {
-    property alias settings: jsonAdapter
+    property alias settings: jsonAdapter.settings
+    property alias colors: jsonAdapter.colors
 
     FileView {
         path: `${Quickshell.env("XDG_DATA_HOME")}/quickshell/settings.json`
@@ -16,9 +17,12 @@ Singleton {
 
         JsonAdapter {
             id: jsonAdapter
-            property int barHeight: 25
-            property string wallpaperUrl: Qt.resolvedUrl("root:resources/wallpapers/pixelart0.jpg")
-            property string colorScheme: "scheme-fruit-salad"
+
+            property QtObject settings: QtObject {
+                property int barHeight: 25
+                property string wallpaperUrl: Qt.resolvedUrl("root:resources/wallpapers/pixelart0.jpg")
+                property string colorScheme: "scheme-fruit-salad"
+            }
 
             property var colors: {
                 "background": "#131313",

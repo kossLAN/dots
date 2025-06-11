@@ -10,8 +10,8 @@ Item {
     property var padding: 0
     property var radius: 20
     property var activeRectangle: true
-    property var color: ShellSettings.settings.colors["inverse_surface"]
-    property var activeColor: ShellSettings.settings.colors["inverse_primary"]
+    property var color: ShellSettings.colors["inverse_surface"]
+    property var activeColor: ShellSettings.colors["inverse_primary"]
     signal clicked
 
     implicitWidth: implicitSize
@@ -19,7 +19,7 @@ Item {
 
     Rectangle {
         id: iconBackground
-        color: ShellSettings.settings.colors["primary"]
+        color: ShellSettings.colors["primary"]
         radius: root.radius
         visible: iconButton.containsMouse && root.activeRectangle
         anchors.fill: parent

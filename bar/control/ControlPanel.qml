@@ -48,7 +48,7 @@ PopupWindow {
     // Add drop shadow effect
     // Rectangle {
     //     id: shadowSource
-    //     color: ShellSettings.settings.colors["surface"]
+    //     color: ShellSettings.colors["surface"]
     //     radius: 8
     //     opacity: container.opacity
     //     width: container.width
@@ -97,7 +97,7 @@ PopupWindow {
 
     Rectangle {
         id: container
-        color: ShellSettings.settings.colors["surface"]
+        color: ShellSettings.colors["surface"]
         radius: 18
         opacity: 0
         width: parent.width - 10
@@ -133,7 +133,7 @@ PopupWindow {
             //
             //     Rectangle {
             //         radius: 20
-            //         color: ShellSettings.settings.colors["surface_container_high"]
+            //         color: ShellSettings.colors["surface_container_high"]
             //         Layout.fillWidth: true
             //         Layout.fillHeight: true
             //
@@ -153,7 +153,7 @@ PopupWindow {
             //
             //             Text {
             //                 text: "kossLAN"
-            //                 color: ShellSettings.settings.colors["inverse_surface"]
+            //                 color: ShellSettings.colors["inverse_surface"]
             //                 font.pointSize: 12
             //                 verticalAlignment: Text.AlignVCenter
             //                 Layout.fillWidth: true
@@ -165,7 +165,7 @@ PopupWindow {
             //
             //     Rectangle {
             //         radius: 20
-            //         color: ShellSettings.settings.colors["surface_container_high"]
+            //         color: ShellSettings.colors["surface_container_high"]
             //         Layout.preferredWidth: powerButtons.implicitWidth + 10
             //         Layout.fillHeight: true
             //
@@ -195,7 +195,7 @@ PopupWindow {
             //
             //             Rectangle {
             //                 radius: 20
-            //                 color: ShellSettings.settings.colors["surface_bright"]
+            //                 color: ShellSettings.colors["surface_bright"]
             //                 Layout.preferredWidth: 2
             //                 Layout.fillHeight: true
             //                 Layout.topMargin: 4
@@ -217,7 +217,7 @@ PopupWindow {
                 Layout.fillWidth: true
 
                 Rectangle {
-                    color: ShellSettings.settings.colors["surface_container_high"]
+                    color: ShellSettings.colors["surface_container_high"]
                     radius: 12
                     Layout.fillWidth: true
                     Layout.preferredHeight: 30
@@ -232,7 +232,7 @@ PopupWindow {
                 Repeater {
                     model: [1, 2, 3, 4, 5]
                     delegate: Rectangle {
-                        color: ShellSettings.settings.colors["surface_container_high"]
+                        color: ShellSettings.colors["surface_container_high"]
                         radius: width / 2
                         Layout.preferredWidth: 45
                         Layout.preferredHeight: 45
@@ -250,14 +250,14 @@ PopupWindow {
                     Layout.preferredHeight: 55
 
                     Rectangle {
-                        color: ShellSettings.settings.colors["primary"]
+                        color: ShellSettings.colors["primary"]
                         radius: width / 2
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                     }
 
                     Rectangle {
-                        color: ShellSettings.settings.colors["primary"]
+                        color: ShellSettings.colors["primary"]
                         radius: width / 2
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -270,14 +270,14 @@ PopupWindow {
                     Layout.preferredHeight: 55
 
                     Rectangle {
-                        color: ShellSettings.settings.colors["surface_container_high"]
+                        color: ShellSettings.colors["surface_container_high"]
                         radius: width / 2
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                     }
 
                     Rectangle {
-                        color: ShellSettings.settings.colors["surface_container_high"]
+                        color: ShellSettings.colors["surface_container_high"]
                         radius: width / 2
                         Layout.fillWidth: true
                         Layout.fillHeight: true

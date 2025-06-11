@@ -42,7 +42,7 @@ Rectangle {
             anchors.fill: parent
 
             Rectangle {
-                color: ShellSettings.settings.colors["surface_container_high"]
+                color: ShellSettings.colors["surface_container_high"]
 
                 Widgets.IconButton {
                     id: arrowButton
@@ -80,7 +80,7 @@ Rectangle {
 
     Rectangle {
         id: divider
-        color: ShellSettings.settings.colors["surface_bright"]
+        color: ShellSettings.colors["surface_bright"]
         height: 2
         width: parent.width
         anchors.top: headerSection.bottom
@@ -140,7 +140,7 @@ Rectangle {
                     height: root.baseHeight
 
                     Rectangle {
-                        color: ShellSettings.settings.colors["surface_container_high"]
+                        color: ShellSettings.colors["surface_container_high"]
 
                         IconImage {
                             implicitSize: 32

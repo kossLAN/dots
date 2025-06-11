@@ -37,7 +37,7 @@ Singleton {
         activeAsync: persist.windowOpen
 
         FloatingWindow {
-            color: ShellSettings.settings.colors["surface"]
+            color: ShellSettings.colors["surface"]
             implicitWidth: 840
             implicitHeight: 845
 
@@ -90,7 +90,7 @@ Singleton {
                 }
 
                 Rectangle {
-                    color: ShellSettings.settings.colors["surface_container"]
+                    color: ShellSettings.colors["surface_container"]
                     radius: 20
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -122,7 +122,7 @@ Singleton {
 
                                 width: 100
                                 height: 100
-                                color: paletteSelect.containsMouse ? ShellSettings.settings.colors["surface_container_highest"] : ShellSettings.settings.colors["surface_container_high"]
+                                color: paletteSelect.containsMouse ? ShellSettings.colors["surface_container_highest"] : ShellSettings.colors["surface_container_high"]
                                 radius: 20
 
                                 MouseArea {
@@ -214,7 +214,7 @@ Singleton {
                         }
 
                         Rectangle {
-                            color: ShellSettings.settings.colors["surface_container_high"]
+                            color: ShellSettings.colors["surface_container_high"]
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
                         }
@@ -251,7 +251,7 @@ Singleton {
                                         radius: 20
 
                                         border {
-                                            color: ShellSettings.settings.colors["primary"]
+                                            color: ShellSettings.colors["primary"]
                                             width: 2
                                         }
 

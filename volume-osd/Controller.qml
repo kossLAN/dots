@@ -52,26 +52,10 @@ Scope {
             Rectangle {
                 anchors.fill: parent
                 radius: width / 2
-                color: ShellSettings.settings.colors["surface"]
+                color: ShellSettings.colors["surface"]
 
-                Item {
-                    id: sliderContainer
-                    layer.enabled: true
-                    layer.effect: OpacityMask {
-                        source: Rectangle {
-                            width: sliderContainer.width
-                            height: sliderContainer.height
-                            radius: sliderContainer.width / 2
-                            color: "white"
-                        }
-
-                        maskSource: Rectangle {
-                            width: sliderContainer.width
-                            height: sliderContainer.height
-                            radius: sliderContainer.width / 2
-                            color: "black"
-                        }
-                    }
+                ColumnLayout {
+                    spacing: 10
 
                     anchors {
                         fill: parent
@@ -80,24 +64,54 @@ Scope {
 
                     Rectangle {
                         radius: width / 2
-                        color: ShellSettings.settings.colors["primary"]
-                        implicitHeight: Math.max(parent.width, parent.height * (Pipewire.defaultAudioSink?.audio.volume ?? 0))
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: width 
+                    }
 
-                        anchors {
-                            bottom: parent.bottom
-                            left: parent.left
-                            right: parent.right
+                    Rectangle {
+                        id: sliderContainer
+                        color: "gray"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            source: Rectangle {
+                                width: sliderContainer.width
+                                height: sliderContainer.height
+                                radius: sliderContainer.width / 2
+                                color: "white"
+                            }
+
+                            maskSource: Rectangle {
+                                width: sliderContainer.width
+                                height: sliderContainer.height
+                                radius: sliderContainer.width / 2
+                                color: "black"
+                            }
                         }
 
-                        // replace with material icon
-                        // IconImage {
-                        //     implicitSize: parent.width - 4
-                        //     source: "root:resources/volume/volume-full.svg"
-                        //
-                        //     anchors {
-                        //         horizontalCenter: parent.horizontalCenter
-                        //     }
-                        // }
+                        Rectangle {
+                            radius: width / 2
+                            color: ShellSettings.colors["primary"]
+                            implicitHeight: Math.max(parent.width, parent.height * (Pipewire.defaultAudioSink?.audio.volume ?? 0))
+
+                            anchors {
+                                bottom: parent.bottom
+                                left: parent.left
+                                right: parent.right
+                            }
+
+                            // replace with material icon
+                            // IconImage {
+                            //     implicitSize: parent.width - 4
+                            //     source: "root:resources/volume/volume-full.svg"
+                            //
+                            //     anchors {
+                            //         horizontalCenter: parent.horizontalCenter
+                            //     }
+                            // }
+                        }
                     }
                 }
             }
@@ -106,7 +120,7 @@ Scope {
             //     anchors.fill: parent
             //     radius: 8
             //     color: {
-            //         let color = ShellSettings.settings.colors["surface"];
+            //         let color = ShellSettings.colors["surface"];
             //         return Qt.rgba(color.r, color.g, color.b, 0.8);
             //     }
             //
@@ -128,7 +142,7 @@ Scope {
             //             implicitHeight: 10
             //             radius: 20
             //             color: {
-            //                 let color = ShellSettings.settings.colors["inverse_surface"];
+            //                 let color = ShellSettings.colors["inverse_surface"];
             //                 return Qt.rgba(color.r, color.g, color.b, 0.5);
             //             }
             //
@@ -143,7 +157,7 @@ Scope {
             //             }
             //
             //             Rectangle {
-            //                 color: ShellSettings.settings.colors["primary"]
+            //                 color: ShellSettings.colors["primary"]
             //                 anchors {
             //                     left: parent.left
             //                     top: parent.top

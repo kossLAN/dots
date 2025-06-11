@@ -11,7 +11,7 @@ import ".."
 
 PanelWindow {
     id: root
-    color: ShellSettings.settings.colors["surface"]
+    color: ShellSettings.colors["surface"]
     implicitHeight: ShellSettings.settings.barHeight
     property alias popup: popupWindow
 
@@ -75,6 +75,19 @@ PanelWindow {
         //     bar: root
         // }
 
+        // Text {
+        //     text: "home"
+        //     color: "white"
+        //     font.family: "Material Symbols Rounded"
+        //     renderType: Text.NativeRendering
+        //     textFormat: Text.PlainText
+        //     font.pointSize: 12
+        //
+        //     font.variableAxes: {
+        //         "FILL": 1
+        //     }
+        // }
+
         BatteryIndicator {
             id: batteryIndicator
             popup: root.popup
@@ -89,7 +102,7 @@ PanelWindow {
 
         Clock {
             id: clock
-            color: ShellSettings.settings.colors["inverse_surface"]
+            color: ShellSettings.colors["inverse_surface"]
         }
     }
 }

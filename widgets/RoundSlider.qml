@@ -8,13 +8,13 @@ import ".."
 Slider {
     id: slider
     implicitHeight: 8
-    property var accentColor: ShellSettings.settings.colors["primary"]
+    property var accentColor: ShellSettings.colors["primary"]
 
     background: Rectangle {
         id: sliderContainer
         width: slider.availableWidth
         height: slider.implicitHeight
-        color: ShellSettings.settings.colors["inverse_surface"]
+        color: ShellSettings.colors["inverse_surface"]
         radius: 4
         anchors.verticalCenter: parent.verticalCenter
 

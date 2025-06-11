@@ -33,15 +33,15 @@ RowLayout {
             }
 
             color: {
-                let value = Qt.color(ShellSettings.settings.colors["secondary"]).darker(2);
+                let value = Qt.color(ShellSettings.colors["secondary"]).darker(2);
 
                 if (!modelData?.id || !Hyprland.focusedMonitor?.activeWorkspace?.id)
                     return value;
 
                 if (workspaceButton.containsMouse) {
-                    value = ShellSettings.settings.colors["on_primary"];
+                    value = ShellSettings.colors["on_primary"];
                 } else if (Hyprland.focusedMonitor.activeWorkspace.id == modelData.id) {
-                    value = ShellSettings.settings.colors["primary"];
+                    value = ShellSettings.colors["primary"];
                 }
 
                 return value;
