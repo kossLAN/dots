@@ -17,8 +17,8 @@ ColumnLayout {
             rootMenu.leftItem = true;
         }
 
-        if (!menuData?.hasChildren) {
-            rootMenu.rightItem = false;
+        if (menuData?.hasChildren) {
+            rootMenu.rightItem = true;
         }
     }
 
