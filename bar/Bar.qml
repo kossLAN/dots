@@ -78,18 +78,18 @@ PanelWindow {
         //     bar: root
         // }
 
-        Text {
-            text: "home"
-            color: "white"
-            font.family: "Material Symbols Rounded"
-            renderType: Text.NativeRendering
-            textFormat: Text.PlainText
-            font.pointSize: 14
-
-            font.variableAxes: {
-                "FILL": 0
-            }
-        }
+        // Text {
+        //     text: "home"
+        //     color: "white"
+        //     font.family: "Material Symbols Rounded"
+        //     renderType: Text.NativeRendering
+        //     textFormat: Text.PlainText
+        //     font.pointSize: 14
+        //
+        //     font.variableAxes: {
+        //         "FILL": 0
+        //     }
+        // }
 
         BatteryIndicator {
             id: batteryIndicator

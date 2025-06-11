@@ -9,9 +9,15 @@ import "volume-osd" as VolumeOSD
 import "settings" as Settings
 import "launcher" as Launcher
 import "wallpaper" as Wallpaper
+import "screencapture" as ScreenCapture
 
 ShellRoot {
-    Component.onCompleted: [Launcher.Controller.init(), Settings.Controller.init(), Notifications.NotificationCenter.init()]
+    Component.onCompleted: {
+        Launcher.Controller.init();
+        Settings.Controller.init();
+        Notifications.NotificationCenter.init();
+        ScreenCapture.Controller.init();
+    }
 
     Variants {
         model: Quickshell.screens

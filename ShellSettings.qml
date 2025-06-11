@@ -11,7 +11,7 @@ Singleton {
     FileView {
         path: `${Quickshell.env("XDG_DATA_HOME")}/quickshell/settings.json`
         watchChanges: true
-        // onFileChanged: reload()
+        onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
         blockLoading: true
 
@@ -22,6 +22,7 @@ Singleton {
                 property int barHeight: 25
                 property string wallpaperUrl: Qt.resolvedUrl("root:resources/wallpapers/pixelart0.jpg")
                 property string colorScheme: "scheme-fruit-salad"
+                property string screenshotPath: "/home/koss/Pictures"
             }
 
             property var colors: {

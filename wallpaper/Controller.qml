@@ -5,7 +5,6 @@ import ".."
 
 Scope {
     id: root
-    required property var screen
     property string matugenConf: Qt.resolvedUrl("matugen.toml").toString().replace("file://", "")
 
     LazyLoader {
@@ -54,8 +53,18 @@ Scope {
                 id: matugen
                 running: false
 
-                // Formatter is keeping me hostage frfr...
-                command: ["matugen", "image", ShellSettings.settings.wallpaperUrl.replace("file://", ""), "--type", ShellSettings.settings.colorScheme, "--json", "hex", "--config", root.matugenConf]
+                // Don't format this lol
+                command: [
+                    "matugen", 
+                    "image", 
+                    ShellSettings.settings.wallpaperUrl.replace("file://", ""), 
+                    "--type", 
+                    ShellSettings.settings.colorScheme, 
+                    "--json", 
+                    "hex", 
+                    "--config", 
+                    root.matugenConf
+                ]
 
                 stdout: SplitParser {
                     onRead: data => {
