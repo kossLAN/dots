@@ -81,6 +81,7 @@ Singleton {
 
                                 onRunningChanged: {
                                     if (!running) {
+                                        // Quickshell.clipboardText = `image://${path}`;
                                         root.windowOpen = false;
                                     }
                                 }
