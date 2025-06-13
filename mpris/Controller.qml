@@ -1,13 +1,42 @@
 pragma Singleton
+pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Mpris
 
 Singleton {
     id: root
     property MprisPlayer trackedPlayer
-    property var colors: ["white"]
+
+    IpcHandler {
+        target: "mpris"
+
+        function next(): void {
+            root.trackedPlayer.next();
+        }
+
+        function prev(): void {
+            root.trackedPlayer.previous();
+        }
+
+        function play(): void {
+            root.trackedPlayer.play();
+        }
+
+        function pause(): void {
+            root.trackedPlayer.pause();
+        }
+
+        function play_pause(): void {
+            if (root.trackedPlayer.isPlaying) {
+                root.trackedPlayer.pause();
+            } else {
+                root.trackedPlayer.play();
+            }
+        }
+    }
 
     Instantiator {
         model: Mpris.players
@@ -31,8 +60,8 @@ Singleton {
                         }
                     }
 
-                    if (trackedPlayer == null && Mpris.players.values.length != 0) {
-                        trackedPlayer = Mpris.players.values[0];
+                    if (root.trackedPlayer == null && Mpris.players.values.length != 0) {
+                        root.trackedPlayer = Mpris.players.values[0];
                     }
                 }
             }
@@ -43,4 +72,6 @@ Singleton {
             }
         }
     }
+
+    function init() {}
 }
