@@ -49,6 +49,11 @@ Item {
             anchors.fill: parent
 
             // placeholder for now
+
+            // Text {
+            //     text
+            // }
+
             ComboBox {
                 model: ["Power Save", "Balanced", "Performance"]
                 currentIndex: PowerProfiles.profile

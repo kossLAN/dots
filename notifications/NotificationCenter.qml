@@ -42,7 +42,7 @@ Singleton {
             id: notificationPanel
             color: "red"
             implicitWidth: 500
-            exclusionMode: ExclusionMode.Normal
+            exclusionMode: ExclusionMode.Ignore
             // WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
             anchors {
                 top: true

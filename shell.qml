@@ -8,6 +8,7 @@ import "notifications" as Notifications
 import "volume-osd" as VolumeOSD
 import "settings" as Settings
 import "launcher" as Launcher
+import "lockscreen" as LockScreen
 import "wallpaper" as Wallpaper
 import "screencapture" as ScreenCapture
 
@@ -28,6 +29,10 @@ ShellRoot {
 
             Bar.Bar {
                 screen: scope.modelData
+            }
+
+            LockScreen.Controller {
+                
             }
         }
     }

@@ -11,7 +11,7 @@ Singleton {
     FileView {
         path: `${Quickshell.env("XDG_DATA_HOME")}/quickshell/settings.json`
         watchChanges: true
-        onFileChanged: reload()
+        // onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
         blockLoading: true
 
