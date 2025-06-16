@@ -1,11 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Widgets
 import "battery"
-import "control" as Control
 import "systray" as SysTray
-import "notifications" as Notifications
 import "popups" as Popup
+import "mpris" as Mpris
 import "../widgets" as Widgets
 import ".."
 
@@ -27,83 +27,94 @@ PanelWindow {
         bar: root
     }
 
-    // Left
     RowLayout {
-        spacing: 10
+        spacing: 0
 
         anchors {
-            top: parent.top
-            left: parent.left
-            bottom: parent.bottom
-            leftMargin: 4
+            fill: parent
+            leftMargin: 5
+            rightMargin: 5
         }
 
-        HyprWorkspaces {
-            screen: root.screen
-            Layout.fillWidth: false
-            Layout.preferredHeight: parent.height
-            Layout.leftMargin: 4
+        // Left side of bar
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            RowLayout {
+                spacing: 10
+                anchors.fill: parent
+
+                HyprWorkspaces {
+                    screen: root.screen
+                    Layout.fillHeight: true
+                    Layout.leftMargin: 4
+                }
+
+                Widgets.Separator {
+                    visible: activeWindow.visible
+                    Layout.leftMargin: 5
+                    Layout.rightMargin: 5
+                }
+
+                ActiveWindow {
+                    id: activeWindow
+                    Layout.preferredWidth: 400
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+            }
         }
 
-        Widgets.Separator {
-            visible: activeWindow.visible
-            Layout.leftMargin: 5
-            Layout.rightMargin: 5
+        // Center of bar
+        WrapperItem {
+            topMargin: 2
+            bottomMargin: 2
+            Layout.fillHeight: true
+
+            Mpris.Button {
+                bar: root
+            }
         }
 
-        ActiveWindow {
-            id: activeWindow
-            Layout.preferredWidth: 400
-        }
-    }
+        // Right side of bar
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-    // Right
-    RowLayout {
-        spacing: 10
+            RowLayout {
+                anchors.fill: parent
 
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
-            right: parent.right
-            rightMargin: 4
-        }
+                Item {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
 
-        SysTray.SysTray {
-            id: sysTray
-            popup: root.popup
-        }
+                SysTray.SysTray {
+                    id: sysTray
+                    popup: root.popup
+                    Layout.fillHeight: true
+                }
 
-        // Notifications.NotificationButton {
-        //     implicitSize: 16
-        //     bar: root
-        // }
+                BatteryIndicator {
+                    id: batteryIndicator
+                    popup: root.popup
+                    Layout.fillHeight: true
+                }
 
-        // Text {
-        //     text: "home"
-        //     color: "white"
-        //     font.family: "Material Symbols Rounded"
-        //     renderType: Text.NativeRendering
-        //     textFormat: Text.PlainText
-        //     font.pointSize: 14
-        //
-        //     font.variableAxes: {
-        //         "FILL": 0
-        //     }
-        // }
+                Widgets.Separator {
+                    Layout.leftMargin: 5
+                    Layout.rightMargin: 5
+                }
 
-        BatteryIndicator {
-            id: batteryIndicator
-            popup: root.popup
-        }
-
-        Widgets.Separator {
-            Layout.leftMargin: 5
-            Layout.rightMargin: 5
-        }
-
-        Clock {
-            id: clock
-            color: ShellSettings.colors["inverse_surface"]
+                Clock {
+                    id: clock
+                    color: ShellSettings.colors["inverse_surface"]
+                }
+            }
         }
     }
 }

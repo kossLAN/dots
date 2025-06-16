@@ -30,7 +30,6 @@ PopupWindow {
     property var content
 
     function set(item, content) {
-        // isOpen = false;
         root.item = item;
         root.content = content;
         popupContent.data = content;

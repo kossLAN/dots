@@ -10,8 +10,7 @@ import "../.."
 
 Item {
     id: root
-    implicitWidth: parent.height + 8
-    implicitHeight: parent.height
+    implicitWidth: height + 8 // for margin 
     visible: UPower.displayDevice.isLaptopBattery
 
     required property var popup

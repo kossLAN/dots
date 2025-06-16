@@ -11,7 +11,6 @@ RowLayout {
     id: root
     spacing: 10
     visible: SystemTray.items.values.length > 0
-    implicitHeight: parent.height
 
     required property var popup
 
@@ -20,8 +19,8 @@ RowLayout {
 
         delegate: Item {
             id: trayField
-            implicitHeight: parent.height
-            implicitWidth: trayContainer.width
+            Layout.preferredWidth: parent.height 
+            Layout.fillHeight: true
             required property SystemTrayItem modelData
 
             MouseArea {
@@ -79,14 +78,20 @@ RowLayout {
                 id: trayContainer
                 color: trayButton.containsMouse ? ShellSettings.colors["primary"] : "transparent"
                 radius: width / 2
-                implicitHeight: parent.height - 2
-                implicitWidth: parent.height - 2
-                anchors.centerIn: parent
+                implicitHeight: parent.height
+                implicitWidth: parent.height
+
+                anchors {
+                    fill: parent
+                    margins: 1
+                }
 
                 IconImage {
                     id: trayIcon
 
                     source: {
+                        // console.log(trayField.modelData.id);
+
                         switch (trayField.modelData.id) {
                         case "obs":
                             return "image://icon/obs-tray";

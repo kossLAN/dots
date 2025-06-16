@@ -1,10 +1,11 @@
+pragma Singleton
 pragma ComponentBehavior: Bound
 
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 
-Scope {
+Singleton {
     id: root
 
     PersistentProperties {
@@ -38,4 +39,6 @@ Scope {
             }
         }
     }
+
+    function init() {}
 }
