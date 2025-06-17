@@ -5,11 +5,11 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
-import "../.."
+import "../../widgets" as Widgets
 
 RowLayout {
     id: root
-    spacing: 10
+    spacing: 5
     visible: SystemTray.items.values.length > 0
 
     required property var popup
@@ -19,14 +19,13 @@ RowLayout {
 
         delegate: Item {
             id: trayField
-            Layout.preferredWidth: parent.height 
+            Layout.preferredWidth: parent.height
             Layout.fillHeight: true
             required property SystemTrayItem modelData
 
-            MouseArea {
+            Widgets.MaterialButton {
                 id: trayButton
                 hoverEnabled: true
-                anchors.fill: parent
                 onClicked: {
                     menuOpener.menu = trayField.modelData.menu;
 
@@ -37,6 +36,25 @@ RowLayout {
 
                     root.popup.set(this, trayMenu);
                     root.popup.show();
+                }
+
+                anchors {
+                    fill: parent
+                    margins: 2
+                }
+
+                IconImage {
+                    id: trayIcon
+                    anchors.fill: parent
+                    source: {
+                        // console.log(trayField.modelData.id);
+                        switch (trayField.modelData.id) {
+                        case "obs":
+                            return "image://icon/obs-tray";
+                        default:
+                            return trayField.modelData.icon;
+                        }
+                    }
                 }
             }
 
@@ -70,45 +88,6 @@ RowLayout {
                                 menuOpener.menu = null;
                             }
                         }
-                    }
-                }
-            }
-
-            Rectangle {
-                id: trayContainer
-                color: trayButton.containsMouse ? ShellSettings.colors["primary"] : "transparent"
-                radius: width / 2
-                implicitHeight: parent.height
-                implicitWidth: parent.height
-
-                anchors {
-                    fill: parent
-                    margins: 1
-                }
-
-                IconImage {
-                    id: trayIcon
-
-                    source: {
-                        // console.log(trayField.modelData.id);
-
-                        switch (trayField.modelData.id) {
-                        case "obs":
-                            return "image://icon/obs-tray";
-                        default:
-                            return trayField.modelData.icon;
-                        }
-                    }
-
-                    anchors {
-                        fill: parent
-                        margins: 1
-                    }
-                }
-
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 100
                     }
                 }
             }

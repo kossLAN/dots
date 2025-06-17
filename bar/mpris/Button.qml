@@ -1,14 +1,16 @@
-import Quickshell.Widgets
 import QtQuick
 import "../../mpris" as Mpris
+import "../../widgets" as Widgets
 import "../.."
 
-WrapperRectangle {
+Widgets.MaterialButton {
     id: root
-    color: button.containsMouse ? ShellSettings.colors["primary"] : "transparent"
     radius: 6
-    leftMargin: 5
-    rightMargin: 5
+    implicitWidth: mediaInfo.contentWidth + 8
+    implicitHeight: parent.height
+    // onClicked: {
+    //     popup.visible = !popup.visible;
+    // }
 
     required property var bar
     property var player: Mpris.Controller.trackedPlayer
@@ -16,48 +18,25 @@ WrapperRectangle {
     Text {
         id: mediaInfo
         text: root.player?.trackTitle ?? ""
-        color: button.containsMouse ? ShellSettings.colors["inverse_primary"] : ShellSettings.colors["inverse_surface"]
+        color: root.containsMouse ? ShellSettings.colors["inverse_primary"] : ShellSettings.colors["inverse_surface"]
         elide: Text.ElideRight
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.pointSize: 11
-        anchors.verticalCenter: parent.verticalCenter
-
-        MouseArea {
-            id: button
-            anchors.fill: parent
-            hoverEnabled: true
-
-            onClicked: {
-                popup.visible = !popup.visible;
-            }
-        }
-
-        WidgetWindow {
-            id: popup
-            visible: false
-            parentWindow: root.bar
-
-            // anchor.window: root.bar
-        }
-
-        // Item {
-        //     id: menu
-        //     visible: false
-        //     implicitWidth: 250
-        //     implicitHeight: 80
-        // }
+        anchors.centerIn: parent
 
         Behavior on color {
             ColorAnimation {
-                duration: 100
+                duration: 200
             }
         }
     }
-
-    Behavior on color {
-        ColorAnimation {
-            duration: 100
-        }
-    }
 }
+
+// WidgetWindow {
+//     id: popup
+//     visible: false
+//     parentWindow: root.bar
+//
+//     // anchor.window: root.bar
+// }

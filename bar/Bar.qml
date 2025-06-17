@@ -2,7 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import "battery"
+import "power"
+import "volume"
 import "systray" as SysTray
 import "popups" as Popup
 import "mpris" as Mpris
@@ -97,6 +98,15 @@ PanelWindow {
                     id: sysTray
                     popup: root.popup
                     Layout.fillHeight: true
+                }
+
+                VolumeIndicator {
+                    id: volumeIndicator
+                    popup: root.popup
+                    Layout.preferredWidth: this.height
+                    Layout.fillHeight: true
+                    Layout.topMargin: 2
+                    Layout.bottomMargin: 2
                 }
 
                 BatteryIndicator {

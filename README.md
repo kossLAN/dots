@@ -4,15 +4,14 @@ The idea is to eventually be minimal but also use material 3 design language, lo
 
 ## TODO List 
 - [x] Custom Popup Window Surface for smooth anims on top bar
-- [ ] Lockscreen
-- [ ] Port visuals to more material 3 aethestic 
-- [ ] Screenshot tool
+- [ ] Lockscreen (WIP)
+- [ ] Port visuals to more material 3 aethestic (WIP) 
+- [x] Screenshot tool (WIP - kinda scuffed, but is functional)
 - [ ] Recording/Clip widget with gpuscreenrecorder
 - [ ] Session Manager
 - [ ] Battery Profile Popup
-- [ ] REDO Volume OSD
+- [ ] REDO Volume OSD (WIP)
 - [ ] REDO Launcher (wallpaper picker, calculator, commands, etc...)
-- [ ] Integrate wallpaper picker into launcher
 - [ ] Music Player Popup V4 lol
 
 ### Optionals
