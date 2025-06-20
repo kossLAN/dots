@@ -4,19 +4,18 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import ".."
 
-Rectangle {
+Item {
     id: root
-    color: Window.active ? ShellSettings.colors["surface"] : ShellSettings.colors["surface_dim"]
-    required property LockContext context
+    required property LockState state 
+    required property string wallpaper
 
     Item {
         anchors.fill: parent
 
         Image {
             id: bgImage
-            source: ShellSettings.settings.wallpaperUrl
+            source: root.wallpaper
             fillMode: Image.PreserveAspectCrop
             anchors.fill: parent
             visible: false
@@ -26,7 +25,7 @@ Rectangle {
             anchors.fill: bgImage
             source: bgImage
             radius: 80
-            transparentBorder: true
+            transparentBorder: false
         }
 
         Rectangle {
@@ -134,27 +133,27 @@ Rectangle {
         // password input, should probably split this out into a seperate comp
         LoginField {
             id: passwordBox
-            enabled: !root.context.unlockInProgress
+            enabled: !root.state.unlockInProgress
 
             Layout.preferredWidth: 250
             Layout.preferredHeight: 30
             Layout.maximumHeight: 30
             Layout.alignment: Qt.AlignHCenter
 
-            onTextChanged: root.context.currentText = this.text
-            onAccepted: root.context.tryUnlock()
+            onTextChanged: root.state.currentText = this.text
+            onAccepted: root.state.tryUnlock()
 
             Connections {
-                target: root.context
+                target: root.state
 
                 function onCurrentTextChanged() {
                     if (!passwordBox.shaking) {
-                        passwordBox.text = root.context.currentText;
+                        passwordBox.text = root.state.currentText;
                     }
                 }
 
                 function onShowFailureChanged() {
-                    if (root.context.showFailure && !passwordBox.shaking) {
+                    if (root.state.showFailure && !passwordBox.shaking) {
                         passwordBox.shaking = true;
                     }
                 }
@@ -185,9 +184,9 @@ Rectangle {
 
     // testing button
     Button {
-        visible: false
+        visible: true
         text: "Emergency Unlock"
-        onClicked: root.context.unlocked()
+        onClicked: root.state.unlocked()
 
         anchors {
             right: parent.right

@@ -1,9 +1,11 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
+import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import ".."
 
 Singleton {
     id: root
@@ -22,9 +24,15 @@ Singleton {
     }
 
     LockContext {
-        id: passwordContext
+        id: context
 
-        onUnlocked: persist.locked = false
+        Connections {
+            target: context.state
+
+            function onUnlocked() {
+                persist.locked = false;
+            }
+        }
     }
 
     WlSessionLock {
@@ -34,11 +42,13 @@ Singleton {
 
         WlSessionLockSurface {
             LockSurface {
+                state: context.state
+                wallpaper: ShellSettings.settings.wallpaperUrl
                 anchors.fill: parent
-                context: passwordContext
             }
         }
     }
 
-    function init() {}
+    function init() {
+    }
 }
