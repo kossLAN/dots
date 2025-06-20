@@ -4,7 +4,6 @@ import QtQuick
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Quickshell.Widgets
-import Quickshell.Services.Pipewire
 import "../../widgets/" as Widgets
 import "../.."
 
@@ -13,7 +12,7 @@ WrapperItem {
     visible: false
 
     ColumnLayout {
-        spacing: 5
+        spacing: 10
 
         // Toolbar
         Rectangle {
@@ -31,7 +30,7 @@ WrapperItem {
             }
 
             Layout.fillWidth: true
-            Layout.preferredHeight: 35
+            Layout.preferredHeight: 30
 
             RowLayout {
                 spacing: 0
