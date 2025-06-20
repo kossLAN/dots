@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Greetd
-import "../lockscreen"
+import "lockscreen"
 
 ShellRoot {
     id: root

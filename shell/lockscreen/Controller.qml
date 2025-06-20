@@ -37,7 +37,6 @@ Singleton {
 
     WlSessionLock {
         id: lock
-
         locked: persist.locked
 
         WlSessionLockSurface {

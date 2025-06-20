@@ -184,7 +184,7 @@ Item {
 
     // testing button
     Button {
-        visible: true
+        visible: false
         text: "Emergency Unlock"
         onClicked: root.state.unlocked()
 
