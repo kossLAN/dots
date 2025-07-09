@@ -27,9 +27,7 @@ Singleton {
             }
 
             property JsonObject sizing: JsonObject {
-                property int borderWidth: 5
-                property int topBorderWidth: 20
-                property int gaps: 5
+                property int barHeight: 25
             }
 
             property var colors: {

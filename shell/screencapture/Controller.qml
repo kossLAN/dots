@@ -20,9 +20,8 @@ Singleton {
         }
     }
 
-    // Just use this window to grab screen context
     LazyLoader {
-        activeAsync: root.windowOpen
+        active: root.windowOpen
 
         PanelWindow {
             id: focusedScreen
@@ -43,54 +42,25 @@ Singleton {
                 focus: true
                 Keys.onEscapePressed: root.windowOpen = false
 
-                // to get a freeze frame for now
-                ScreencopyView {
-                    id: screenView
-                    captureSource: focusedScreen.screen
+                SelectionRectangle {
+                    id: selection
                     anchors.fill: parent
 
-                    SelectionRectangle {
-                        id: selection
-                        anchors.fill: parent
+                    onAreaSelected: selection => {
+                        let screen = focusedScreen.screen;
+                        const x = Math.floor(selection.x) + screen.x;
+                        const y = Math.floor(selection.y) + screen.y;
+                        const width = Math.floor(selection.width);
+                        const height = Math.floor(selection.height);
 
-                        property string position
-                        property bool running: false
+                        let position = `${x},${y} ${width}x${height}`;
+                        let path = "/home/koss/Pictures/screenshot.png";
 
-                        onAreaSelected: selection => {
-                            let screen = focusedScreen.screen;
-                            const x = Math.floor(selection.x) + screen.x;
-                            const y = Math.floor(selection.y) + screen.y;
-                            const width = Math.floor(selection.width);
-                            const height = Math.floor(selection.height);
-                            position = `${x},${y} ${width}x${height}`;
+                        Quickshell.execDetached({
+                            command: ["grim", "-g", position, path]
+                        });
 
-                            running = true;
-                        }
-
-                        LazyLoader {
-                            activeAsync: selection.running
-
-                            Process {
-                                id: grim
-                                running: true
-
-                                property var path: `${ShellSettings.settings.screenshotPath}/screenshot.png`
-
-                                command: ["grim", "-g", selection.position, path]
-
-
-                                onRunningChanged: {
-                                    if (!running) {
-                                        // Quickshell.clipboardText = `image://${path}`;
-                                        root.windowOpen = false;
-                                    }
-                                }
-
-                                stderr: SplitParser {
-                                    onRead: data => console.log(`line read: ${data}`)
-                                }
-                            }
-                        }
+                        root.windowOpen = false;
                     }
                 }
             }

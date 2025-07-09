@@ -3,8 +3,7 @@
 
 import Quickshell
 import QtQuick
-// import "bar" as Bar
-import "experimental-bar" as Bar
+import "bar" as Bar
 import "notifications" as Notifications
 import "mpris" as Mpris
 import "volume-osd" as VolumeOSD
