@@ -57,11 +57,6 @@ PanelWindow {
                 id: activeWindow
                 Layout.preferredWidth: 400
             }
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
         }
 
         // Right side of bar
@@ -69,11 +64,7 @@ PanelWindow {
             spacing: 5
             Layout.fillWidth: true
             Layout.fillHeight: true
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
+            Layout.alignment: Qt.AlignRight
 
             SysTray.SysTray {
                 id: sysTray
