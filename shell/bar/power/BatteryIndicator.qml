@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Quickshell.Widgets
@@ -17,7 +16,7 @@ Item {
 
     required property var popup
 
-    Widgets.MaterialButton {
+    Widgets.StyledMouseArea {
         id: batteryButton
         hoverEnabled: true
         onClicked: {

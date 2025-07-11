@@ -23,7 +23,7 @@ RowLayout {
             Layout.fillHeight: true
             required property SystemTrayItem modelData
 
-            Widgets.MaterialButton {
+            Widgets.StyledMouseArea {
                 id: trayButton
                 hoverEnabled: true
                 onClicked: {

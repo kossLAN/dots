@@ -1,11 +1,9 @@
 import Quickshell
-import Quickshell.Io
 import QtQuick
 import ".."
 
 Scope {
     id: root
-    property string matugenConf: Qt.resolvedUrl("matugen.toml").toString().replace("file://", "")
 
     LazyLoader {
         loading: true
@@ -40,43 +38,6 @@ Scope {
 
                 function onWallpaperUrlChanged() {
                     console.log("Switching wallpaper: " + ShellSettings.settings.wallpaperUrl);
-                    matugen.running = true;
-                }
-
-                function onColorSchemeChanged() {
-                    console.log("Switching color scheme: " + ShellSettings.settings.colorScheme);
-                    matugen.running = true;
-                }
-            }
-
-            Process {
-                id: matugen
-                running: false
-
-                // Don't format this lol
-                command: [
-                    "matugen", 
-                    "image", 
-                    ShellSettings.settings.wallpaperUrl.replace("file://", ""), 
-                    "--type", 
-                    ShellSettings.settings.colorScheme, 
-                    "--json", 
-                    "hex", 
-                    "--config", 
-                    root.matugenConf
-                ]
-
-                stdout: SplitParser {
-                    onRead: data => {
-                        console.log(ShellSettings.settings.colorScheme);
-                        try {
-                            ShellSettings.colors = JSON.parse(data)['colors']['dark'];
-                        } catch (e) {}
-                    }
-                }
-
-                stderr: SplitParser {
-                    onRead: data => console.log(`line read: ${data}`)
                 }
             }
         }

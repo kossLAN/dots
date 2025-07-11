@@ -29,10 +29,11 @@ Item {
                 property bool checked: index === root.currentIndex
 
                 onClicked: {
-                    currentIndex = index;
+                    currentIndex = button.index;
                     root.updateSelectionBarPosition();
                 }
 
+                // Change to SVG Icon
                 FontIcon {
                     text: button.modelData
                     fill: {
@@ -79,6 +80,7 @@ Item {
         }
     }
 
+    // Change to icons being greyed out by default but selected is full white
     function updateSelectionBarPosition() {
         if (buttonRepeater.count > 0) {
             var buttonWidth = buttonGroup.width / buttonRepeater.count;

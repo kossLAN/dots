@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell.Widgets
-import Qt5Compat.GraphicalEffects
 import ".."
 
 Item {
