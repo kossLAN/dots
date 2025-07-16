@@ -37,8 +37,9 @@ PopupWindow {
         let itemPos = item.mapToItem(root.bar.contentItem, 0, root.bar.height, item.width, 0).x;
         position(itemPos);
 
-        popupContainer.opacity = 0;
-        popupContent.opacity = 0;
+        // popupContainer.opacity = 0;
+        // popupContent.opacity = 0;
+        popupContainer.visible = false;
     }
 
     function position(itemPos) {
@@ -66,15 +67,17 @@ PopupWindow {
         isOpen = true;
         root.visible = true; // set and leave open
         root.content.visible = true;
-        popupContainer.opacity = 1;
-        popupContent.opacity = 1;
+        // popupContainer.opacity = 1;
+        // popupContent.opacity = 1;
+        popupContainer.visible = true;
     }
 
     function hide() {
         grab.active = false;
         isOpen = false;
-        popupContainer.opacity = 0;
-        popupContent.opacity = 0;
+        // popupContainer.opacity = 0;
+        // popupContent.opacity = 0;
+        popupContainer.visible = false;
 
         root.item = undefined;
         root.content = undefined;
@@ -89,24 +92,33 @@ PopupWindow {
         }
     }
 
-    RectangularShadow {
-        radius: popupContainer.radius
+    // RectangularShadow {
+    //     radius: popupContainer.radius
+    //     anchors.fill: popupContainer
+    //     opacity: popupContainer.opacity
+    //     visible: popupContainer.visible
+    //     blur: 10
+    //     spread: 2
+    // }
+
+    Rectangle {
+        color: ShellSettings.colors.surface
+        // opacity: ShellSettings.settings.opacity
+        opacity: 0.15
+        radius: 12
         anchors.fill: popupContainer
-        opacity: popupContainer.opacity
-        visible: popupContainer.visible
-        blur: 10
-        spread: 2
+        border.color: ShellSettings.colors.active
     }
 
-    WrapperRectangle {
+    WrapperItem {
         id: popupContainer
 
-        color: ShellSettings.colors["surface"]
-        radius: 12
+        // color: ShellSettings.colors.surface
+        // radius: 12
         margin: 8
         clip: true
-        opacity: 0
-        visible: opacity > 0
+        // opacity: 0.5
+        // visible: opacity > 0
         x: root.bar.width
 
         // spooky, likely to cause problems lol
@@ -132,7 +144,7 @@ PopupWindow {
             Behavior on opacity {
                 NumberAnimation {
                     duration: 200
-                    easing.type: Easing.Linear
+                    easing.type: Easing.InOutQuad
                     from: 0
                     to: 1
                 }
@@ -158,25 +170,25 @@ PopupWindow {
             }
         }
 
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 200
-                easing.type: Easing.Linear
-            }
-        }
+        // Behavior on opacity {
+        //     NumberAnimation {
+        //         duration: 200
+        //         easing.type: Easing.Linear
+        //     }
+        // }
 
         Behavior on width {
             enabled: root.isOpen
             SmoothedAnimation {
                 duration: 200
-                easing.type: Easing.Linear
+                easing.type: Easing.InOutQuad
             }
         }
 
         Behavior on height {
             SmoothedAnimation {
                 duration: 200
-                easing.type: Easing.Linear
+                easing.type: Easing.InOutQuad
             }
         }
 
@@ -184,7 +196,7 @@ PopupWindow {
             enabled: root.isOpen
             SmoothedAnimation {
                 duration: 200
-                easing.type: Easing.OutQuad
+                easing.type: Easing.InOutQuad
             }
         }
     }

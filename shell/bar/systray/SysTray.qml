@@ -12,7 +12,8 @@ RowLayout {
     spacing: 5
     visible: SystemTray.items.values.length > 0
 
-    required property var popup
+    // required property var popup
+    required property var bar
 
     Repeater {
         model: SystemTray.items
@@ -29,23 +30,26 @@ RowLayout {
                 onClicked: {
                     menuOpener.menu = trayField.modelData.menu;
 
-                    if (root.popup.content == trayMenu) {
-                        root.popup.hide();
+                    if (trayMenu.visible) {
+                        trayMenu.visible = false;
+                        // root.popup.hide();
+
                         return;
                     }
 
-                    root.popup.set(this, trayMenu);
-                    root.popup.show();
+                    trayMenu.visible = true;
+
+                    // root.popup.set(this, trayMenu);
+                    // root.popup.show();
                 }
 
                 anchors {
                     fill: parent
-                    margins: 2
+                    // margins: 2
                 }
 
                 IconImage {
                     id: trayIcon
-                    anchors.fill: parent
                     source: {
                         // console.log(trayField.modelData.id);
                         switch (trayField.modelData.id) {
@@ -55,6 +59,11 @@ RowLayout {
                             return trayField.modelData.icon;
                         }
                     }
+
+                    anchors {
+                        fill: parent
+                        margins: 2
+                    }
                 }
             }
 
@@ -62,12 +71,18 @@ RowLayout {
                 id: menuOpener
             }
 
-            WrapperItem {
+            Widgets.StyledPopup {
                 id: trayMenu
-                visible: false
+                // visible: false
 
                 property var leftItem: false
                 property var rightItem: false
+
+                anchor {
+                    window: root.bar
+                    item: trayButton
+                    margins.top: root.bar.height + 5
+                }
 
                 ColumnLayout {
                     id: menuContainer

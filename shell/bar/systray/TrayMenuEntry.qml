@@ -25,13 +25,15 @@ ColumnLayout {
     WrapperRectangle {
         Layout.fillWidth: true
         Layout.preferredHeight: 25
-        radius: 6
+        radius: 4
         color: {
             if (!root.menuData?.enabled)
                 return "transparent";
 
-            if (entryArea.containsMouse)
-                return ShellSettings.colors["primary"];
+            if (entryArea.containsMouse) {
+                let base = ShellSettings.colors.active;
+                return Qt.rgba(base.r, base.g, base.b, 0.15);
+            }
 
             return "transparent";
         }
@@ -92,13 +94,13 @@ ColumnLayout {
                     text: root.menuData?.text ?? ""
                     verticalAlignment: Text.AlignVCenter
                     color: {
-                        let color = Qt.color(ShellSettings.colors["inverse_surface"]);
+                        let color = Qt.color(ShellSettings.colors.active);
 
                         if (!root.menuData?.enabled)
                             return color.darker(2);
 
-                        if (entryArea.containsMouse)
-                            return Qt.color(ShellSettings.colors["inverse_primary"]);
+                        // if (entryArea.containsMouse)
+                        //     return Qt.color(ShellSettings.colors["inverse_primary"]);
 
                         return color;
                     }
@@ -139,7 +141,7 @@ ColumnLayout {
 
     WrapperRectangle {
         id: subTrayMenu
-        color: ShellSettings.colors["surface_container"]
+        color: ShellSettings.colors.surface_container
         radius: 8
         visible: false
         Layout.fillWidth: true

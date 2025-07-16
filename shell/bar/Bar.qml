@@ -10,7 +10,7 @@ import ".."
 
 PanelWindow {
     id: root
-    color: ShellSettings.colors["surface"]
+    color: "transparent" 
     implicitHeight: ShellSettings.sizing.barHeight
     property alias popup: popupWindow
 
@@ -18,6 +18,12 @@ PanelWindow {
         top: true
         left: true
         right: true
+    }
+
+    Rectangle {
+        color: ShellSettings.colors.surface 
+        opacity: 0.15 
+        anchors.fill: parent
     }
 
     // Popup window for all popups
@@ -37,38 +43,32 @@ PanelWindow {
 
         // Left side of bar
         RowLayout {
-            spacing: 5
+            spacing: 15
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            HyprWorkspaces {
-                screen: root.screen
-                Layout.fillHeight: true
-                Layout.leftMargin: 4
-            }
+            // HyprWorkspaces {
+            //     screen: root.screen
+            //     Layout.fillHeight: true
+            // }
 
-            Widgets.Separator {
-                visible: activeWindow.visible
-                Layout.leftMargin: 5
-                Layout.rightMargin: 5
-            }
-
-            ActiveWindow {
-                id: activeWindow
-                Layout.preferredWidth: 400
-            }
+            // ActiveWindow {
+            //     id: activeWindow
+            //     Layout.preferredWidth: 400
+            // }
         }
 
         // Right side of bar
         RowLayout {
-            spacing: 5
+            spacing: 10
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignRight
 
             SysTray.SysTray {
                 id: sysTray
-                popup: root.popup
+                // popup: root.popup
+                bar: root
                 Layout.fillHeight: true
             }
 
@@ -81,20 +81,20 @@ PanelWindow {
             //     Layout.bottomMargin: 2
             // }
 
-            BatteryIndicator {
-                id: batteryIndicator
-                popup: root.popup
-                Layout.fillHeight: true
-            }
+            // BatteryIndicator {
+            //     id: batteryIndicator
+            //     popup: root.popup
+            //     Layout.fillHeight: true
+            // }
 
-            Widgets.Separator {
-                Layout.leftMargin: 5
-                Layout.rightMargin: 5
-            }
+            // Widgets.Separator {
+            //     Layout.leftMargin: 5
+            //     Layout.rightMargin: 5
+            // }
 
             Clock {
                 id: clock
-                color: ShellSettings.colors["inverse_surface"]
+                color: ShellSettings.colors["active"]
             }
         }
     }
