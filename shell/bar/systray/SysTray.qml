@@ -5,15 +5,14 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
-import "../../widgets" as Widgets
+import qs.widgets 
 
 RowLayout {
     id: root
     spacing: 5
     visible: SystemTray.items.values.length > 0
 
-    // required property var popup
-    required property var bar
+    required property var popup
 
     Repeater {
         model: SystemTray.items
@@ -24,32 +23,29 @@ RowLayout {
             Layout.fillHeight: true
             required property SystemTrayItem modelData
 
-            Widgets.StyledMouseArea {
+            StyledMouseArea {
                 id: trayButton
                 hoverEnabled: true
                 onClicked: {
                     menuOpener.menu = trayField.modelData.menu;
 
-                    if (trayMenu.visible) {
-                        trayMenu.visible = false;
-                        // root.popup.hide();
-
+                    if (root.popup.content == trayMenu) {
+                        root.popup.hide();
                         return;
                     }
 
-                    trayMenu.visible = true;
-
-                    // root.popup.set(this, trayMenu);
-                    // root.popup.show();
+                    root.popup.set(this, trayMenu);
+                    root.popup.show();
                 }
 
                 anchors {
                     fill: parent
-                    // margins: 2
+                    margins: 2
                 }
 
                 IconImage {
                     id: trayIcon
+                    anchors.fill: parent
                     source: {
                         // console.log(trayField.modelData.id);
                         switch (trayField.modelData.id) {
@@ -59,11 +55,6 @@ RowLayout {
                             return trayField.modelData.icon;
                         }
                     }
-
-                    anchors {
-                        fill: parent
-                        margins: 2
-                    }
                 }
             }
 
@@ -71,18 +62,12 @@ RowLayout {
                 id: menuOpener
             }
 
-            Widgets.StyledPopup {
+            WrapperItem {
                 id: trayMenu
-                // visible: false
+                visible: false
 
                 property var leftItem: false
                 property var rightItem: false
-
-                anchor {
-                    window: root.bar
-                    item: trayButton
-                    margins.top: root.bar.height + 5
-                }
 
                 ColumnLayout {
                     id: menuContainer

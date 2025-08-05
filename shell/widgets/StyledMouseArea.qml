@@ -1,5 +1,5 @@
 import QtQuick
-import ".."
+import qs
 
 MouseArea {
     id: root
@@ -7,7 +7,7 @@ MouseArea {
 
     property real radius: width / 2
     property bool checked: false
-    property var activeColor: ShellSettings.colors["primary"]
+    property var activeColor: ShellSettings.colors.active_translucent
     property var inactiveColor: "transparent"
 
     Rectangle {

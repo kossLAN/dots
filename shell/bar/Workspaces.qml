@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import ".."
+import qs
 
 RowLayout {
     spacing: 6
@@ -14,15 +14,27 @@ RowLayout {
         id: workspaceButtons
 
         model: ScriptModel {
-            values: Hyprland.workspaces.values.slice().filter(
-                workspace => workspace.monitor === Hyprland.monitorFor(screen)
-            )
+            values: Hyprland.workspaces.values.slice().filter(workspace => workspace.monitor === Hyprland.monitorFor(screen))
         }
 
         Rectangle {
-            required property var modelData
-
             radius: height / 2
+
+            color: {
+                let value = ShellSettings.colors.active_translucent;
+
+                if (!modelData?.id || !Hyprland.focusedMonitor?.activeWorkspace?.id)
+                    return value;
+
+                if (workspaceButton.containsMouse) {
+                    value = ShellSettings.colors.highlight;
+                } else if (Hyprland.focusedMonitor.activeWorkspace.id === modelData.id) {
+                    value = ShellSettings.colors.highlight;
+                }
+
+                return value;
+            }
+
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredHeight: 12
             Layout.preferredWidth: {
@@ -32,20 +44,7 @@ RowLayout {
                 return 12;
             }
 
-            color: {
-                let value = Qt.color(ShellSettings.colors["secondary"]).darker(2);
-
-                if (!modelData?.id || !Hyprland.focusedMonitor?.activeWorkspace?.id)
-                    return value;
-
-                if (workspaceButton.containsMouse) {
-                    value = ShellSettings.colors["on_primary"];
-                } else if (Hyprland.focusedMonitor.activeWorkspace.id === modelData.id) {
-                    value = ShellSettings.colors["primary"];
-                }
-
-                return value;
-            }
+            required property var modelData
 
             Behavior on Layout.preferredWidth {
                 SmoothedAnimation {

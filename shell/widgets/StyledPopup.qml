@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Widgets
+import Quickshell.Hyprland
 import ".."
 
 PopupWindow {
@@ -11,22 +12,42 @@ PopupWindow {
 
     default property alias contentItem: container.children
 
+    function open() {
+        // root.anchor.rect.y = -root.implicitHeight;
+        root.visible = true;
+        grab.active = true;
+        // slideAnimation.start();
+    }
+
+    function hide() {
+        root.visible = false;
+        grab.active = false;
+    }
+
+    // PropertyAnimation {
+    //     id: slideAnimation
+    //     target: root.anchor.rect
+    //     property: "y"
+    //     from: -root.implicitHeight  // Off-screen position
+    //     to: 0  // On-screen position
+    //     duration: 300  // Animation duration in milliseconds
+    // }
+
+    HyprlandFocusGrab {
+        id: grab
+        windows: [root]
+        onCleared: root.hide()
+    }
+
     WrapperRectangle {
         id: container
         margin: 5
         radius: 12
-
-        color: {
-            let base = ShellSettings.colors.surface;
-            return Qt.rgba(base.r, base.g, base.b, 0.15);
-        }
+        color: ShellSettings.colors.surface_translucent
 
         border {
             width: 1
-            color: {
-                let base = ShellSettings.colors.active;
-                return Qt.rgba(base.r, base.g, base.b, 0.05);
-            }
+            color: ShellSettings.colors.active_translucent
         }
     }
 }

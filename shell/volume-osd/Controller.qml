@@ -33,15 +33,10 @@ Scope {
         onTriggered: root.shouldShowOsd = false
     }
 
-    // The OSD window will be created and destroyed based on shouldShowOsd.
-    // PanelWindow.visible could be set instead of using a loader, but using
-    // a loader will reduce the memory overhead when the window isn't open.
     LazyLoader {
         active: root.shouldShowOsd
 
-        PanelWindow {
-            anchors.right: true
-            margins.right: 5
+        PopupWindow {
             implicitWidth: 50
             implicitHeight: 275
             color: "transparent"
@@ -51,124 +46,57 @@ Scope {
 
             Rectangle {
                 anchors.fill: parent
-                radius: width / 2
-                color: ShellSettings.colors["surface"]
+                radius: 8
+                color: {
+                    let color = ShellSettings.colors["surface"];
+                    return Qt.rgba(color.r, color.g, color.b, 0.8);
+                }
 
-                ColumnLayout {
-                    spacing: 10
-
+                RowLayout {
                     anchors {
                         fill: parent
-                        margins: 8
+                        leftMargin: 10
+                        rightMargin: 15
+                    }
+
+                    IconImage {
+                        implicitSize: 30
+                        source: "root:resources/volume/volume-full.svg"
                     }
 
                     Rectangle {
-                        radius: width / 2
+                        id: sliderBackground
                         Layout.fillWidth: true
-                        Layout.preferredHeight: width 
-                    }
-
-                    Rectangle {
-                        id: sliderContainer
-                        color: "gray"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        implicitHeight: 10
+                        radius: 20
+                        color: {
+                            let color = ShellSettings.colors["inverse_surface"];
+                            return Qt.rgba(color.r, color.g, color.b, 0.5);
+                        }
 
                         layer.enabled: true
                         layer.effect: OpacityMask {
-                            source: Rectangle {
-                                width: sliderContainer.width
-                                height: sliderContainer.height
-                                radius: sliderContainer.width / 2
-                                color: "white"
-                            }
-
                             maskSource: Rectangle {
-                                width: sliderContainer.width
-                                height: sliderContainer.height
-                                radius: sliderContainer.width / 2
+                                width: sliderBackground.width
+                                height: sliderBackground.height
+                                radius: sliderBackground.radius
                                 color: "black"
                             }
                         }
 
                         Rectangle {
-                            radius: width / 2
                             color: ShellSettings.colors["primary"]
-                            implicitHeight: Math.max(parent.width, parent.height * (Pipewire.defaultAudioSink?.audio.volume ?? 0))
-
                             anchors {
-                                bottom: parent.bottom
                                 left: parent.left
-                                right: parent.right
+                                top: parent.top
+                                bottom: parent.bottom
                             }
 
-                            // replace with material icon
-                            // IconImage {
-                            //     implicitSize: parent.width - 4
-                            //     source: "root:resources/volume/volume-full.svg"
-                            //
-                            //     anchors {
-                            //         horizontalCenter: parent.horizontalCenter
-                            //     }
-                            // }
+                            implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
                         }
                     }
                 }
             }
-
-            // Rectangle {
-            //     anchors.fill: parent
-            //     radius: 8
-            //     color: {
-            //         let color = ShellSettings.colors["surface"];
-            //         return Qt.rgba(color.r, color.g, color.b, 0.8);
-            //     }
-            //
-            //     RowLayout {
-            //         anchors {
-            //             fill: parent
-            //             leftMargin: 10
-            //             rightMargin: 15
-            //         }
-            //
-            //         IconImage {
-            //             implicitSize: 30
-            //             source: "root:resources/volume/volume-full.svg"
-            //         }
-            //
-            //         Rectangle {
-            //             id: sliderBackground
-            //             Layout.fillWidth: true
-            //             implicitHeight: 10
-            //             radius: 20
-            //             color: {
-            //                 let color = ShellSettings.colors["inverse_surface"];
-            //                 return Qt.rgba(color.r, color.g, color.b, 0.5);
-            //             }
-            //
-            //             layer.enabled: true
-            //             layer.effect: OpacityMask {
-            //                 maskSource: Rectangle {
-            //                     width: sliderBackground.width
-            //                     height: sliderBackground.height
-            //                     radius: sliderBackground.radius
-            //                     color: "black"
-            //                 }
-            //             }
-            //
-            //             Rectangle {
-            //                 color: ShellSettings.colors["primary"]
-            //                 anchors {
-            //                     left: parent.left
-            //                     top: parent.top
-            //                     bottom: parent.bottom
-            //                 }
-            //
-            //                 implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
-            //             }
-            //         }
-            //     }
-            // }
         }
     }
 }

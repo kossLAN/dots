@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell.Widgets
-import ".."
+import qs 
 
 Item {
     id: root
@@ -9,8 +9,8 @@ Item {
     property var padding: 0
     property var radius: 20
     property var activeRectangle: true
-    property var color: ShellSettings.colors["inverse_surface"]
-    property var activeColor: ShellSettings.colors["inverse_primary"]
+    property var color: ShellSettings.colors.inactive_translucent
+    property var activeColor: ShellSettings.colors.active_translucent
     signal clicked
 
     implicitWidth: implicitSize
@@ -18,7 +18,7 @@ Item {
 
     Rectangle {
         id: iconBackground
-        color: ShellSettings.colors["primary"]
+        color: ShellSettings.colors.active_translucent
         radius: root.radius
         visible: iconButton.containsMouse && root.activeRectangle
         anchors.fill: parent

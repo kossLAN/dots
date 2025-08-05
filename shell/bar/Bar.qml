@@ -1,18 +1,17 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "power"
+// import "power"
 // import "volume"
-import "systray" as SysTray
-import "popups" as Popup
-import "../widgets" as Widgets
-import ".."
+import "systray"
+// import qs.widgets
+import qs
 
 PanelWindow {
     id: root
-    color: "transparent" 
+    color: "transparent"
     implicitHeight: ShellSettings.sizing.barHeight
-    property alias popup: popupWindow
+    property alias popup: popupHandler 
 
     anchors {
         top: true
@@ -21,14 +20,12 @@ PanelWindow {
     }
 
     Rectangle {
-        color: ShellSettings.colors.surface 
-        opacity: 0.15 
+        color: ShellSettings.colors.surface_translucent
         anchors.fill: parent
     }
 
-    // Popup window for all popups
-    Popup.MenuWindow {
-        id: popupWindow
+    PopupHandler {
+        id: popupHandler
         bar: root
     }
 
@@ -47,15 +44,15 @@ PanelWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            // HyprWorkspaces {
-            //     screen: root.screen
-            //     Layout.fillHeight: true
-            // }
+            Workspaces {
+                screen: root.screen
+                Layout.fillHeight: true
+            }
 
-            // ActiveWindow {
-            //     id: activeWindow
-            //     Layout.preferredWidth: 400
-            // }
+            ActiveWindow {
+                id: activeWindow
+                Layout.preferredWidth: 400
+            }
         }
 
         // Right side of bar
@@ -65,10 +62,10 @@ PanelWindow {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignRight
 
-            SysTray.SysTray {
+            SysTray {
                 id: sysTray
-                // popup: root.popup
-                bar: root
+                popup: root.popup
+                // bar: root
                 Layout.fillHeight: true
             }
 
@@ -94,7 +91,7 @@ PanelWindow {
 
             Clock {
                 id: clock
-                color: ShellSettings.colors["active"]
+                color: ShellSettings.colors.active
             }
         }
     }

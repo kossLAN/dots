@@ -2,8 +2,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Widgets
 import QtQuick
-import QtQuick.Effects
-import "../.."
+import qs
 
 PopupWindow {
     id: root
@@ -37,8 +36,6 @@ PopupWindow {
         let itemPos = item.mapToItem(root.bar.contentItem, 0, root.bar.height, item.width, 0).x;
         position(itemPos);
 
-        // popupContainer.opacity = 0;
-        // popupContent.opacity = 0;
         popupContainer.visible = false;
     }
 
@@ -67,16 +64,12 @@ PopupWindow {
         isOpen = true;
         root.visible = true; // set and leave open
         root.content.visible = true;
-        // popupContainer.opacity = 1;
-        // popupContent.opacity = 1;
         popupContainer.visible = true;
     }
 
     function hide() {
         grab.active = false;
         isOpen = false;
-        // popupContainer.opacity = 0;
-        // popupContent.opacity = 0;
         popupContainer.visible = false;
 
         root.item = undefined;
@@ -92,18 +85,8 @@ PopupWindow {
         }
     }
 
-    // RectangularShadow {
-    //     radius: popupContainer.radius
-    //     anchors.fill: popupContainer
-    //     opacity: popupContainer.opacity
-    //     visible: popupContainer.visible
-    //     blur: 10
-    //     spread: 2
-    // }
-
     Rectangle {
-        color: ShellSettings.colors.surface
-        // opacity: ShellSettings.settings.opacity
+        color: ShellSettings.colors.surface_translucent
         opacity: 0.15
         radius: 12
         anchors.fill: popupContainer
@@ -112,19 +95,9 @@ PopupWindow {
 
     WrapperItem {
         id: popupContainer
-
-        // color: ShellSettings.colors.surface
-        // radius: 12
         margin: 8
         clip: true
-        // opacity: 0.5
-        // visible: opacity > 0
         x: root.bar.width
-
-        // spooky, likely to cause problems lol
-        width: implicitWidth
-        height: implicitHeight
-
         onVisibleChanged: root.visible = visible
 
         // needed to handle occurences where items are resized while open
@@ -140,63 +113,13 @@ PopupWindow {
             id: popupContent
             implicitWidth: Math.max(root.content?.width, 60)
             implicitHeight: Math.max(childrenRect.height, 60)
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 200
-                    easing.type: Easing.InOutQuad
-                    from: 0
-                    to: 1
-                }
-            }
         }
-
-        // broken for elements in the popup that have hover/mousearea's
-        // HoverHandler {
-        //     id: hover
-        //     enabled: true
-        //     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-        //     onHoveredChanged: {
-        //         if (hovered == false)
-        //             root.hide();
-        //     }
-        // }
 
         HyprlandFocusGrab {
             id: grab
             windows: [root, root.bar]
             onCleared: {
                 root.hide();
-            }
-        }
-
-        // Behavior on opacity {
-        //     NumberAnimation {
-        //         duration: 200
-        //         easing.type: Easing.Linear
-        //     }
-        // }
-
-        Behavior on width {
-            enabled: root.isOpen
-            SmoothedAnimation {
-                duration: 200
-                easing.type: Easing.InOutQuad
-            }
-        }
-
-        Behavior on height {
-            SmoothedAnimation {
-                duration: 200
-                easing.type: Easing.InOutQuad
-            }
-        }
-
-        Behavior on x {
-            enabled: root.isOpen
-            SmoothedAnimation {
-                duration: 200
-                easing.type: Easing.InOutQuad
             }
         }
     }

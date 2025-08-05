@@ -31,8 +31,7 @@ ColumnLayout {
                 return "transparent";
 
             if (entryArea.containsMouse) {
-                let base = ShellSettings.colors.active;
-                return Qt.rgba(base.r, base.g, base.b, 0.15);
+                return ShellSettings.colors.active_translucent;
             }
 
             return "transparent";
@@ -141,9 +140,15 @@ ColumnLayout {
 
     WrapperRectangle {
         id: subTrayMenu
-        color: ShellSettings.colors.surface_container
+        color: ShellSettings.colors.surface_container_translucent
         radius: 8
         visible: false
+        
+        border {
+            width: 1
+            color: ShellSettings.colors.active_translucent
+        }
+
         Layout.fillWidth: true
 
         QsMenuOpener {

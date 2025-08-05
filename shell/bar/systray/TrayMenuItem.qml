@@ -1,7 +1,7 @@
 import Quickshell
 import QtQuick
 import QtQuick.Layouts
-import "../.."
+import qs
 
 ColumnLayout {
     id: root
@@ -12,8 +12,8 @@ ColumnLayout {
 
     Rectangle {
         visible: (root.modelData?.isSeparator ?? false)
-        color: ShellSettings.colors.inactive
-        opacity: 0.1
+        color: ShellSettings.colors.inactive_translucent
+        // opacity: 0.1
         Layout.fillWidth: true
         Layout.preferredHeight: 2
         Layout.leftMargin: 8
