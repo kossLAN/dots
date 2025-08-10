@@ -3,7 +3,7 @@
 
 import Quickshell
 import QtQuick
-import "bar" as Bar
+import "bar"
 import "notifications" as Notifications
 import "mpris" as Mpris
 import "volume-osd" as VolumeOSD
@@ -14,7 +14,7 @@ import "wallpaper" as Wallpaper
 import "screencapture" as ScreenCapture
 
 ShellRoot {
-    Bar.Controller {}
+    Bar {}
     Wallpaper.Controller {}
     Notifications.Controller {}
     VolumeOSD.Controller {}

@@ -1,17 +1,19 @@
+pragma ComponentBehavior: Bound
+
 import Quickshell
-import Quickshell.Hyprland
 import Quickshell.Widgets
+import Quickshell.Hyprland
 import QtQuick
 import qs
 
 PopupWindow {
     id: root
+    visible: false
     color: "transparent"
     implicitWidth: bar.width
-    implicitHeight: Math.max(popupContainer.height, 800) + 20
-
+    implicitHeight: Math.max(1000, bar.height)
     mask: Region {
-        item: popupContainer
+        item: surface
     }
 
     anchor {
@@ -23,103 +25,126 @@ PopupWindow {
     }
 
     required property var bar
-    property var isOpen: false
-    property var padding: 5
-    property var item
-    property var content
+    property var currentMenu
+    property real padding: 5
 
-    function set(item, content) {
-        root.item = item;
-        root.content = content;
-        popupContent.data = content;
+    function set(item) {
+
+        // Clear surface
+        if (content.children.includes(item.menu)) {
+            console.log("Clearing popup surface.");
+            root.currentMenu = undefined;
+            content.children = [];
+            // surface.implicitHeight = 0;
+            surface.opacity = 0;
+            contentOpacity.restart();
+            grab.active = false;
+            return;
+        }
+
+        // Set surface
+        console.log("Setting popup surface.");
+        root.visible = true;
+        root.currentMenu = item.menu
+        content.children = [item.menu];
+        // content.implicitWidth = item.menu.implicitWidth;
+        // content.implicitHeight = item.menu.implicitHeight;
 
         let itemPos = item.mapToItem(root.bar.contentItem, 0, root.bar.height, item.width, 0).x;
-        position(itemPos);
 
-        popupContainer.visible = false;
-    }
-
-    function position(itemPos) {
-        if (itemPos === undefined)
-            return;
-
-        let rightEdge = itemPos + popupContainer.implicitWidth;
+        // Check right edge
+        let rightEdge = itemPos + surface.implicitWidth;
         let maxRightEdge = root.width - padding;
         let isTouchingRightEdge = rightEdge > maxRightEdge;
 
         if (isTouchingRightEdge) {
             // touching right edge, reposition
-            // console.log("touching right edge");
-            popupContainer.x = maxRightEdge - popupContainer.implicitWidth;
-            popupContainer.y = padding;
+            surface.x = maxRightEdge - surface.implicitWidth;
+            surface.y = padding;
         } else {
             // not touching right edge
-            popupContainer.x = itemPos;
-            popupContainer.y = padding;
+            surface.x = itemPos;
+            surface.y = padding;
         }
-    }
 
-    function show() {
+        surface.opacity = 1;
+        contentOpacity.restart();
         grab.active = true;
-        isOpen = true;
-        root.visible = true; // set and leave open
-        root.content.visible = true;
-        popupContainer.visible = true;
     }
 
-    function hide() {
-        grab.active = false;
-        isOpen = false;
-        popupContainer.visible = false;
-
-        root.item = undefined;
-        root.content = undefined;
-        popupContent.data = [];
-    }
-
-    function toggle() {
-        if (isOpen) {
-            hide();
-        } else {
-            show();
+    HyprlandFocusGrab {
+        id: grab
+        windows: [root, root.bar]
+        onCleared: {
+            surface.opacity = 0;
+            contentOpacity.restart();
+            root.currentMenu = undefined;
+            content.children = [];
         }
     }
 
-    Rectangle {
+    WrapperRectangle {
+        id: surface
+        opacity: 0
+        visible: opacity > 0
         color: ShellSettings.colors.surface_translucent
-        opacity: 0.15
-        radius: 12
-        anchors.fill: popupContainer
-        border.color: ShellSettings.colors.active
-    }
-
-    WrapperItem {
-        id: popupContainer
-        margin: 8
         clip: true
-        x: root.bar.width
-        onVisibleChanged: root.visible = visible
+        margin: 5
+        radius: 12
 
-        // needed to handle occurences where items are resized while open
-        onImplicitWidthChanged: {
-            if (root.isOpen && popupContent.data !== []) {
-                // console.log("repositioning popup");
-                let itemPos = root.item.mapToItem(root.bar.contentItem, 0, root.bar.height, root.item.width, 0).x;
-                root.position(itemPos);
+        border {
+            width: 1
+            color: ShellSettings.colors.active_translucent
+        }
+
+        // Animating implicit widht/height causes issues, this works but
+        // is kind of cursed, but fuck it. Better solutions welcome.
+        width: implicitWidth
+        height: implicitHeight
+
+        Item {
+            id: content
+            implicitWidth: Math.max(root.currentMenu?.width, 60) 
+            implicitHeight: root.currentMenu?.height ?? 0
+
+            NumberAnimation {
+                id: contentOpacity
+                target: content
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: 300
+                easing.type: Easing.InOutQuad
             }
         }
 
-        Item {
-            id: popupContent
-            implicitWidth: Math.max(root.content?.width, 60)
-            implicitHeight: Math.max(childrenRect.height, 60)
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 250
+                easing.type: Easing.InOutQuad
+            }
         }
 
-        HyprlandFocusGrab {
-            id: grab
-            windows: [root, root.bar]
-            onCleared: {
-                root.hide();
+        Behavior on width {
+            enabled: root.visible 
+            SmoothedAnimation {
+                duration: 250
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        Behavior on height {
+            SmoothedAnimation {
+                duration: 250
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        Behavior on x {
+            enabled: root.visible 
+            SmoothedAnimation {
+                duration: 250
+                easing.type: Easing.InOutQuad
             }
         }
     }

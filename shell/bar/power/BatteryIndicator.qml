@@ -26,7 +26,6 @@ Item {
             }
 
             root.popup.set(this, powerMenu);
-            root.popup.show();
         }
 
         anchors {
