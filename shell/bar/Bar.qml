@@ -24,8 +24,7 @@ Variants {
             right: true
         }
 
-        PopupHandler {
-            id: popupHandler
+        readonly property Popup popup: Popup {
             bar: root
         }
 
@@ -43,6 +42,7 @@ Variants {
                 spacing: 15
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.alignment: Qt.AlignLeft
 
                 Workspaces {
                     screen: root.screen
@@ -64,38 +64,8 @@ Variants {
 
                 SysTray {
                     id: sysTray
-                    popup: popupHandler
+                    bar: root
                     Layout.fillHeight: true
-                }
-
-                PopupItem {
-                    id: test
-                    Layout.preferredWidth: 20
-                    Layout.fillHeight: true
-
-                    onClicked: {
-                        popupHandler.set(test);
-                    }
-
-                    menu: Rectangle {
-                        implicitWidth: 100
-                        implicitHeight: 100
-                    }
-                }
-
-                PopupItem {
-                    id: test2
-                    Layout.preferredWidth: 20
-                    Layout.fillHeight: true
-
-                    onClicked: {
-                        popupHandler.set(test2);
-                    }
-
-                    menu: Rectangle {
-                        implicitWidth: 200
-                        implicitHeight: 200
-                    }
                 }
 
                 // VolumeIndicator {

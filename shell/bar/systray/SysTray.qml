@@ -2,7 +2,10 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
+import Quickshell.Widgets
 import Quickshell.Services.SystemTray
+import "../../widgets"
 import ".."
 
 RowLayout {
@@ -10,19 +13,80 @@ RowLayout {
     spacing: 5
     visible: SystemTray.items.values.length > 0
 
-    required property PopupHandler popup
+    required property var bar
 
     Repeater {
         id: repeater
         model: SystemTray.items
 
-        delegate: TrayMenuLauncher {
-            id: trayItem
-            required property SystemTrayItem modelData
-            trayItem: modelData
-            popup: root.popup
+        delegate: StyledMouseArea {
+            id: button
             Layout.preferredWidth: parent.height
             Layout.fillHeight: true
+
+            required property SystemTrayItem modelData
+            property bool showMenu: false
+
+            onClicked: {
+                menuOpener.menu = modelData.menu;
+                showMenu = !showMenu;
+            }
+
+            IconImage {
+                id: trayIcon
+                anchors.fill: parent
+                source: {
+                    // console.log(trayField.modelData.id);
+                    switch (button.modelData.id) {
+                    case "obs":
+                        return "image://icon/obs-tray";
+                    default:
+                        return button.modelData.icon;
+                    }
+                }
+            }
+
+            QsMenuOpener {
+                id: menuOpener
+            }
+
+            property PopupItem menu: PopupItem {
+                id: menu
+                owner: button
+                popup: root.bar.popup
+                show: button.showMenu
+                onClosed: button.showMenu = false
+
+                implicitWidth: content.implicitWidth + (2 * 8)
+                implicitHeight: content.implicitHeight + (2 * 8)
+
+                // TODO: come up with a better way instead of having to do this
+                property var leftItem: false
+                property var rightItem: false
+
+                ColumnLayout {
+                    id: content
+                    spacing: 2
+                    anchors.centerIn: parent
+
+                    Repeater {
+                        model: menuOpener.children
+
+                        delegate: TrayMenuItem {
+                            id: sysTrayContent
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            rootMenu: menu
+
+                            onInteracted: {
+                                menuOpener.menu = null;
+                                button.showMenu = false;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
