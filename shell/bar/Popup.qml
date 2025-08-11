@@ -30,12 +30,13 @@ Scope {
         if (lastActiveItem != null && lastActiveItem != activeItem) {
             lastActiveItem.targetVisible = false;
         }
-
-        if (activeItem != null)
-            lastActiveItem = activeItem;
     }
 
     function setItem(item: PopupItem) {
+        if (activeItem != null) {
+            lastActiveItem = activeItem;
+        }
+
         activeItem = item;
     }
 
@@ -90,11 +91,14 @@ Scope {
 
             StyledRectangle {
                 id: parentItem
-                width: Math.max(1, x2 - x1)
-                height: Math.max(1, h)
-                x: x1 ?? 0
+                width: targetWidth
+                height: targetHeight
+                x: targetX
                 y: root.gaps
                 clip: true
+
+                readonly property var targetWidth: root.shownItem?.implicitWidth ?? 0
+                readonly property var targetHeight: root.shownItem?.implicitHeight ?? 0
 
                 readonly property var targetX: {
                     if (root.shownItem == null) {
@@ -117,15 +121,6 @@ Scope {
                     return xPos;
                 }
 
-                readonly property var targetWidth: root.shownItem?.implicitWidth ?? 0
-                readonly property var targetHeight: root.shownItem?.implicitHeight ?? 0
-
-                property var h
-                property var x1
-                property var x2
-
-                property var largestAnimHeight: 0
-
                 Component.onCompleted: {
                     root.parentItem = this;
 
@@ -134,30 +129,29 @@ Scope {
                     }
                 }
 
-                SmoothedAnimation on x1 {
-                    id: x1Anim
-                    to: parentItem.targetX
-                    onToChanged: {
-                        velocity = (Math.max(parentItem.x1, to) - Math.min(parentItem.x1, to)) * 5;
-                        restart();
+                // TODO: Make a close animation, a little complicated, will need to track if an animation is running 
+                // and stop unload from occuring until its done, in the LazyLoader.
+
+                Behavior on width {
+                    enabled: root.lastActiveItem != null
+                    SmoothedAnimation {
+                        duration: 300
+                        easing.type: Easing.InOutQuad
                     }
                 }
 
-                SmoothedAnimation on x2 {
-                    id: x2Anim
-                    to: parentItem.targetX + parentItem.targetWidth
-                    onToChanged: {
-                        velocity = (Math.max(parentItem.x2, to) - Math.min(parentItem.x2, to)) * 5;
-                        restart();
+                Behavior on height {
+                    SmoothedAnimation {
+                        duration: 300
+                        easing.type: Easing.InOutQuad
                     }
                 }
 
-                SmoothedAnimation on h {
-                    id: heightAnim
-                    to: parentItem.targetHeight
-                    onToChanged: {
-                        velocity = (Math.max(parentItem.height, to) - Math.min(parentItem.height, to)) * 5;
-                        restart();
+                Behavior on x {
+                    enabled: root.lastActiveItem != null
+                    SmoothedAnimation {
+                        duration: 300
+                        easing.type: Easing.InOutQuad
                     }
                 }
             }
