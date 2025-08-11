@@ -8,6 +8,11 @@ import Quickshell.Services.SystemTray
 import "../../widgets"
 import ".."
 
+// TODO:
+// 1. Get rid of leftItem/rightItem properties on menu
+// 2. Load menu properly, right now its pretty buggy
+// 3. Fix bug that causes close on update (nm-applet wifi networks updating)
+
 RowLayout {
     id: root
     spacing: 5
@@ -60,7 +65,6 @@ RowLayout {
                 implicitWidth: content.implicitWidth + (2 * 8)
                 implicitHeight: content.implicitHeight + (2 * 8)
 
-                // TODO: come up with a better way instead of having to do this
                 property var leftItem: false
                 property var rightItem: false
 
@@ -80,8 +84,8 @@ RowLayout {
                             rootMenu: menu
 
                             onInteracted: {
-                                menuOpener.menu = null;
                                 button.showMenu = false;
+                                menuOpener.menu = null;
                             }
                         }
                     }

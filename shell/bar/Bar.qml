@@ -63,7 +63,6 @@ Variants {
                 Layout.alignment: Qt.AlignRight
 
                 SysTray {
-                    id: sysTray
                     bar: root
                     Layout.fillHeight: true
                 }
@@ -77,8 +76,8 @@ Variants {
                 //     Layout.bottomMargin: 2
                 // }
 
-                // BatteryIndicator {
-                //     id: batteryIndicator
+                // PowerMenu {
+                //     bar: root
                 //     Layout.fillHeight: true
                 // }
 

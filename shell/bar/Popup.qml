@@ -30,13 +30,13 @@ Scope {
         if (lastActiveItem != null && lastActiveItem != activeItem) {
             lastActiveItem.targetVisible = false;
         }
-    }
 
-    function setItem(item: PopupItem) {
         if (activeItem != null) {
             lastActiveItem = activeItem;
         }
+    }
 
+    function setItem(item: PopupItem) {
         activeItem = item;
     }
 
@@ -48,7 +48,16 @@ Scope {
 
     function onHidden(item: PopupItem) {
         if (item == lastActiveItem) {
+            console.log("triggered");
             lastActiveItem = null;
+        }
+    }
+
+    property real scaleMul: lastActiveItem && lastActiveItem.targetVisible ? 1 : 0
+
+    Behavior on scaleMul {
+        SmoothedAnimation {
+            velocity: 5
         }
     }
 
@@ -84,9 +93,19 @@ Scope {
                 }
             }
 
+            // HyprlandWindow.opacity: root.scaleMul
+
             HyprlandWindow.visibleMask: Region {
                 id: mask
                 item: parentItem
+            }
+
+            Connections {
+                target: root
+
+                function onScaleMulChanged() {
+                    mask.changed();
+                }
             }
 
             StyledRectangle {
@@ -95,7 +114,13 @@ Scope {
                 height: targetHeight
                 x: targetX
                 y: root.gaps
-                clip: true
+
+                transform: Scale {
+                    origin.x: parentItem.targetX
+                    origin.y: 0
+                    xScale: 1
+                    yScale: root.scaleMul
+                }
 
                 readonly property var targetWidth: root.shownItem?.implicitWidth ?? 0
                 readonly property var targetHeight: root.shownItem?.implicitHeight ?? 0
@@ -107,10 +132,15 @@ Scope {
 
                     let owner = root.shownItem.owner;
                     let bar = root.bar;
+                    let isCentered = root.shownItem.centered;
                     let xPos = owner.mapToItem(bar.contentItem, 0, bar.height, owner.width, 0).x;
 
                     let rightEdge = xPos + targetWidth;
                     let maxRightEdge = popup.width;
+
+                    if (isCentered) {
+                        return xPos - (targetWidth / 2) + (owner.width / 2);
+                    }
 
                     if (rightEdge > maxRightEdge) {
                         // touching right edge, reposition
@@ -129,31 +159,39 @@ Scope {
                     }
                 }
 
-                // TODO: Make a close animation, a little complicated, will need to track if an animation is running 
+                // TODO: Make a close animation, a little complicated, will need to track if an animation is running
                 // and stop unload from occuring until its done, in the LazyLoader.
+
+                Behavior on x {
+                    enabled: root.lastActiveItem != null
+                    SmoothedAnimation {
+                        duration: 200
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 Behavior on width {
                     enabled: root.lastActiveItem != null
                     SmoothedAnimation {
-                        duration: 300
+                        duration: 200
                         easing.type: Easing.InOutQuad
                     }
                 }
 
                 Behavior on height {
+                    enabled: root.lastActiveItem != null
                     SmoothedAnimation {
-                        duration: 300
+                        duration: 200
                         easing.type: Easing.InOutQuad
                     }
                 }
 
-                Behavior on x {
-                    enabled: root.lastActiveItem != null
-                    SmoothedAnimation {
-                        duration: 300
-                        easing.type: Easing.InOutQuad
-                    }
-                }
+                // SmoothedAnimation on height {
+                //     duration: 200
+                //     easing.type: Easing.InOutQuad
+                //     to: parentItem.targetHeight
+                //     onToChanged: restart()
+                // }
             }
         }
     }

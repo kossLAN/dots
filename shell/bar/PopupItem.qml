@@ -1,4 +1,5 @@
 import QtQuick
+import qs.widgets
 
 Item {
     id: root
@@ -46,8 +47,9 @@ Item {
         implicitWidth: children[0].implicitWidth
     }
 
-    required property var popup 
+    required property var popup
     required property var owner
+    property bool centered: false
     property bool show: false
 
     signal closed
@@ -60,11 +62,5 @@ Item {
         SmoothedAnimation {
             velocity: 5
         }
-    }
-
-    function snapOpacity(opacity: real) {
-        opacityAnimation.enabled = false;
-        targetOpacity = opacity;
-        opacityAnimation.enabled = true;
     }
 }
