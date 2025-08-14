@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-// import "power"
+import "power"
 // import "volume"
 import "systray"
 // import qs.widgets
@@ -54,6 +54,11 @@ Variants {
                     Layout.preferredWidth: 400
                 }
             }
+
+            // PowerMenu {
+            //     bar: root
+            //     Layout.fillHeight: true
+            // }
 
             // Right side of bar
             RowLayout {

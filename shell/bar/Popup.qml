@@ -89,22 +89,21 @@ Scope {
                 active: true
                 windows: [popup, root.bar]
                 onCleared: {
-                    root.shownItem.closed();
+                    if (!active) {
+                        root.shownItem.closed();
+                    }
                 }
             }
 
             // HyprlandWindow.opacity: root.scaleMul
 
-            HyprlandWindow.visibleMask: Region {
-                id: mask
-                item: parentItem
-            }
+            HyprlandWindow.visibleMask: popup.mask 
 
             Connections {
                 target: root
 
                 function onScaleMulChanged() {
-                    mask.changed();
+                    popup.mask.changed();
                 }
             }
 
