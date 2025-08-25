@@ -14,7 +14,6 @@ Singleton {
         property color surface_container: Qt.rgba(0.25, 0.25, 0.25, 1.0)
         property color surface_container_translucent: Qt.rgba(0.25, 0.25, 0.25, 0.25)
         property color highlight: Qt.rgba(1.0, 1.0, 1.0, 0.85)
-        // property color primary: "#2EADC6"
         property color active: Qt.rgba(1.0, 1.0, 1.0, 1.0)
         property color active_translucent: Qt.rgba(1.0, 1.0, 1.0, 0.15)
         property color border_translucent: Qt.rgba(1.0, 1.0, 1.0, 0.05)

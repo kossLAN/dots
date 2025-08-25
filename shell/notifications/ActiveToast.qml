@@ -3,9 +3,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Notifications
-import "../widgets/" as Widgets
-import ".."
-import "../.."
+import qs
+import qs.widgets
 
 Item {
     id: root
@@ -16,10 +15,10 @@ Item {
     width: parent.width
     height: Math.min(row.implicitHeight + 30, 400)
 
-    Rectangle {
+    StyledRectangle {
         id: container
         radius: 10
-        color: ShellSettings.colors["surface_container"]
+        color: ShellSettings.colors.surface_translucent
         anchors.fill: parent
 
         Item {
@@ -110,7 +109,7 @@ Item {
                         Text {
                             id: appName
                             text: root.notification.appName
-                            color: ShellSettings.colors["inverse_surface"]
+                            color: ShellSettings.colors.active
                             font.pointSize: 11
                             font.bold: true
                             elide: Text.ElideRight
@@ -119,12 +118,10 @@ Item {
                             Layout.maximumWidth: topRow.width * 0.3
                         }
 
-                        Widgets.Separator {}
-
                         Text {
                             id: summaryText
                             text: root.notification.summary
-                            color: ShellSettings.colors["inverse_surface"]
+                            color: ShellSettings.colors.active
                             font.pointSize: 11
                             elide: Text.ElideRight
                             maximumLineCount: 1
@@ -156,7 +153,7 @@ Item {
 
                                 ctx.beginPath();
                                 ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
-                                ctx.strokeStyle = ShellSettings.colors["primary"];
+                                ctx.strokeStyle = ShellSettings.colors.highlight
                                 ctx.lineWidth = 2;
                                 ctx.stroke();
                             }
@@ -204,7 +201,7 @@ Item {
                     Text {
                         id: bodyText
                         text: root.notification.body
-                        color: ShellSettings.colors["inverse_surface"]
+                        color: ShellSettings.colors.active
                         font.pointSize: 11
                         wrapMode: Text.Wrap
                         elide: Text.ElideRight

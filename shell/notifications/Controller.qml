@@ -53,10 +53,6 @@ Scope {
                 right: true
             }
 
-            Text {
-                text: "length: " + notificationWindow.visibleCount
-            }
-
             ColumnLayout {
                 id: notifLayout
                 spacing: 15

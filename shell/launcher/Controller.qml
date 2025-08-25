@@ -40,12 +40,12 @@ Singleton {
             implicitHeight: 7 + searchContainer.implicitHeight + list.topMargin * 2 + list.delegateHeight * 10
             color: "transparent"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-            WlrLayershell.namespace: "shell:launcher"
+            // WlrLayershell.namespace: "shell:launcher"
 
             Rectangle {
                 id: container
-                color: ShellSettings.colors["surface"]
-                radius: 18
+                color: ShellSettings.colors.surface_translucent
+                radius: 12
 
                 anchors {
                     fill: parent
@@ -70,9 +70,9 @@ Singleton {
                         id: searchContainer
                         Layout.fillWidth: true
                         implicitHeight: searchbox.implicitHeight + 15
-                        radius: 10
-                        color: ShellSettings.colors["surface_container"]
-                        border.color: ShellSettings.colors["secondary"]
+                        radius: 6
+                        color: ShellSettings.colors.surface_container_translucent
+                        border.color: ShellSettings.colors.border_translucent
 
                         RowLayout {
                             id: searchbox
@@ -82,7 +82,7 @@ Singleton {
                             TextInput {
                                 id: search
                                 Layout.fillWidth: true
-                                color: ShellSettings.colors["inverse_surface"]
+                                color: ShellSettings.colors.highlight
 
                                 focus: true
                                 Keys.forwardTo: [list]
@@ -255,8 +255,8 @@ Singleton {
                         }
 
                         highlight: Rectangle {
-                            radius: 12
-                            color: ShellSettings.colors["primary"]
+                            radius: 6
+                            color: ShellSettings.colors.active_translucent
                         }
 
                         keyNavigationEnabled: true
@@ -297,7 +297,7 @@ Singleton {
                                 }
                                 Text {
                                     text: modelData.name
-                                    color: ShellSettings.colors["inverse_surface"]
+                                    color: ShellSettings.colors.active
                                     Layout.alignment: Qt.AlignVCenter
                                 }
                             }

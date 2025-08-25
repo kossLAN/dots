@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import "power"
-// import "volume"
+import "volume"
 import "systray"
 // import qs.widgets
 import qs
