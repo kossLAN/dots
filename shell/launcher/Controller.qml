@@ -7,7 +7,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
-import ".."
+import qs
+import qs.widgets
 
 Singleton {
     PersistentProperties {
@@ -42,10 +43,9 @@ Singleton {
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
             // WlrLayershell.namespace: "shell:launcher"
 
-            Rectangle {
+            StyledRectangle {
                 id: container
                 color: ShellSettings.colors.surface_translucent
-                radius: 12
 
                 anchors {
                     fill: parent
@@ -66,13 +66,11 @@ Singleton {
                     anchors.bottomMargin: 0
                     spacing: 0
 
-                    Rectangle {
+                    StyledRectangle {
                         id: searchContainer
                         Layout.fillWidth: true
                         implicitHeight: searchbox.implicitHeight + 15
                         radius: 6
-                        color: ShellSettings.colors.surface_container_translucent
-                        border.color: ShellSettings.colors.border_translucent
 
                         RowLayout {
                             id: searchbox

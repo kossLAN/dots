@@ -73,14 +73,11 @@ Variants {
                     Layout.fillHeight: true
                 }
 
-                // VolumeIndicator {
-                //     id: volumeIndicator
-                //     popup: root.popup
-                //     Layout.preferredWidth: this.height
-                //     Layout.fillHeight: true
-                //     Layout.topMargin: 2
-                //     Layout.bottomMargin: 2
-                // }
+                VolumeIndicator {
+                    bar: root
+                    Layout.preferredWidth: this.height
+                    Layout.fillHeight: true
+                }
 
                 PowerMenu {
                     bar: root

@@ -3,32 +3,34 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Widgets
-import "../../widgets/" as Widgets
+import qs.widgets
 
-WrapperItem {
-    id: root
-    visible: false
+DeviceMixer {}
 
-    ColumnLayout {
-        spacing: 10
-
-        Widgets.TabBar {
-            id: tabBar
-            model: ["headphones", "tune"]
-            Layout.fillWidth: true
-            Layout.preferredHeight: 35
-        }
-
-        StackLayout {
-            id: page
-            currentIndex: tabBar.currentIndex
-            Layout.fillWidth: true
-            Layout.preferredHeight: currentItem ? currentItem.implicitHeight : 0
-
-            readonly property Item currentItem: children[currentIndex]
-
-            DeviceMixer {}
-            ApplicationMixer {}
-        }
-    }
-}
+// WrapperItem {
+//     id: root
+//
+//     ColumnLayout {
+//         spacing: 10
+//
+//         // TabBar {
+//         //     id: tabBar
+//         //     model: ["headphones", "tune"]
+//         //     Layout.fillWidth: true
+//         //     Layout.preferredHeight: 35
+//         // }
+//
+//
+//         // StackLayout {
+//         //     id: page
+//         //     currentIndex: tabBar.currentIndex
+//         //     Layout.fillWidth: true
+//         //     Layout.preferredHeight: currentItem ? currentItem.implicitHeight : 0
+//         //
+//         //     readonly property Item currentItem: children[currentIndex]
+//         //
+//         //     DeviceMixer {}
+//         //     ApplicationMixer {}
+//         // }
+//     }
+// }

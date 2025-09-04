@@ -1,27 +1,65 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import "../../widgets/" as Widgets
+import QtQuick.Layouts
+import Quickshell.Widgets
+import Quickshell.Services.Pipewire
+import qs.widgets
+import qs.bar
 
-Item {
+StyledMouseArea {
     id: root
+    onClicked: showMenu = !showMenu
 
-    required property var popup
+    required property var bar
+    property bool showMenu: false
 
-    Widgets.FontIconButton {
-        id: button
-        iconName: "volume_up"
-        anchors.fill: parent
-        onClicked: {
-            if (root.popup.content == volumeMenu) {
-                root.popup.hide();
-                return;
-            }
+    IconImage {
+        id: icon
+        source: "root:resources/volume/volume-full.svg"
 
-            root.popup.set(this, volumeMenu);
-            root.popup.show();
+        anchors {
+            fill: parent
+            margins: 2
         }
     }
 
-    VolumeControl {
-        id: volumeMenu
+    property PopupItem menu: PopupItem {
+        id: menu
+        owner: root
+        popup: root.bar.popup
+        show: root.showMenu
+        onClosed: root.showMenu = false
+
+        implicitWidth: 300
+        implicitHeight: container.implicitHeight + (2 * 8)
+
+        // implicitWidth: volumeMenu.implicitWidth
+        // implicitHeight: volumeMenu.implicitHeight
+
+        // VolumeControl {
+        //     id: volumeMenu
+        // }
+
+        ColumnLayout {
+            id: container
+
+            anchors {
+                fill: parent
+                margins: 8
+            }
+
+            VolumeCard {
+                node: Pipewire.defaultAudioSink
+                Layout.fillWidth: true
+                Layout.preferredHeight: 45
+            }
+
+            VolumeCard {
+                node: Pipewire.defaultAudioSource
+                Layout.fillWidth: true
+                Layout.preferredHeight: 45
+            }
+        }
     }
 }

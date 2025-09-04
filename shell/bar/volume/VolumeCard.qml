@@ -1,50 +1,80 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell.Widgets
 import Quickshell.Services.Pipewire
-import "../../widgets/" as Widgets
-import "../.."
+import qs
+import qs.widgets
 
-WrapperRectangle {
+Loader {
     id: root
-    color: ShellSettings.colors["surface_container"]
-    radius: width / 2
-    margin: 6
+    active: node !== null
 
     required property PwNode node
-    property string text
-    property Component button 
-    property Component icon 
 
-    PwObjectTracker {
-        id: tracker
-        objects: [root.node]
-    }
+    sourceComponent: WrapperRectangle {
+        id: comp
+        color: ShellSettings.colors.surface_container_translucent
+        radius: 12 
+        margin: 6
 
-    RowLayout {
-        Widgets.MaterialSlider {
-            value: root.node.audio.volume ?? 0
-            text: root.text
-            icon: root.icon
+        border {
+            width: 1
+            color: ShellSettings.colors.active_translucent
+        }
 
-            onValueChanged: {
-                // only allow changes when the node is ready other wise you will combust
-                if (!root.node.ready)
-                    return;
+        // property string text
+        // property Component button
+        // property Component icon
 
-                root.node.audio.volume = value;
+        PwObjectTracker {
+            id: tracker
+            objects: [root.node]
+        }
+
+        RowLayout {
+            Slider {
+                value: root.node.audio.volume ?? 0
+                // text: root.text
+                // icon: root.icon
+
+                onValueChanged: {
+                    // only allow changes when the node is ready other wise you will combust
+                    if (!root.node.ready)
+                        return;
+
+                    root.node.audio.volume = value;
+                }
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-
-        Loader {
-            id: buttonLoader
-            sourceComponent: root.button
-
-            Layout.preferredWidth: this.height
-            Layout.fillHeight: true
+            // Loader {
+            //     id: buttonLoader
+            //     sourceComponent: root.button
+            //
+            //     Layout.preferredWidth: this.height
+            //     Layout.fillHeight: true
+            // }
         }
     }
+
+    // sourceComponent: VolumeCard {
+    //     id: sinkCard
+    //     node: sinkLoader.sink
+    //     button: StyledMouseArea {
+    //         property bool checked: !sinkCard.node.audio.muted
+    //
+    //         // IconImage {}
+    //
+    //         onClicked: {
+    //             sinkCard.node.audio.muted = !sinkCard.node.audio.muted;
+    //         }
+    //     }
+    //
+    //     anchors.fill: parent
+    // }
 }

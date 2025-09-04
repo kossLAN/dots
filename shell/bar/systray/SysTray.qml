@@ -5,8 +5,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
-import "../../widgets"
-import ".."
+import qs.bar
+import qs.widgets
 
 // TODO:
 // 1. Get rid of leftItem/rightItem properties on menu
