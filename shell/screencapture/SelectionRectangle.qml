@@ -93,7 +93,6 @@ Item {
     Rectangle {
         id: rectangle
         color: "transparent"
-        radius: 8
         border.color: ShellSettings.colors.active_translucent
         border.width: 2
         x: 0
