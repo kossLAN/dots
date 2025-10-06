@@ -62,7 +62,7 @@ Variants {
 
             // Right side of bar
             RowLayout {
-                spacing: 10
+                spacing: 5
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignRight
@@ -81,10 +81,10 @@ Variants {
                 //     Layout.bottomMargin: 2
                 // }
 
-                // PowerMenu {
-                //     bar: root
-                //     Layout.fillHeight: true
-                // }
+                PowerMenu {
+                    bar: root
+                    Layout.fillHeight: true
+                }
 
                 // Widgets.Separator {
                 //     Layout.leftMargin: 5

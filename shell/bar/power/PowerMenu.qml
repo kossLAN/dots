@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 import Quickshell.Widgets
 import Quickshell.Services.UPower
@@ -38,7 +39,7 @@ StyledMouseArea {
 
         Rectangle {
             id: batteryBackground
-            color: Qt.color(ShellSettings.colors["surface"]).lighter(4)
+            color: Qt.color(ShellSettings.colors.inactive_translucent).lighter(4)
             opacity: 0.75
             anchors {
                 fill: parent
@@ -49,7 +50,7 @@ StyledMouseArea {
         Rectangle {
             id: batteryPercentage
             width: (parent.width - 4) * UPower.displayDevice.percentage
-            color: ShellSettings.colors["inverse_surface"]
+            color: ShellSettings.colors.surface
 
             anchors {
                 left: batteryBackground.left
@@ -64,9 +65,22 @@ StyledMouseArea {
         popup: root.bar.popup
         show: root.showMenu
         onClosed: root.showMenu = false
-        centered: true
 
-        implicitWidth: 250 
-        implicitHeight: 250 
+        implicitWidth: 300
+        implicitHeight: 50
+
+        ColumnLayout {
+            anchors {
+                fill: parent
+                margins: 8
+            }
+
+            OptionSlider {
+                Layout.fillWidth: true
+                values: ["Power Save", "Balanced", "Performance"]
+                index: PowerProfiles.profile
+                onIndexChanged: PowerProfiles.profile = this.index
+            }
+        }
     }
 }

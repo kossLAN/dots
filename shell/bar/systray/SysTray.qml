@@ -10,7 +10,7 @@ import ".."
 
 // TODO:
 // 1. Get rid of leftItem/rightItem properties on menu
-// 2. Load menu properly, right now its pretty buggy
+// 2. Animate height of subTrayMenu's on expand 
 // 3. Fix bug that causes close on update (nm-applet wifi networks updating)
 
 RowLayout {
