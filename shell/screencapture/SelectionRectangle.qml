@@ -9,10 +9,17 @@ Item {
     property color overlayColor: "#80000000"
     property rect selectionRect: Qt.rect(0, 0, 0, 0)
     property point startPosition: Qt.point(0, 0)
+    property real borderSize: 2
+
     signal areaSelected(rect selection)
- 
-    // only send signal when selection rectangle has finished 
-    onVisibleChanged: areaSelected(selectionRect)
+
+    // only send signal when selection rectangle has finished
+    onVisibleChanged: {
+        if (!visible)
+            selectionRect.width -= borderSize;
+            selectionRect.height -= borderSize;
+            areaSelected(selectionRect);
+    }
 
     MouseArea {
         id: selectionArea
@@ -94,7 +101,7 @@ Item {
         id: rectangle
         color: "transparent"
         border.color: ShellSettings.colors.active_translucent
-        border.width: 2
+        border.width: root.borderSize
         x: 0
         y: 0
         width: 0

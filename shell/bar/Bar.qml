@@ -40,7 +40,6 @@ Variants {
             // Left side of bar
             RowLayout {
                 spacing: 15
-                Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignLeft
 
@@ -94,6 +93,7 @@ Variants {
                 Clock {
                     id: clock
                     color: ShellSettings.colors.active
+                    Layout.leftMargin: 5
                 }
             }
         }
