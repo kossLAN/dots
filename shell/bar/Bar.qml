@@ -40,18 +40,20 @@ Variants {
             // Left side of bar
             RowLayout {
                 spacing: 15
+                Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignLeft
 
                 Workspaces {
                     screen: root.screen
                     Layout.fillHeight: true
+                    Layout.preferredWidth: height
                 }
 
-                ActiveWindow {
-                    id: activeWindow
-                    Layout.preferredWidth: 400
-                }
+                // ActiveWindow {
+                //     id: activeWindow
+                //     Layout.preferredWidth: 400
+                // }
             }
 
             // PowerMenu {

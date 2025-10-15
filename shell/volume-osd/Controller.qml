@@ -6,7 +6,8 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Pipewire
-import ".."
+import qs
+import qs.widgets
 
 Scope {
     id: root
@@ -20,6 +21,7 @@ Scope {
         target: Pipewire.defaultAudioSink?.audio
 
         function onVolumeChanged() {
+            console.log("Volume Changed, showing OSD.");
             root.shouldShowOsd = true;
             hideTimer.restart();
         }
@@ -36,21 +38,19 @@ Scope {
     LazyLoader {
         active: root.shouldShowOsd
 
-        PopupWindow {
-            implicitWidth: 50
-            implicitHeight: 275
+        PanelWindow {
+            implicitWidth: 250
+            implicitHeight: 50
             color: "transparent"
-
-            // An empty click mask prevents the window from blocking mouse events.
+            exclusiveZone: 0
+            visible: true
             mask: Region {}
+            anchors.bottom: true
+            margins.bottom: screen.height / 10
 
-            Rectangle {
+            StyledRectangle {
                 anchors.fill: parent
-                radius: 8
-                color: {
-                    let color = ShellSettings.colors["surface"];
-                    return Qt.rgba(color.r, color.g, color.b, 0.8);
-                }
+                // radius: 8
 
                 RowLayout {
                     anchors {
@@ -69,10 +69,7 @@ Scope {
                         Layout.fillWidth: true
                         implicitHeight: 10
                         radius: 20
-                        color: {
-                            let color = ShellSettings.colors["inverse_surface"];
-                            return Qt.rgba(color.r, color.g, color.b, 0.5);
-                        }
+                        color: ShellSettings.colors.inactive
 
                         layer.enabled: true
                         layer.effect: OpacityMask {
@@ -85,7 +82,7 @@ Scope {
                         }
 
                         Rectangle {
-                            color: ShellSettings.colors["primary"]
+                            color: ShellSettings.colors.active
                             anchors {
                                 left: parent.left
                                 top: parent.top

@@ -6,7 +6,7 @@ import qs
 
 RowLayout {
     spacing: 6
-    visible: Hyprland.monitors.values.length != 0
+    visible: Hyprland.workspaces.values.some(ws => ws.monitor === Hyprland.monitorFor(screen))
 
     required property var screen
 
