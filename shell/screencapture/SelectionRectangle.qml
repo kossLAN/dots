@@ -17,8 +17,8 @@ Item {
     onVisibleChanged: {
         if (!visible)
             selectionRect.width -= borderSize;
-            selectionRect.height -= borderSize;
-            areaSelected(selectionRect);
+        selectionRect.height -= borderSize;
+        areaSelected(selectionRect);
     }
 
     MouseArea {

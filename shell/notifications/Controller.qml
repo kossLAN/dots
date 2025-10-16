@@ -39,7 +39,7 @@ Scope {
             onVisibleCountChanged: visible = visibleCount != 0
 
             color: "transparent"
-            implicitWidth: 525
+            implicitWidth: 500 
             visible: false
             exclusionMode: ExclusionMode.Normal
 

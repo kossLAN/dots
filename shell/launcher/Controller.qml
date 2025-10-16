@@ -34,43 +34,50 @@ Singleton {
 
     LazyLoader {
         id: loader
-        activeAsync: persist.launcherOpen
+        // activeAsync: persist.launcherOpen
+        active: persist.launcherOpen
 
         PanelWindow {
-            implicitWidth: 500
-            implicitHeight: 7 + searchContainer.implicitHeight + list.topMargin * 2 + list.delegateHeight * 10
             color: "transparent"
+            exclusiveZone: 0
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
             // WlrLayershell.namespace: "shell:launcher"
 
-            StyledRectangle {
-                id: container
-                color: ShellSettings.colors.surface_translucent
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
 
-                anchors {
-                    fill: parent
-                    margins: 10
+            WrapperRectangle {
+                clip: true
+                radius: 12
+                color: ShellSettings.colors.surface_translucent
+                margin: 6
+
+                border {
+                    width: 1
+                    color: ShellSettings.colors.active_translucent
                 }
 
-                Behavior on height {
-                    NumberAnimation {
-                        duration: 200
-                        easing.type: Easing.OutCubic
-                    }
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    top: parent.top
+                    topMargin: screen.height / 2.75
                 }
 
                 ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 7
-                    anchors.topMargin: 10
-                    anchors.bottomMargin: 0
-                    spacing: 0
+                    id: column
+                    anchors.centerIn: parent
 
                     StyledRectangle {
                         id: searchContainer
-                        Layout.fillWidth: true
                         implicitHeight: searchbox.implicitHeight + 15
                         radius: 6
+
+                        // Width is largely determined by size of the searchContainer
+                        Layout.preferredWidth: 500
 
                         RowLayout {
                             id: searchbox
@@ -79,8 +86,8 @@ Singleton {
 
                             TextInput {
                                 id: search
-                                Layout.fillWidth: true
                                 color: ShellSettings.colors.highlight
+                                Layout.fillWidth: true
 
                                 focus: true
                                 Keys.forwardTo: [list]
@@ -113,96 +120,121 @@ Singleton {
 
                     ListView {
                         id: list
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        visible: opacity > 0
+                        opacity: matchesLength != 0 ? 1 : 0
                         clip: true
                         cacheBuffer: 0 // works around QTBUG-131106
                         //reuseItems: true
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: Math.min(matchesLength * delegateHeight, 500)
+
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+
+                        Behavior on Layout.preferredHeight {
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+
+                        property var matchesLength: model.values.length
+
                         model: ScriptModel {
-                            values: DesktopEntries.applications.values.map(object => {
+                            values: {
                                 const stxt = search.text.toLowerCase();
-                                const ntxt = object.name.toLowerCase();
-                                let si = 0;
-                                let ni = 0;
 
-                                let matches = [];
-                                let startMatch = -1;
+                                if (stxt === '')
+                                    return [];
 
-                                for (let si = 0; si != stxt.length; ++si) {
-                                    const sc = stxt[si];
+                                return DesktopEntries.applications.values.map(object => {
+                                    // const stxt = search.text.toLowerCase();
 
-                                    while (true) {
-                                        // Drop any entries with letters that don't exist in order
-                                        if (ni == ntxt.length)
-                                            return null;
+                                    const ntxt = object.name.toLowerCase();
+                                    let si = 0;
+                                    let ni = 0;
 
-                                        const nc = ntxt[ni++];
+                                    let matches = [];
+                                    let startMatch = -1;
 
-                                        if (nc == sc) {
-                                            if (startMatch == -1)
-                                                startMatch = ni;
-                                            break;
-                                        } else {
-                                            if (startMatch != -1) {
-                                                matches.push({
-                                                    index: startMatch,
-                                                    length: ni - startMatch
-                                                });
+                                    for (let si = 0; si != stxt.length; ++si) {
+                                        const sc = stxt[si];
 
-                                                startMatch = -1;
+                                        while (true) {
+                                            // Drop any entries with letters that don't exist in order
+                                            if (ni == ntxt.length)
+                                                return null;
+
+                                            const nc = ntxt[ni++];
+
+                                            if (nc == sc) {
+                                                if (startMatch == -1)
+                                                    startMatch = ni;
+                                                break;
+                                            } else {
+                                                if (startMatch != -1) {
+                                                    matches.push({
+                                                        index: startMatch,
+                                                        length: ni - startMatch
+                                                    });
+
+                                                    startMatch = -1;
+                                                }
                                             }
                                         }
                                     }
-                                }
 
-                                if (startMatch != -1) {
-                                    matches.push({
-                                        index: startMatch,
-                                        length: ni - startMatch + 1
-                                    });
-                                }
+                                    if (startMatch != -1) {
+                                        matches.push({
+                                            index: startMatch,
+                                            length: ni - startMatch + 1
+                                        });
+                                    }
 
-                                return {
-                                    object: object,
-                                    matches: matches
-                                };
-                            }).filter(entry => entry !== null).sort((a, b) => {
-                                let ai = 0;
-                                let bi = 0;
-                                let s = 0;
+                                    return {
+                                        object: object,
+                                        matches: matches
+                                    };
+                                }).filter(entry => entry !== null).sort((a, b) => {
+                                    let ai = 0;
+                                    let bi = 0;
+                                    let s = 0;
 
-                                while (ai != a.matches.length && bi != b.matches.length) {
-                                    const am = a.matches[ai];
-                                    const bm = b.matches[bi];
+                                    while (ai != a.matches.length && bi != b.matches.length) {
+                                        const am = a.matches[ai];
+                                        const bm = b.matches[bi];
 
-                                    s = bm.length - am.length;
+                                        s = bm.length - am.length;
+                                        if (s != 0)
+                                            return s;
+
+                                        s = am.index - bm.index;
+                                        if (s != 0)
+                                            return s;
+
+                                        ++ai;
+                                        ++bi;
+                                    }
+
+                                    s = a.matches.length - b.matches.length;
                                     if (s != 0)
                                         return s;
 
-                                    s = am.index - bm.index;
+                                    s = a.object.name.length - b.object.name.length;
                                     if (s != 0)
                                         return s;
 
-                                    ++ai;
-                                    ++bi;
-                                }
-
-                                s = a.matches.length - b.matches.length;
-                                if (s != 0)
-                                    return s;
-
-                                s = a.object.name.length - b.object.name.length;
-                                if (s != 0)
-                                    return s;
-
-                                return a.object.name.localeCompare(b.object.name);
-                            }).map(entry => entry.object)
+                                    return a.object.name.localeCompare(b.object.name);
+                                }).map(entry => entry.object);
+                            }
 
                             onValuesChanged: list.currentIndex = 0
                         }
-
-                        topMargin: 7
-                        bottomMargin: list.count == 0 ? 0 : 7
 
                         add: Transition {
                             NumberAnimation {
@@ -269,6 +301,7 @@ Singleton {
                         readonly property real delegateHeight: 44
 
                         delegate: MouseArea {
+                            id: entryMouseArea
                             required property DesktopEntry modelData
 
                             implicitHeight: list.delegateHeight
@@ -281,6 +314,7 @@ Singleton {
 
                             RowLayout {
                                 id: delegateLayout
+
                                 anchors {
                                     verticalCenter: parent.verticalCenter
                                     left: parent.left
@@ -291,10 +325,11 @@ Singleton {
                                     Layout.alignment: Qt.AlignVCenter
                                     asynchronous: true
                                     implicitSize: 30
-                                    source: Quickshell.iconPath(modelData.icon)
+                                    source: Quickshell.iconPath(entryMouseArea.modelData.icon)
                                 }
+
                                 Text {
-                                    text: modelData.name
+                                    text: entryMouseArea.modelData.name
                                     color: ShellSettings.colors.active
                                     Layout.alignment: Qt.AlignVCenter
                                 }

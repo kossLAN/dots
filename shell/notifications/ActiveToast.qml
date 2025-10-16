@@ -114,8 +114,8 @@ Item {
                             font.bold: true
                             elide: Text.ElideRight
                             maximumLineCount: 1
-                            Layout.preferredWidth: implicitWidth
-                            Layout.maximumWidth: topRow.width * 0.3
+                            // Layout.preferredWidth: implicitWidth
+                            // Layout.maximumWidth: topRow.width * 0.3
                         }
 
                         Text {

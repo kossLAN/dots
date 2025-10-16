@@ -15,9 +15,9 @@
       (system: fn system nixpkgs.legacyPackages.${system});
   in {
     packages = forEachSystem (system: pkgs: rec {
-      default = minmat;
-      minmat = pkgs.stdenv.mkDerivation {
-        pname = "minmat";
+      default = dots;
+      dots = pkgs.stdenv.mkDerivation {
+        pname = "dots";
         version = "0.1.0";
         src = ./shell;
 
