@@ -120,21 +120,13 @@ Singleton {
 
                     ListView {
                         id: list
-                        visible: opacity > 0
-                        opacity: matchesLength != 0 ? 1 : 0
+                        visible: Layout.preferredHeight > 1
                         clip: true
                         cacheBuffer: 0 // works around QTBUG-131106
                         //reuseItems: true
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: Math.min(matchesLength * delegateHeight, 500)
-
-                        Behavior on opacity {
-                            NumberAnimation {
-                                duration: 200
-                                easing.type: Easing.OutCubic
-                            }
-                        }
 
                         Behavior on Layout.preferredHeight {
                             NumberAnimation {
