@@ -63,7 +63,7 @@ Scope {
 
     LazyLoader {
         id: popupLoader
-        activeAsync: root.shownItem != null
+        active: root.shownItem != null
 
         PopupWindow {
             id: popup

@@ -6,6 +6,7 @@ import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 import qs.widgets
 import qs.bar
+import qs
 
 StyledMouseArea {
     id: root
@@ -34,31 +35,66 @@ StyledMouseArea {
         implicitWidth: 300
         implicitHeight: container.implicitHeight + (2 * 8)
 
-        // implicitWidth: volumeMenu.implicitWidth
-        // implicitHeight: volumeMenu.implicitHeight
-
-        // VolumeControl {
-        //     id: volumeMenu
-        // }
+        property PwNode sink: Pipewire.defaultAudioSink
+        property real entryHeight: 45
 
         ColumnLayout {
             id: container
+            spacing: 4
 
             anchors {
                 fill: parent
                 margins: 8
             }
 
+            // Default Audio
             VolumeCard {
-                node: Pipewire.defaultAudioSink
+                node: menu.sink
                 Layout.fillWidth: true
-                Layout.preferredHeight: 45
+                Layout.preferredHeight: menu.entryHeight
             }
 
-            VolumeCard {
-                node: Pipewire.defaultAudioSource
+            Rectangle {
+                color: ShellSettings.colors.active_translucent
+                radius: height / 2
+                Layout.leftMargin: 3
+                Layout.rightMargin: 3
                 Layout.fillWidth: true
-                Layout.preferredHeight: 45
+                Layout.preferredHeight: 2
+            }
+
+            // Application Mixer
+            Loader {
+                id: sinkLoader
+                active: menu.sink
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 5 * menu.entryHeight
+
+                PwNodeLinkTracker {
+                    id: linkTracker
+                    node: menu.sink
+                }
+
+                sourceComponent: ListView {
+                    anchors.fill: parent
+                    spacing: 6
+                    model: linkTracker.linkGroups
+
+                    delegate: Loader {
+                        id: nodeLoader
+                        active: modelData.source != null
+                        width: ListView.view.width
+                        height: menu.entryHeight
+
+                        required property PwLinkGroup modelData
+
+                        sourceComponent: VolumeCard {
+                            node: nodeLoader.modelData.source 
+                            label: node.properties["media.name"] ?? ""
+                        }
+                    }
+                }
             }
         }
     }

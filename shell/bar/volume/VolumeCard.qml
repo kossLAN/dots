@@ -5,19 +5,20 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell.Widgets
 import Quickshell.Services.Pipewire
-import qs
 import qs.widgets
+import qs
 
 Loader {
     id: root
-    active: node !== null
+    active: node != null
 
     required property PwNode node
+    property string label: node.nickname
 
     sourceComponent: WrapperRectangle {
         id: comp
         color: ShellSettings.colors.surface_container_translucent
-        radius: 12 
+        radius: 12
         margin: 6
 
         border {
@@ -25,7 +26,6 @@ Loader {
             color: ShellSettings.colors.active_translucent
         }
 
-        // property string text
         // property Component button
         // property Component icon
 
@@ -35,22 +35,47 @@ Loader {
         }
 
         RowLayout {
-            Slider {
-                value: root.node.audio.volume ?? 0
-                // text: root.text
-                // icon: root.icon
-
-                onValueChanged: {
-                    // only allow changes when the node is ready other wise you will combust
-                    if (!root.node.ready)
-                        return;
-
-                    root.node.audio.volume = value;
-                }
-
+            ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+
+                Text {
+                    text: root.label 
+                    color: ShellSettings.colors.active
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+
+                StyledSlider {
+                    value: root.node.audio.volume ?? 0
+                    // text: root.text
+                    // icon: root.icon
+
+                    onValueChanged: {
+                        // only allow changes when the node is ready other wise you will combust
+                        if (!root.node.ready)
+                            return;
+
+                        root.node.audio.volume = value;
+                    }
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
             }
+
+            // StyledMouseArea {
+            //     id: rightArrow
+            //     Layout.preferredWidth: rightArrow.height
+            //     // Layout.fillWidth: true
+            //     Layout.fillHeight: true
+            //
+            //     IconImage {
+            //         source: "root:resources/general/right-arrow.svg"
+            //         anchors.fill: parent
+            //     }
+            // }
 
             // Loader {
             //     id: buttonLoader

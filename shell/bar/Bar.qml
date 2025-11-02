@@ -73,11 +73,11 @@ Variants {
                     Layout.fillHeight: true
                 }
 
-                // VolumeIndicator {
-                //     bar: root
-                //     Layout.preferredWidth: this.height
-                //     Layout.fillHeight: true
-                // }
+                VolumeIndicator {
+                    bar: root
+                    Layout.preferredWidth: this.height
+                    Layout.fillHeight: true
+                }
 
                 PowerMenu {
                     bar: root
