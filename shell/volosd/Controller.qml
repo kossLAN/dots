@@ -24,6 +24,11 @@ Scope {
             root.shouldShowOsd = true;
             hideTimer.restart();
         }
+
+        function onMutedChanged() {
+            root.shouldShowOsd = true;
+            hideTimer.restart();
+        }
     }
 
     property bool shouldShowOsd: false
@@ -52,6 +57,8 @@ Scope {
                 // radius: 8
 
                 RowLayout {
+                    spacing: 10
+
                     anchors {
                         fill: parent
                         leftMargin: 10
@@ -60,15 +67,23 @@ Scope {
 
                     IconImage {
                         implicitSize: 30
-                        source: "root:resources/volume/volume-full.svg"
+                        source: {
+                            if (Pipewire.defaultAudioSink?.audio.muted) {
+                                return "root:resources/volume/volume-mute.svg";
+                            } else {
+                                return "root:resources/volume/volume-full.svg";
+                            }
+                        }
                     }
 
                     Rectangle {
                         id: sliderBackground
                         Layout.fillWidth: true
                         implicitHeight: 10
-                        radius: 20
-                        color: ShellSettings.colors.inactive
+                        radius: height / 2
+                        color: "transparent"
+                        border.color: ShellSettings.colors.active_translucent
+                        border.width: 1
 
                         layer.enabled: true
                         layer.effect: OpacityMask {
@@ -82,13 +97,13 @@ Scope {
 
                         Rectangle {
                             color: ShellSettings.colors.active
+                            implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
+
                             anchors {
                                 left: parent.left
                                 top: parent.top
                                 bottom: parent.bottom
                             }
-
-                            implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
                         }
                     }
                 }
