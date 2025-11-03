@@ -7,15 +7,18 @@ import ".."
 
 Slider {
     id: slider
-    implicitHeight: 8
+    implicitHeight: 7
+
     property var accentColor: ShellSettings.colors.active
 
     background: Rectangle {
         id: sliderContainer
         width: slider.availableWidth
         height: slider.implicitHeight
-        color: ShellSettings.colors.inactive
-        radius: 4
+        color: "transparent"
+        border.color: ShellSettings.colors.active_translucent
+        border.width: 1
+        radius: 5
         anchors.verticalCenter: parent.verticalCenter
 
         layer.enabled: true
@@ -39,7 +42,7 @@ Slider {
             id: fill
             width: slider.handle.width / 2 + slider.visualPosition * (sliderContainer.width - slider.handle.width)
             height: sliderContainer.height
-            color: Qt.color(slider.accentColor ?? "purple").darker(1.2)
+            color: ShellSettings.colors.active_translucent
         }
     }
 

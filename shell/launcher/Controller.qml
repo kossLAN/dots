@@ -64,7 +64,7 @@ Singleton {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     top: parent.top
-                    topMargin: screen.height / 2.75
+                    topMargin: screen.height / 3 
                 }
 
                 ColumnLayout {

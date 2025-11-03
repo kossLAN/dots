@@ -21,7 +21,6 @@ Scope {
         target: Pipewire.defaultAudioSink?.audio
 
         function onVolumeChanged() {
-            console.log("Volume Changed, showing OSD.");
             root.shouldShowOsd = true;
             hideTimer.restart();
         }
