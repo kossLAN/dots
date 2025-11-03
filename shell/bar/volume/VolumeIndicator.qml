@@ -7,7 +7,6 @@ import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 import qs.widgets
 import qs.bar
-import qs
 
 StyledMouseArea {
     id: root
@@ -15,14 +14,19 @@ StyledMouseArea {
 
     required property var bar
     property bool showMenu: false
+    property PwNode sink: Pipewire.defaultAudioSink
 
     IconImage {
         id: icon
-        source: "root:resources/volume/volume-full.svg"
-
-        anchors {
-            fill: parent
-            margins: 2
+        anchors.fill: parent
+        source: if (root.sink.audio.muted) {
+            return "image://icon/audio-volume-muted";
+        } else if (root.sink.audio.volume > 0.66) {
+            return "image://icon/audio-volume-high";
+        } else if (root.sink.audio.volume > 0.33) {
+            return "image://icon/audio-volume-medium";
+        } else {
+            return "image://icon/audio-volume-low";
         }
     }
 
@@ -33,25 +37,24 @@ StyledMouseArea {
         show: root.showMenu
         onClosed: root.showMenu = false
 
-        implicitWidth: 300
+        implicitWidth: 275
         implicitHeight: container.implicitHeight + (2 * 8)
 
-        property PwNode sink: Pipewire.defaultAudioSink
-        property real entryHeight: 45
+        property real entryHeight: 40
 
         ColumnLayout {
             id: container
-            spacing: 4
+            spacing: 2
 
             anchors {
                 fill: parent
-                margins: 8
+                margins: 4
             }
 
             // Default Audio
             VolumeCard {
                 id: defaultCard
-                node: menu.sink
+                node: root.sink
                 Layout.fillWidth: true
                 Layout.preferredHeight: menu.entryHeight
 
@@ -60,37 +63,29 @@ StyledMouseArea {
 
                     IconImage {
                         anchors.fill: parent
-                        source: {
-                            if (defaultCard.node.audio.muted) {
-                                return "root:resources/volume/volume-mute.svg";
-                            } else {
-                                return "root:resources/volume/volume-full.svg";
-                            }
+                        source: if (root.sink.audio.muted) {
+                            return "image://icon/audio-volume-muted";
+                        } else if (root.sink.audio.volume > 0.66) {
+                            return "image://icon/audio-volume-high";
+                        } else if (root.sink.audio.volume > 0.33) {
+                            return "image://icon/audio-volume-medium";
+                        } else {
+                            return "image://icon/audio-volume-low";
                         }
                     }
                 }
             }
 
-            Rectangle {
-                visible: linkTracker.linkGroups.length !== 0
-                color: ShellSettings.colors.active_translucent
-                radius: height / 2
-                Layout.leftMargin: 3
-                Layout.rightMargin: 3
-                Layout.fillWidth: true
-                Layout.preferredHeight: 2
-            }
-
             // Application Mixer
             PwNodeLinkTracker {
                 id: linkTracker
-                node: menu.sink
+                node: root.sink
             }
 
             StyledListView {
                 id: appList
                 visible: linkTracker.linkGroups.length !== 0
-                spacing: 6
+                spacing: 2
                 model: linkTracker.linkGroups
                 clip: true
 

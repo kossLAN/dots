@@ -12,7 +12,7 @@ Loader {
     active: node != null
 
     required property PwNode node
-    property string label: node.nickname ?? node.name
+    property string label: node.nickname === "" ? node.description : node.nickname
 
     property Component leftWidget
 

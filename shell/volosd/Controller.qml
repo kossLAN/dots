@@ -67,12 +67,14 @@ Scope {
 
                     IconImage {
                         implicitSize: 30
-                        source: {
-                            if (Pipewire.defaultAudioSink?.audio.muted) {
-                                return "root:resources/volume/volume-mute.svg";
-                            } else {
-                                return "root:resources/volume/volume-full.svg";
-                            }
+                        source: if (Pipewire.defaultAudioSink?.audio.muted) {
+                            return "image://icon/audio-volume-muted";
+                        } else if (Pipewire.defaultAudioSink?.audio.volume > 0.66) {
+                            return "image://icon/audio-volume-high";
+                        } else if (Pipewire.defaultAudioSink?.audio.volume > 0.33) {
+                            return "image://icon/audio-volume-medium";
+                        } else {
+                            return "image://icon/audio-volume-low";
                         }
                     }
 
