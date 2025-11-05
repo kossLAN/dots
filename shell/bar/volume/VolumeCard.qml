@@ -47,6 +47,8 @@ Loader {
                 }
 
                 StyledSlider {
+                    implicitHeight: 7
+                    handleHeight: 12
                     value: root.node.audio.volume ?? 0
 
                     onValueChanged: {

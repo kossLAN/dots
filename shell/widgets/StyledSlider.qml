@@ -10,6 +10,7 @@ Slider {
     implicitHeight: 7
 
     property var accentColor: ShellSettings.colors.active
+    property real handleHeight: 16 
 
     background: Rectangle {
         id: sliderContainer
@@ -50,8 +51,8 @@ Slider {
         id: handleRect
         x: slider.visualPosition * (slider.availableWidth - width)
         y: slider.topPadding + slider.availableHeight / 2 - height / 2
-        width: 16
-        height: 16
+        width: slider.handleHeight
+        height: slider.handleHeight 
         radius: width / 2
         color: slider.pressed ? Qt.color(slider.accentColor ?? "purple").darker(1.5) : slider.accentColor ?? "purple"
     }

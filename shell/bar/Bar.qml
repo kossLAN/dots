@@ -4,6 +4,7 @@ import Quickshell
 import "power"
 import "volume"
 import "systray"
+import "bluetooth"
 // import qs.widgets
 import qs
 
@@ -74,6 +75,12 @@ Variants {
                 }
 
                 VolumeIndicator {
+                    bar: root
+                    Layout.preferredWidth: this.height
+                    Layout.fillHeight: true
+                }
+
+                BluetoothMenu {
                     bar: root
                     Layout.preferredWidth: this.height
                     Layout.fillHeight: true

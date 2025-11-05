@@ -38,9 +38,9 @@ StyledMouseArea {
         onClosed: root.showMenu = false
 
         implicitWidth: 275
-        implicitHeight: container.implicitHeight + (2 * 8)
+        implicitHeight: container.implicitHeight + (2 * container.anchors.margins)
 
-        property real entryHeight: 40
+        property real entryHeight: 38
 
         ColumnLayout {
             id: container
@@ -91,7 +91,7 @@ StyledMouseArea {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: {
-                    const entryHeight = Math.min(5, linkTracker.linkGroups.length);
+                    const entryHeight = Math.min(6, linkTracker.linkGroups.length);
 
                     return entryHeight * (menu.entryHeight + appList.spacing);
                 }
