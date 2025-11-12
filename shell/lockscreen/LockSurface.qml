@@ -7,7 +7,7 @@ import Qt5Compat.GraphicalEffects
 
 Item {
     id: root
-    required property LockState state 
+    required property LockState state
     required property string wallpaper
 
     Item {
@@ -75,9 +75,8 @@ Item {
                 const now = this.date;
                 let hours = now.getHours();
                 const minutes = now.getMinutes().toString().padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12;
-                hours = hours ? hours : 12; // 0 should be 12
+                hours = hours ? hours : 12;
                 return `${hours}:${minutes}`;
             }
 
@@ -130,7 +129,6 @@ Item {
             }
         }
 
-        // password input, should probably split this out into a seperate comp
         LoginField {
             id: passwordBox
             enabled: !root.state.unlockInProgress
@@ -184,7 +182,7 @@ Item {
 
     // testing button
     Button {
-        visible: false
+        visible: false 
         text: "Emergency Unlock"
         onClicked: root.state.unlocked()
 

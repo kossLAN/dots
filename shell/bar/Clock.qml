@@ -1,7 +1,8 @@
 import QtQuick
 import Quickshell
+import qs.widgets
 
-Text {
+StyledText {
     property string ap: sysClock.hours >= 12 ? "PM" : "AM"
     property string minutes: sysClock.minutes.toString().padStart(2, '0')
     property string hours: {

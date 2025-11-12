@@ -320,9 +320,8 @@ Singleton {
                                     source: Quickshell.iconPath(entryMouseArea.modelData.icon)
                                 }
 
-                                Text {
+                                StyledText {
                                     text: entryMouseArea.modelData.name
-                                    color: ShellSettings.colors.active
                                     Layout.alignment: Qt.AlignVCenter
                                 }
                             }

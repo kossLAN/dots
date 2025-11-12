@@ -3,8 +3,8 @@ import Quickshell.Widgets
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../widgets" as Widgets
-import "../.."
+import qs.widgets
+import qs
 
 ColumnLayout {
     id: root
@@ -88,7 +88,7 @@ ColumnLayout {
                     }
                 }
 
-                Text {
+                StyledText {
                     id: text
                     text: root.menuData?.text ?? ""
                     verticalAlignment: Text.AlignVCenter
@@ -114,7 +114,7 @@ ColumnLayout {
                     Layout.preferredWidth: 20
                     Layout.rightMargin: 5
 
-                    Widgets.IconButton {
+                    IconButton {
                         id: arrowButton
                         visible: root.menuData?.hasChildren ?? false
                         activeRectangle: false

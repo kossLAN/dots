@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import qs.widgets
 
 TextField {
     id: root
@@ -13,17 +13,8 @@ TextField {
     font.pointSize: 11
     horizontalAlignment: Text.AlignHCenter
 
-    background: Rectangle {
-        color: Qt.rgba(1, 1, 1, 0.1)
-        border.color: root.activeFocus ? Qt.rgba(1, 1, 1, 0.5) : Qt.rgba(1, 1, 1, 0.2)
-        border.width: 1
-        radius: 8
-
-        layer.enabled: true
-        layer.effect: FastBlur {
-            radius: 10
-            transparentBorder: true
-        }
+    background: StyledRectangle {
+        clip: true
     }
 
     transform: Translate {

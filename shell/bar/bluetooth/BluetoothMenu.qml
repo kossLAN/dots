@@ -72,7 +72,7 @@ StyledMouseArea {
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignVCenter
 
-                    Text {
+                    StyledText {
                         text: `Bluetooth(${Bluetooth.defaultAdapter.adapterId})`
                         color: ShellSettings.colors.active
                         elide: Text.ElideRight
@@ -80,7 +80,7 @@ StyledMouseArea {
                         Layout.preferredHeight: contentHeight
                     }
 
-                    Text {
+                    StyledText {
                         text: Bluetooth.defaultAdapter.enabled ? "Enabled" : "Disabled"
                         color: ShellSettings.colors.active.darker(1.5)
                         elide: Text.ElideRight

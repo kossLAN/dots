@@ -28,7 +28,7 @@ Item {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
 
-            Text {
+            StyledText {
                 text: root.device.name
                 color: ShellSettings.colors.active
                 elide: Text.ElideRight
@@ -36,7 +36,7 @@ Item {
                 Layout.preferredHeight: contentHeight
             }
 
-            Text {
+            StyledText {
                 text: root.device.connected ? "Connected" : "Disconnected"
                 color: ShellSettings.colors.active.darker(1.5)
                 elide: Text.ElideRight

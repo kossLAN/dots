@@ -38,7 +38,7 @@ Loader {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                Text {
+                StyledText {
                     text: root.label
                     color: ShellSettings.colors.active
                     elide: Text.ElideRight
