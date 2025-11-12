@@ -69,7 +69,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             renderType: Text.NativeRendering
             font.pointSize: 72
-            font.weight: Font.Light
+            font.weight: Font.Bold
             font.family: "DejaVu Sans"
             color: "white"
             text: {
