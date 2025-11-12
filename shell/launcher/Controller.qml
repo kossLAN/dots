@@ -64,7 +64,7 @@ Singleton {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     top: parent.top
-                    topMargin: screen.height / 3 
+                    topMargin: (screen.height / 2) - 250 // half of max height of list
                 }
 
                 ColumnLayout {

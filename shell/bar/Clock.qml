@@ -19,4 +19,5 @@ StyledText {
 
     text: `${hours}:${minutes} ${ap}`
     font.pointSize: 11
+    font.family: "DejaVu Sans"
 }

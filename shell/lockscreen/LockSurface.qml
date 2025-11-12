@@ -70,6 +70,7 @@ Item {
             renderType: Text.NativeRendering
             font.pointSize: 72
             font.weight: Font.Light
+            font.family: "DejaVu Sans"
             color: "white"
             text: {
                 const now = this.date;
