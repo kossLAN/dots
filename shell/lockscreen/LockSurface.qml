@@ -69,8 +69,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             renderType: Text.NativeRendering
             font.pointSize: 72
-            font.weight: Font.Bold
-            font.family: "DejaVu Sans"
+            font.weight: Font.DemiBold
             color: "white"
             text: {
                 const now = this.date;
@@ -99,6 +98,8 @@ Item {
                 samples: 41
                 color: Qt.rgba(1, 1, 1, 0.3)
             }
+
+            Component.onCompleted: console.log(font.family)
         }
     }
 
