@@ -69,7 +69,6 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             renderType: Text.NativeRendering
             font.pointSize: 72
-            font.weight: Font.DemiBold
             color: "white"
             text: {
                 const now = this.date;
