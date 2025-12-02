@@ -31,7 +31,7 @@ ColumnLayout {
                 return "transparent";
 
             if (entryArea.containsMouse) {
-                return ShellSettings.colors.active_translucent;
+                return ShellSettings.colors.trim;
             }
 
             return "transparent";
@@ -93,7 +93,7 @@ ColumnLayout {
                     text: root.menuData?.text ?? ""
                     verticalAlignment: Text.AlignVCenter
                     color: {
-                        let color = Qt.color(ShellSettings.colors.active);
+                        let color = Qt.color(ShellSettings.colors.foreground);
 
                         if (!root.menuData?.enabled)
                             return color.darker(2);
@@ -140,13 +140,13 @@ ColumnLayout {
 
     WrapperRectangle {
         id: subTrayMenu
-        color: ShellSettings.colors.surface_container
+        color: ShellSettings.colors.background
         radius: 8
         visible: false
         
         border {
             width: 1
-            color: ShellSettings.colors.active_translucent
+            color: ShellSettings.colors.trim
         }
 
         Layout.fillWidth: true

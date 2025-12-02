@@ -85,7 +85,7 @@ Scope {
                         implicitHeight: 10
                         radius: height / 2
                         color: "transparent"
-                        border.color: ShellSettings.colors.active_translucent
+                        border.color: ShellSettings.colors.trim
                         border.width: 1
 
                         layer.enabled: true
@@ -99,7 +99,7 @@ Scope {
                         }
 
                         Rectangle {
-                            color: ShellSettings.colors.active
+                            color: ShellSettings.colors.foreground
                             implicitWidth: parent.width * (Pipewire.defaultAudioSink?.audio.volume ?? 0)
 
                             anchors {

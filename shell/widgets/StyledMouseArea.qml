@@ -7,7 +7,7 @@ MouseArea {
 
     property real radius: 10  
     property bool checked: false
-    property var activeColor: ShellSettings.colors.active_translucent
+    property var activeColor: ShellSettings.colors.trim
     property var inactiveColor: "transparent"
 
     Rectangle {
@@ -17,7 +17,7 @@ MouseArea {
 
         border {
             width: root.containsMouse ? 1 : 0
-            color: ShellSettings.colors.active_translucent
+            color: ShellSettings.colors.trim
         }
 
         Behavior on color {

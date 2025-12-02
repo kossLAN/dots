@@ -12,8 +12,7 @@ ColumnLayout {
 
     Rectangle {
         visible: (root.modelData?.isSeparator ?? false)
-        color: ShellSettings.colors.inactive_translucent
-        // opacity: 0.1
+        color: ShellSettings.colors.trim
         Layout.fillWidth: true
         Layout.preferredHeight: 2
         Layout.leftMargin: 8

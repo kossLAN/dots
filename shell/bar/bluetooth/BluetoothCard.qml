@@ -30,7 +30,7 @@ Item {
 
             StyledText {
                 text: root.device && root.device.name ? root.device.name : "Unknown Device"
-                color: ShellSettings.colors.active
+                color: ShellSettings.colors.foreground
                 elide: Text.ElideRight
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight
@@ -38,7 +38,7 @@ Item {
 
             StyledText {
                 text: root.device ? (root.device.connected ? "Connected" : "Disconnected") : "Unknown"
-                color: ShellSettings.colors.active.darker(1.5)
+                color: ShellSettings.colors.foreground.darker(1.5)
                 elide: Text.ElideRight
                 Layout.fillWidth: true
                 Layout.preferredHeight: contentHeight

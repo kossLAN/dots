@@ -53,12 +53,12 @@ Singleton {
             WrapperRectangle {
                 clip: true
                 radius: 12
-                color: ShellSettings.colors.surface_translucent
+                color: ShellSettings.colors.background
                 margin: 6
 
                 border {
                     width: 1
-                    color: ShellSettings.colors.active_translucent
+                    color: ShellSettings.colors.trim
                 }
 
                 anchors {
@@ -278,7 +278,7 @@ Singleton {
 
                         highlight: Rectangle {
                             radius: 6
-                            color: ShellSettings.colors.active_translucent
+                            color: ShellSettings.colors.trim
                         }
 
                         keyNavigationEnabled: true

@@ -18,7 +18,7 @@ Item {
     StyledRectangle {
         id: container
         radius: 10
-        color: ShellSettings.colors.surface_translucent
+        color: ShellSettings.colors.background
         anchors.fill: parent
 
         Item {
@@ -109,7 +109,7 @@ Item {
                         Text {
                             id: appName
                             text: root.notification.appName
-                            color: ShellSettings.colors.active
+                            color: ShellSettings.colors.foreground
                             font.pointSize: 11
                             font.bold: true
                             elide: Text.ElideRight
@@ -121,7 +121,7 @@ Item {
                         Text {
                             id: summaryText
                             text: root.notification.summary
-                            color: ShellSettings.colors.active
+                            color: ShellSettings.colors.foreground
                             font.pointSize: 11
                             elide: Text.ElideRight
                             maximumLineCount: 1
@@ -201,7 +201,7 @@ Item {
                     Text {
                         id: bodyText
                         text: root.notification.body
-                        color: ShellSettings.colors.active
+                        color: ShellSettings.colors.foreground
                         font.pointSize: 11
                         wrapMode: Text.Wrap
                         elide: Text.ElideRight

@@ -16,13 +16,13 @@ WrapperMouseArea {
 
             Text {
                 text: root.title
-                color: ShellSettings.colors.active
+                color: ShellSettings.colors.foreground
                 font.pointSize: 10
             }
 
             Text {
                 text: root.description
-                color: ShellSettings.colors.active.darker(2.0)
+                color: ShellSettings.colors.foreground.darker(2.0)
                 font.pointSize: 9
             }
         }

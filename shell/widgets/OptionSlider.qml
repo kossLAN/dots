@@ -34,7 +34,7 @@ Item {
 
                 Rectangle {
                     id: mark
-                    color: ShellSettings.colors.active_translucent
+                    color: ShellSettings.colors.trim
                     width: 1
                     height: groove.height
                 }
@@ -45,7 +45,7 @@ Item {
                     x: delegate.index === 0 ? -4 : delegate.index === root.values.length - 1 ? -this.width + 4 : -(this.width / 2)
 
                     text: delegate.modelData
-                    color: ShellSettings.colors.active
+                    color: ShellSettings.colors.foreground
                 }
             }
         }
@@ -60,7 +60,7 @@ Item {
             }
 
             radius: 5
-            color: ShellSettings.colors.active_translucent
+            color: ShellSettings.colors.trim
             width: mouseArea.valueOffset
         }
 
@@ -75,7 +75,7 @@ Item {
             y: 5
             implicitHeight: 7
             color: "transparent"
-            border.color: ShellSettings.colors.active_translucent
+            border.color: ShellSettings.colors.trim
             border.width: 1
             radius: 5
         }

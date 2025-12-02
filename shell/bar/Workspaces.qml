@@ -21,7 +21,7 @@ RowLayout {
             radius: height / 2
 
             color: {
-                let value = ShellSettings.colors.active_translucent;
+                let value = ShellSettings.colors.trim;
 
                 if (!modelData?.id || !Hyprland.focusedMonitor?.activeWorkspace?.id)
                     return value;

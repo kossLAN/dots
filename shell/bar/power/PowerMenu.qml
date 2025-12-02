@@ -53,7 +53,7 @@ StyledMouseArea {
             return "#ff9800";
         }
         // Normal - use surface color
-        return ShellSettings.colors.surface;
+        return ShellSettings.colors.background;
     }
 
     Item {
@@ -76,7 +76,7 @@ StyledMouseArea {
 
         Rectangle {
             id: batteryBackground
-            color: Qt.color(ShellSettings.colors.inactive_translucent).lighter(4)
+            color: Qt.color(ShellSettings.colors.foregroundDim).lighter(4)
             opacity: 0.75
             anchors {
                 fill: parent

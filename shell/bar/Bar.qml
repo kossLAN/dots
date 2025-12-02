@@ -13,7 +13,7 @@ Variants {
 
     delegate: PanelWindow {
         id: root
-        color: ShellSettings.colors.surface_translucent
+        color: ShellSettings.colors.background
         implicitHeight: ShellSettings.sizing.barHeight
         screen: modelData
 
@@ -104,7 +104,7 @@ Variants {
 
                 Clock {
                     id: clock
-                    color: ShellSettings.colors.active
+                    color: ShellSettings.colors.foreground
                     Layout.leftMargin: 5
                 }
             }

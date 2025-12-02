@@ -40,7 +40,7 @@ Loader {
 
                 StyledText {
                     text: root.label
-                    color: ShellSettings.colors.active
+                    color: ShellSettings.colors.foreground
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                     Layout.fillHeight: true

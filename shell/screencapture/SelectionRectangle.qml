@@ -100,7 +100,7 @@ Item {
     Rectangle {
         id: rectangle
         color: "transparent"
-        border.color: ShellSettings.colors.active_translucent
+        border.color: ShellSettings.colors.trim
         border.width: root.borderSize
         x: 0
         y: 0

@@ -74,7 +74,7 @@ StyledMouseArea {
 
                     StyledText {
                         text: Bluetooth.defaultAdapter ? `Bluetooth(${Bluetooth.defaultAdapter.adapterId})` : "Bluetooth (No Adapter)"
-                        color: ShellSettings.colors.active
+                        color: ShellSettings.colors.foreground
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                         Layout.preferredHeight: contentHeight
@@ -82,7 +82,7 @@ StyledMouseArea {
 
                     StyledText {
                         text: Bluetooth.defaultAdapter ? (Bluetooth.defaultAdapter.enabled ? "Enabled" : "Disabled") : "Not Available"
-                        color: ShellSettings.colors.active.darker(1.5)
+                        color: ShellSettings.colors.foreground.darker(1.5)
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                         Layout.preferredHeight: contentHeight

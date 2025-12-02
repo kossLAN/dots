@@ -9,7 +9,7 @@ Slider {
     id: slider
     implicitHeight: 7
 
-    property var accentColor: ShellSettings.colors.active
+    property var accentColor: ShellSettings.colors.foreground
     property real handleHeight: 16 
 
     background: Rectangle {
@@ -17,7 +17,7 @@ Slider {
         width: slider.availableWidth
         height: slider.implicitHeight
         color: "transparent"
-        border.color: ShellSettings.colors.active_translucent
+        border.color: ShellSettings.colors.trim
         border.width: 1
         radius: 5
         anchors.verticalCenter: parent.verticalCenter
@@ -43,7 +43,7 @@ Slider {
             id: fill
             width: slider.handle.width / 2 + slider.visualPosition * (sliderContainer.width - slider.handle.width)
             height: sliderContainer.height
-            color: ShellSettings.colors.active_translucent
+            color: ShellSettings.colors.trim
         }
     }
 

@@ -9,8 +9,8 @@ Item {
     property var padding: 0
     property var radius: 20
     property var activeRectangle: true
-    property var color: ShellSettings.colors.inactive_translucent
-    property var activeColor: ShellSettings.colors.active_translucent
+    property var color: ShellSettings.colors.foregroundDim
+    property var activeColor: ShellSettings.colors.trim
     signal clicked
 
     implicitWidth: implicitSize
@@ -18,7 +18,7 @@ Item {
 
     Rectangle {
         id: iconBackground
-        color: ShellSettings.colors.active_translucent
+        color: ShellSettings.colors.trim
         radius: root.radius
         visible: iconButton.containsMouse && root.activeRectangle
         anchors.fill: parent

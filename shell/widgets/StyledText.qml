@@ -3,6 +3,6 @@ import qs
 
 Text {
     id: root
-    color: ShellSettings.colors.active 
+    color: ShellSettings.colors.foreground 
     renderType: Text.NativeRendering
 }
