@@ -19,11 +19,11 @@ StyledMouseArea {
     IconImage {
         id: icon
         anchors.fill: parent
-        source: if (root.sink.audio.muted) {
+        source: if (root.sink?.audio?.muted) {
             return "image://icon/audio-volume-muted";
-        } else if (root.sink.audio.volume > 0.66) {
+        } else if (root.sink?.audio && root.sink.audio.volume > 0.66) {
             return "image://icon/audio-volume-high";
-        } else if (root.sink.audio.volume > 0.33) {
+        } else if (root.sink?.audio && root.sink.audio.volume > 0.33) {
             return "image://icon/audio-volume-medium";
         } else {
             return "image://icon/audio-volume-low";
@@ -59,15 +59,20 @@ StyledMouseArea {
                 Layout.preferredHeight: menu.entryHeight
 
                 leftWidget: StyledMouseArea {
-                    onClicked: defaultCard.node.audio.muted = !defaultCard.node.audio.muted
+                    enabled: defaultCard.node?.audio !== null && defaultCard.node?.audio !== undefined
+                    onClicked: {
+                        if (defaultCard.node?.audio) {
+                            defaultCard.node.audio.muted = !defaultCard.node.audio.muted;
+                        }
+                    }
 
                     IconImage {
                         anchors.fill: parent
-                        source: if (root.sink.audio.muted) {
+                        source: if (root.sink?.audio?.muted) {
                             return "image://icon/audio-volume-muted";
-                        } else if (root.sink.audio.volume > 0.66) {
+                        } else if (root.sink?.audio && root.sink.audio.volume > 0.66) {
                             return "image://icon/audio-volume-high";
-                        } else if (root.sink.audio.volume > 0.33) {
+                        } else if (root.sink?.audio && root.sink.audio.volume > 0.33) {
                             return "image://icon/audio-volume-medium";
                         } else {
                             return "image://icon/audio-volume-low";
@@ -106,7 +111,12 @@ StyledMouseArea {
                     required property PwLinkGroup modelData
 
                     leftWidget: StyledMouseArea {
-                        onClicked: appCard.node.audio.muted = !appCard.node.audio.muted
+                        enabled: appCard.node?.audio !== null && appCard.node?.audio !== undefined
+                        onClicked: {
+                            if (appCard.node?.audio) {
+                                appCard.node.audio.muted = !appCard.node.audio.muted;
+                            }
+                        }
 
                         IconImage {
                             id: appIcon
@@ -125,7 +135,7 @@ StyledMouseArea {
                         MultiEffect {
                             source: appIcon
                             anchors.fill: appIcon
-                            saturation: appCard.node.audio.muted ? -1.0 : 0.0
+                            saturation: appCard.node?.audio?.muted ? -1.0 : 0.0
                         }
                     }
                 }

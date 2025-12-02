@@ -16,7 +16,7 @@ Item {
         anchors.fill: parent
 
         IconImage {
-            source: Quickshell.iconPath(root.device.icon)
+            source: root.device && root.device.icon ? Quickshell.iconPath(root.device.icon) : ""
             Layout.preferredWidth: this.height
             Layout.fillHeight: true
             Layout.margins: 6
@@ -29,7 +29,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
 
             StyledText {
-                text: root.device.name
+                text: root.device && root.device.name ? root.device.name : "Unknown Device"
                 color: ShellSettings.colors.active
                 elide: Text.ElideRight
                 Layout.fillWidth: true
@@ -37,7 +37,7 @@ Item {
             }
 
             StyledText {
-                text: root.device.connected ? "Connected" : "Disconnected"
+                text: root.device ? (root.device.connected ? "Connected" : "Disconnected") : "Unknown"
                 color: ShellSettings.colors.active.darker(1.5)
                 elide: Text.ElideRight
                 Layout.fillWidth: true
@@ -54,18 +54,21 @@ Item {
             StyledMouseArea {
                 Layout.preferredWidth: this.height
                 Layout.fillHeight: true
+                enabled: root.device !== null
 
                 onClicked: {
-                    if (root.device.connected) {
-                        root.device.disconnect();
-                    } else {
-                        root.device.connect();
+                    if (root.device) {
+                        if (root.device.connected) {
+                            root.device.disconnect();
+                        } else {
+                            root.device.connect();
+                        }
                     }
                 }
 
                 IconImage {
                     source: {
-                        if (root.device.connected) {
+                        if (root.device && root.device.connected) {
                             return "image://icon/network-disconnect-symbolic";
                         } else {
                             return "image://icon/network-connect-symbolic";
@@ -80,7 +83,12 @@ Item {
             }
 
             StyledMouseArea {
-                onClicked: root.device.forget()
+                onClicked: {
+                    if (root.device) {
+                        root.device.forget();
+                    }
+                }
+                enabled: root.device !== null
                 Layout.preferredWidth: this.height
                 Layout.fillHeight: true
 

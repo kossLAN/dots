@@ -18,7 +18,7 @@ StyledMouseArea {
     IconImage {
         anchors.fill: parent
         source: {
-            if (Bluetooth.defaultAdapter.enabled) {
+            if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled) {
                 return "image://icon/bluetooth-online";
             } else {
                 return "image://icon/bluetooth-offline";
@@ -58,7 +58,7 @@ StyledMouseArea {
                     // Layout.margins: 5
 
                     source: {
-                        if (Bluetooth.defaultAdapter.enabled) {
+                        if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled) {
                             return "image://icon/bluetooth-online";
                         } else {
                             return "image://icon/bluetooth-offline";
@@ -73,7 +73,7 @@ StyledMouseArea {
                     Layout.alignment: Qt.AlignVCenter
 
                     StyledText {
-                        text: `Bluetooth(${Bluetooth.defaultAdapter.adapterId})`
+                        text: Bluetooth.defaultAdapter ? `Bluetooth(${Bluetooth.defaultAdapter.adapterId})` : "Bluetooth (No Adapter)"
                         color: ShellSettings.colors.active
                         elide: Text.ElideRight
                         Layout.fillWidth: true
@@ -81,7 +81,7 @@ StyledMouseArea {
                     }
 
                     StyledText {
-                        text: Bluetooth.defaultAdapter.enabled ? "Enabled" : "Disabled"
+                        text: Bluetooth.defaultAdapter ? (Bluetooth.defaultAdapter.enabled ? "Enabled" : "Disabled") : "Not Available"
                         color: ShellSettings.colors.active.darker(1.5)
                         elide: Text.ElideRight
                         Layout.fillWidth: true
@@ -98,14 +98,17 @@ StyledMouseArea {
                     StyledMouseArea {
                         Layout.preferredWidth: this.height
                         Layout.fillHeight: true
+                        enabled: Bluetooth.defaultAdapter !== null
 
                         onClicked: {
-                            Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled;
+                            if (Bluetooth.defaultAdapter) {
+                                Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled;
+                            }
                         }
 
                         IconImage {
                             source: {
-                                if (Bluetooth.defaultAdapter.enabled) {
+                                if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled) {
                                     return "image://icon/bluetooth-offline";
                                 } else {
                                     return "image://icon/bluetooth-online";
@@ -122,9 +125,12 @@ StyledMouseArea {
                     StyledMouseArea {
                         Layout.preferredWidth: this.height
                         Layout.fillHeight: true
+                        enabled: Bluetooth.defaultAdapter !== null
 
                         onClicked: {
-                            Bluetooth.defaultAdapter.discovering = !Bluetooth.defaultAdapter.discovering;
+                            if (Bluetooth.defaultAdapter) {
+                                Bluetooth.defaultAdapter.discovering = !Bluetooth.defaultAdapter.discovering;
+                            }
                         }
 
                         IconImage {
@@ -132,7 +138,7 @@ StyledMouseArea {
                             transformOrigin: Item.Center
 
                             source: {
-                                if (Bluetooth.defaultAdapter.discovering) {
+                                if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.discovering) {
                                     return "image://icon/reload";
                                 } else {
                                     return "image://icon/cm_search";
@@ -149,7 +155,7 @@ StyledMouseArea {
                                 to: 360
                                 duration: 900
                                 loops: Animation.Infinite
-                                running: Bluetooth.defaultAdapter.discovering
+                                running: Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.discovering
                                 onRunningChanged: {
                                     if (!running)
                                         searchIcon.rotation = 0;
@@ -169,7 +175,7 @@ StyledMouseArea {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: {
-                    const entryHeight = Math.min(8, Bluetooth.devices.values.length);
+                    const entryHeight = Math.min(8, Bluetooth.devices && Bluetooth.devices.values ? Bluetooth.devices.values.length : 0);
 
                     return entryHeight * (menu.entryHeight + appList.spacing);
                 }

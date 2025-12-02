@@ -12,7 +12,7 @@ Loader {
     active: node != null
 
     required property PwNode node
-    property string label: node.nickname === "" ? node.description : node.nickname
+    property string label: node ? (node.nickname === "" ? node.description : node.nickname) : ""
 
     property Component leftWidget
 
@@ -49,11 +49,11 @@ Loader {
                 StyledSlider {
                     implicitHeight: 7
                     handleHeight: 12
-                    value: root.node.audio.volume ?? 0
+                    value: root.node?.audio?.volume ?? 0
 
                     onValueChanged: {
                         // only allow changes when the node is ready other wise you will combust
-                        if (!root.node.ready)
+                        if (!root.node || !root.node.audio || !root.node.ready)
                             return;
 
                         root.node.audio.volume = value;
