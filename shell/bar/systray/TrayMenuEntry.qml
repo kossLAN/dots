@@ -140,7 +140,7 @@ ColumnLayout {
 
     WrapperRectangle {
         id: subTrayMenu
-        color: ShellSettings.colors.surface_container_translucent
+        color: ShellSettings.colors.surface_container
         radius: 8
         visible: false
         

@@ -10,42 +10,30 @@ Singleton {
 
     property QtObject colors: QtObject {
         // Background colors - for surfaces and overlays
-        property color background: Qt.rgba(0.0, 0.0, 0.0, 1.0)
-        property color backgroundTranslucent: Qt.rgba(0.0, 0.0, 0.0, 0.15)
-        property color panel: Qt.rgba(0.25, 0.25, 0.25, 1.0)
-        property color panelTranslucent: Qt.rgba(0.25, 0.25, 0.25, 0.25)
+        property color background: Qt.rgba(0.0, 0.0, 0.0, 0.15)
 
         // Foreground colors - for text, icons, and UI elements
         property color foreground: Qt.rgba(1.0, 1.0, 1.0, 1.0)
-        property color foregroundTranslucent: Qt.rgba(1.0, 1.0, 1.0, 0.15)
         property color foregroundDim: Qt.rgba(0.25, 0.25, 0.25, 1.0)
-        property color foregroundDimTranslucent: Qt.rgba(0.25, 0.25, 0.25, 0.15)
 
         // Accent & highlight colors - for interactive and focused elements
-        property color accent: Qt.rgba(1.0, 1.0, 1.0, 1.0)
-        property color accentTranslucent: Qt.rgba(1.0, 1.0, 1.0, 0.15)
+        property color accent: Qt.rgba(1.0, 1.0, 1.0, 0.15)
         property color highlight: Qt.rgba(1.0, 1.0, 1.0, 0.85)
+        property color trim: Qt.rgba(1.0, 1.0, 1.0, 0.15)
 
         // Border colors
         property color border: Qt.rgba(1.0, 1.0, 1.0, 1.0)
         property color borderSubtle: Qt.rgba(1.0, 1.0, 1.0, 0.05)
 
-        // Opacity levels - for custom color combinations
-        property real opacityFull: 1.0
-        property real opacityHigh: 0.85
-        property real opacityMedium: 0.25
-        property real opacityLow: 0.15
-        property real opacityMinimal: 0.05
-
         // Legacy compatibility aliases (deprecated - use new names above)
-        property color surface: panel
-        property color surface_translucent: backgroundTranslucent
-        property color surface_container: panel
-        property color surface_container_translucent: panelTranslucent
+        property color surface: background
+        property color surface_translucent: background
+        property color surface_container: background
+        property color surface_container_translucent: background
         property color active: foreground
-        property color active_translucent: foregroundTranslucent
+        property color active_translucent: trim 
         property color inactive: foregroundDim
-        property color inactive_translucent: foregroundDimTranslucent
+        property color inactive_translucent: foregroundDim
         property color border_translucent: borderSubtle
     }
 

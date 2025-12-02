@@ -5,8 +5,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
-import "../widgets/" as Widgets
-import "../"
+import qs
 
 Singleton {
     PersistentProperties {
@@ -35,7 +34,7 @@ Singleton {
         activeAsync: persist.windowOpen
 
         FloatingWindow {
-            color: ShellSettings.colors["surface"]
+            color: ShellSettings.colors["background"]
             implicitWidth: 840
             implicitHeight: 845
 
@@ -73,13 +72,6 @@ Singleton {
                     readonly property Item currentItem: children[currentIndex]
 
                     WallpaperPicker {}
-                }
-
-                Widgets.TopBar {
-                    id: topBar
-                    model: ["headphones", "tune"]
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 35
                 }
             }
         }

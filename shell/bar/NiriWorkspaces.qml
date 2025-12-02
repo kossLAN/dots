@@ -15,6 +15,14 @@ RowLayout {
         property var workspaces: []
         property int activeWorkspaceId: -1
         property string socketPath: Quickshell.env("NIRI_SOCKET")
+        property bool initialized: false
+    }
+
+    Component.onCompleted: {
+        // Request initial workspaces on startup
+        if (niriState.socketPath !== "") {
+            querySocket.requestWorkspaces()
+        }
     }
 
     // Event stream socket for workspace updates
@@ -38,7 +46,7 @@ RowLayout {
 
         onConnectedChanged: {
             if (connected) {
-                // Request event stream
+                // Subscribe to event stream
                 write('"EventStream"\n')
                 flush()
             }
@@ -96,9 +104,16 @@ RowLayout {
 
         parser: SplitParser {
             onRead: data => {
-                // We don't need to process responses for workspace switches
-                // but we can log them for debugging if needed
-                // console.log("Niri query response:", data)
+                if (data.trim() === "") return
+
+                try {
+                    let response = JSON.parse(data)
+                    if (response.Ok && response.Ok.Workspaces) {
+                        eventSocket.updateWorkspaces(response.Ok.Workspaces)
+                    }
+                } catch (e) {
+                    console.error("Failed to parse Niri query response:", e, data)
+                }
             }
         }
 
