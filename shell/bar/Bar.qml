@@ -51,6 +51,12 @@ Variants {
                     Layout.preferredWidth: height
                 }
 
+                NiriWorkspaces {
+                    screen: root.screen
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: height
+                }
+
                 // ActiveWindow {
                 //     id: activeWindow
                 //     Layout.preferredWidth: 400

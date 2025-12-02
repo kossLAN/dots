@@ -21,38 +21,39 @@ StyledMouseArea {
 
     // Helper function to format time in seconds to human readable
     function formatTime(seconds) {
-        if (seconds <= 0 || !isFinite(seconds)) return "calculating..."
+        if (seconds <= 0 || !isFinite(seconds))
+            return "calculating...";
 
-        const hours = Math.floor(seconds / 3600)
-        const minutes = Math.floor((seconds % 3600) / 60)
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
 
         if (hours > 0) {
-            return hours + "h " + minutes + "m"
+            return hours + "h " + minutes + "m";
         } else {
-            return minutes + "m"
+            return minutes + "m";
         }
     }
 
     // Helper function to get battery color based on percentage and state
     function getBatteryColor() {
-        const device = UPower.displayDevice
-        const percentage = device.percentage
+        const device = UPower.displayDevice;
+        const percentage = device.percentage;
 
         // Charging - use a blue/cyan color
         if (device.state === 1) { // Charging state
-            return ShellSettings.colors.accent
+            return ShellSettings.colors.accent;
         }
 
         // Critical battery - red
         if (percentage < 0.10) {
-            return "#ef5350"
-        }
+            return "#ef5350";
+        } else
         // Low battery - orange
-        else if (percentage < 0.20) {
-            return "#ff9800"
+        if (percentage < 0.20) {
+            return "#ff9800";
         }
         // Normal - use surface color
-        return ShellSettings.colors.surface
+        return ShellSettings.colors.surface;
     }
 
     Item {
@@ -98,8 +99,14 @@ StyledMouseArea {
             SequentialAnimation on opacity {
                 running: UPower.displayDevice.state === 1 // Charging
                 loops: Animation.Infinite
-                NumberAnimation { to: 0.5; duration: 1000 }
-                NumberAnimation { to: 1.0; duration: 1000 }
+                NumberAnimation {
+                    to: 0.5
+                    duration: 1000
+                }
+                NumberAnimation {
+                    to: 1.0
+                    duration: 1000
+                }
             }
         }
     }
@@ -132,10 +139,6 @@ StyledMouseArea {
                     font.pixelSize: 14
                 }
 
-                Separator {
-                    Layout.fillWidth: true
-                }
-
                 // Percentage and state
                 RowLayout {
                     Layout.fillWidth: true
@@ -162,15 +165,23 @@ StyledMouseArea {
 
                     StyledText {
                         text: {
-                            switch(UPower.displayDevice.state) {
-                                case 0: return "Unknown"
-                                case 1: return "Charging"
-                                case 2: return "Discharging"
-                                case 3: return "Empty"
-                                case 4: return "Fully charged"
-                                case 5: return "Pending charge"
-                                case 6: return "Pending discharge"
-                                default: return "Unknown"
+                            switch (UPower.displayDevice.state) {
+                            case 0:
+                                return "Unknown";
+                            case 1:
+                                return "Charging";
+                            case 2:
+                                return "Discharging";
+                            case 3:
+                                return "Empty";
+                            case 4:
+                                return "Fully charged";
+                            case 5:
+                                return "Pending charge";
+                            case 6:
+                                return "Pending discharge";
+                            default:
+                                return "Unknown";
                             }
                         }
                         color: UPower.displayDevice.state === 1 ? ShellSettings.colors.accent : ShellSettings.colors.foreground
@@ -218,8 +229,7 @@ StyledMouseArea {
                     }
 
                     StyledText {
-                        text: UPower.displayDevice.energy.toFixed(2) + " Wh / " +
-                              UPower.displayDevice.energyCapacity.toFixed(2) + " Wh"
+                        text: UPower.displayDevice.energy.toFixed(2) + " Wh / " + UPower.displayDevice.energyCapacity.toFixed(2) + " Wh"
                         font.pixelSize: 12
                     }
                 }
@@ -252,10 +262,13 @@ StyledMouseArea {
                     StyledText {
                         text: Math.round(UPower.displayDevice.healthPercentage * 100) + "%"
                         color: {
-                            const health = UPower.displayDevice.healthPercentage
-                            if (health > 0.8) return "#4caf50"
-                            else if (health > 0.6) return "#ff9800"
-                            else return "#ef5350"
+                            const health = UPower.displayDevice.healthPercentage;
+                            if (health > 0.8)
+                                return "#4caf50";
+                            else if (health > 0.6)
+                                return "#ff9800";
+                            else
+                                return "#ef5350";
                         }
                     }
                 }
@@ -277,10 +290,6 @@ StyledMouseArea {
                         Layout.fillWidth: true
                     }
                 }
-            }
-
-            Separator {
-                Layout.fillWidth: true
             }
 
             // Power profile section
