@@ -6,6 +6,7 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import qs
+import qs.widgets
 
 Singleton {
     PersistentProperties {
@@ -44,12 +45,12 @@ Singleton {
             // }
 
             maximumSize {
-                width: 840
+                width: 880
                 height: 845
             }
 
             minimumSize {
-                width: 840
+                width: 880
                 height: 845
             }
 
@@ -59,19 +60,88 @@ Singleton {
                 }
             }
 
-            ColumnLayout {
-                spacing: 20
+            RowLayout {
+                id: layoutRoot
+                spacing: 2
                 anchors.fill: parent
 
-                StackLayout {
-                    id: page
-                    currentIndex: topBar.currentIndex
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: currentItem ? currentItem.implicitHeight : 0
+                property var pageDefinitions: [({
+                            title: "Wallpapers",
+                            description: "Pick a wallpaper"
+                        }), ({
+                            title: "Colors",
+                            description: "Adjust the palette"
+                        })]
 
-                    readonly property Item currentItem: children[currentIndex]
+                property int currentPageIndex: 0
+
+                
+                Rectangle {
+                    color: ShellSettings.colors.background
+                    Layout.preferredWidth: 175
+                    Layout.fillHeight: true
+
+                    ColumnLayout {
+                        spacing: 4
+
+                        anchors {
+                            fill: parent 
+                            margins: 4
+                        }
+
+                        // change to listview
+                        StyledListView {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            clip: true
+                            spacing: 4
+                            model: layoutRoot.pageDefinitions.length
+
+                            delegate: Rectangle {
+                                required property int index
+                                readonly property bool selected: layoutRoot.currentPageIndex === index
+                                readonly property var pageInfo: layoutRoot.pageDefinitions[index]
+
+                                // Layout.fillWidth: true
+                                
+                                implicitHeight: 24
+                                implicitWidth: ListView.view.width 
+                                // make sure children do NOT request to fill extra height:
+                                // remove any `Layout.fillHeight: true` from the delegate
+
+                                radius: 6
+                                color: selected ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.04)
+
+                                Text {
+                                    text: pageInfo.title
+                                    color: ShellSettings.colors.foreground
+                                    font.pixelSize: 12
+                                    anchors {
+                                        verticalCenter: parent.verticalCenter
+                                        left: parent.left
+                                        leftMargin: 8
+                                    }
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: layoutRoot.currentPageIndex = index
+                                    hoverEnabled: true
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                StackLayout {
+                    id: pageStack
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    currentIndex: layoutRoot.currentPageIndex
 
                     WallpaperPicker {}
+                    ColorSettings {}
                 }
             }
         }
