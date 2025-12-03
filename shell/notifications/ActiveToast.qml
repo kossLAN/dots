@@ -36,14 +36,17 @@ Item {
 
                 onTriggered: {
                     var currentTime = Date.now();
+
                     if (timerController.lastTime > 0) {
                         var delta = currentTime - timerController.lastTime;
                         timerController.remainingTime -= delta;
+
                         if (timerController.remainingTime <= 0) {
                             timerController.isRunning = false;
                             root.expired(root.notification);
                         }
                     }
+
                     timerController.lastTime = currentTime;
                 }
             }

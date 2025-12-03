@@ -6,12 +6,12 @@ import Qt5Compat.GraphicalEffects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Quickshell.Wayland
-import Quickshell.Widgets
-import "../widgets" as Widgets
-import ".."
+import qs.widgets
+import qs
 
 Singleton {
+    property alias notificationsOpen: persist.notificationsOpen
+
     PersistentProperties {
         id: persist
         property bool notificationsOpen: false
@@ -40,215 +40,242 @@ Singleton {
 
         PanelWindow {
             id: notificationPanel
-            color: "red"
+            color: "transparent"
             implicitWidth: 500
-            exclusionMode: ExclusionMode.Ignore
+            exclusionMode: ExclusionMode.Normal
             // WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
             anchors {
                 top: true
                 right: true
                 bottom: true
             }
 
-            ColumnLayout {
-                spacing: 10
+            // WrapperRectangle {
+            //     // visible: toastList.count > 0
+            //     color: ShellSettings.colors.background
+            //     margin: 8
+
+            ListView {
+                id: toastList
+                clip: true
+                spacing: 5
 
                 anchors {
                     fill: parent
-                    margins: 10
+                    margins: 4
                 }
 
-                Text {
-                    text: "Notifications: " + toastList.count
-                    Layout.fillWidth: true
-                }
+                model: ScriptModel {
+                    values: {
+                        const notifications = Notifications.notificationServer.trackedNotifications.values.concat();
 
-                ListView {
-                    id: toastList
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    clip: true
-                    spacing: 5
+                        const groupedByApp = notifications.reduce((groups, notification) => {
+                            const appName = notification.appName;
 
-                    model: ScriptModel {
-                        values: {
-                            const notifications = Notifications.notificationServer.trackedNotifications.values.concat();
-
-                            const groupedByApp = notifications.reduce((groups, notification) => {
-                                const appName = notification.appName;
-
-                                if (!groups[appName]) {
-                                    groups[appName] = {
-                                        appName: appName,
-                                        summaryGroups: {}
-                                    };
-                                }
-
-                                const summary = notification.summary;
-                                const image = notification.image;
-
-                                if (!groups[appName].summaryGroups[summary]) {
-                                    groups[appName].summaryGroups[summary] = {
-                                        summary: summary,
-                                        image: image,
-                                        notifications: []
-                                    };
-                                }
-
-                                groups[appName].summaryGroups[summary].notifications.push(notification);
-
-                                return groups;
-                            }, {});
-
-                            return Object.values(groupedByApp).map(appGroup => {
-                                return {
-                                    appName: appGroup.appName,
-                                    summaryGroups: Object.values(appGroup.summaryGroups)
+                            if (!groups[appName]) {
+                                groups[appName] = {
+                                    appName: appName,
+                                    summaryGroups: {}
                                 };
-                            });
-                        }
+                            }
+
+                            const summary = notification.summary;
+                            const image = notification.image;
+                            const timeTracked = notification.timeTracked;
+
+                            if (!groups[appName].summaryGroups[summary]) {
+                                groups[appName].summaryGroups[summary] = {
+                                    summary: summary,
+                                    image: image,
+                                    timeTracked: timeTracked,
+                                    notifications: []
+                                };
+                            }
+
+                            groups[appName].summaryGroups[summary].notifications.push(notification);
+
+                            return groups;
+                        }, {});
+
+                        return Object.values(groupedByApp).map(appGroup => {
+                            return {
+                                appName: appGroup.appName,
+                                summaryGroups: Object.values(appGroup.summaryGroups)
+                            };
+                        });
                     }
+                }
 
-                    delegate: Item {
-                        id: toastWrapper
-                        required property var modelData
-                        width: ListView.view.width
-                        height: toastContent.height
+                delegate: Item {
+                    id: toastWrapper
+                    required property var modelData
+                    width: ListView.view.width
+                    height: toastContent.height
 
-                        Item {
-                            id: toastContent
-                            width: parent.width
-                            height: contentColumn.implicitHeight
-                            anchors.centerIn: parent
+                    Item {
+                        id: toastContent
+                        width: parent.width
+                        height: contentColumn.implicitHeight
+                        anchors.centerIn: parent
 
-                            ColumnLayout {
-                                id: contentColumn
-                                spacing: 2
+                        ColumnLayout {
+                            id: contentColumn
+                            spacing: 2
 
-                                anchors {
-                                    fill: parent
-                                    margins: 0
-                                }
+                            anchors {
+                                fill: parent
+                                margins: 0
+                            }
 
-                                // Notification content
-                                Repeater {
-                                    model: toastWrapper.modelData.summaryGroups
+                            // Notification content
+                            Repeater {
+                                model: toastWrapper.modelData.summaryGroups
 
-                                    delegate: Rectangle {
-                                        id: summaryGroup
-                                        required property var modelData
-                                        required property int index
-                                        Layout.fillWidth: true
-                                        Layout.preferredHeight: groupContent.implicitHeight + 24
-                                        color: ShellSettings.colors["surface_container"]
-                                        antialiasing: true
+                                delegate: StyledRectangle {
+                                    id: summaryGroup
+                                    required property var modelData
+                                    required property int index
 
-                                        topLeftRadius: index === 0 ? 25 : 5
-                                        topRightRadius: index === 0 ? 25 : 5
-                                        bottomLeftRadius: index === (toastWrapper.modelData.summaryGroups.length - 1) ? 25 : 5
-                                        bottomRightRadius: index === (toastWrapper.modelData.summaryGroups.length - 1) ? 25 : 5
+                                    topLeftRadius: index === 0 ? 12 : 6
+                                    topRightRadius: index === 0 ? 12 : 6
+                                    bottomLeftRadius: index === (toastWrapper.modelData.summaryGroups.length - 1) ? 12 : 6
+                                    bottomRightRadius: index === (toastWrapper.modelData.summaryGroups.length - 1) ? 12 : 6
 
-                                        ColumnLayout {
-                                            id: groupContent
-                                            spacing: 8
+                                    Layout.fillWidth: true
+                                    Layout.preferredHeight: groupContent.implicitHeight + 24
 
-                                            anchors {
-                                                fill: parent
-                                                margins: 12
-                                            }
+                                    ColumnLayout {
+                                        id: groupContent
+                                        spacing: 8
 
-                                            RowLayout {
-                                                spacing: 12
-                                                Layout.fillWidth: true
+                                        anchors {
+                                            fill: parent
+                                            margins: 12
+                                        }
+
+                                        RowLayout {
+                                            spacing: 12
+                                            Layout.fillWidth: true
+                                            Layout.alignment: Qt.AlignTop
+
+                                            ColumnLayout {
                                                 Layout.alignment: Qt.AlignTop
+                                                spacing: 0
 
-                                                ColumnLayout {
-                                                    Layout.alignment: Qt.AlignTop
-                                                    spacing: 0
+                                                Item {
+                                                    id: imageContainer
+                                                    Layout.preferredWidth: 36
+                                                    Layout.preferredHeight: 36
+                                                    visible: summaryGroup.modelData.image != ""
+                                                    antialiasing: true
 
-                                                    Item {
-                                                        id: imageContainer
-                                                        Layout.preferredWidth: 36
-                                                        Layout.preferredHeight: 36
-                                                        visible: summaryGroup.modelData.image != ""
-                                                        antialiasing: true
+                                                    Image {
+                                                        id: notificationImage
+                                                        anchors.fill: parent
+                                                        source: summaryGroup.modelData.image
+                                                        fillMode: Image.PreserveAspectCrop
 
-                                                        Image {
-                                                            id: notificationImage
-                                                            anchors.fill: parent
-                                                            source: summaryGroup.modelData.image
-                                                            fillMode: Image.PreserveAspectCrop
-
-                                                            layer.enabled: true
-                                                            layer.effect: OpacityMask {
-                                                                maskSource: Rectangle {
-                                                                    width: notificationImage.width
-                                                                    height: notificationImage.height
-                                                                    radius: notificationImage.width / 2
-                                                                    antialiasing: true
-                                                                }
+                                                        layer.enabled: true
+                                                        layer.effect: OpacityMask {
+                                                            maskSource: Rectangle {
+                                                                width: notificationImage.width
+                                                                height: notificationImage.height
+                                                                radius: notificationImage.width / 2
+                                                                antialiasing: true
                                                             }
                                                         }
                                                     }
                                                 }
+                                            }
 
-                                                // Content column
-                                                ColumnLayout {
+                                            // Content column
+                                            ColumnLayout {
+                                                Layout.fillWidth: true
+                                                Layout.alignment: Qt.AlignTop
+                                                spacing: 8
+
+                                                // Header row
+                                                RowLayout {
                                                     Layout.fillWidth: true
-                                                    Layout.alignment: Qt.AlignTop
                                                     spacing: 8
 
-                                                    // Header row
-                                                    RowLayout {
-                                                        Layout.fillWidth: true
-                                                        spacing: 8
-
-                                                        Text {
-                                                            text: summaryGroup.modelData.summary
-                                                            font.pixelSize: 16
-                                                            font.weight: Font.Medium
-                                                            color: ShellSettings.colors["on_surface"]
-                                                            wrapMode: Text.WordWrap
-                                                            maximumLineCount: 2
-                                                            elide: Text.ElideRight
-                                                        }
-
-                                                        Widgets.Separator {}
-
-                                                        Text {
-                                                            text: "now"
-                                                            font.pixelSize: 14
-                                                            color: ShellSettings.colors["on_surface_variant"]
-                                                            Layout.alignment: Qt.AlignVCenter
-                                                        }
+                                                    Text {
+                                                        text: summaryGroup.modelData.summary
+                                                        font.pixelSize: 16
+                                                        font.weight: Font.Medium
+                                                        color: ShellSettings.colors.foreground
+                                                        wrapMode: Text.WordWrap
+                                                        maximumLineCount: 2
+                                                        elide: Text.ElideRight
                                                     }
 
-                                                    // Notification bodies
-                                                    ColumnLayout {
-                                                        Layout.fillWidth: true
-                                                        spacing: 2
+                                                    Text {
+                                                        id: timeText
+                                                        color: ShellSettings.colors.foreground.darker(2)
+                                                        font.pixelSize: 14
+                                                        Layout.alignment: Qt.AlignVCenter
 
-                                                        Repeater {
-                                                            model: summaryGroup.modelData.notifications
+                                                        // poll every minute for updated time
+                                                        Timer {
+                                                            interval: 60000
+                                                            running: true
+                                                            repeat: true
+                                                            onTriggered: timeText.text = timeText.getTimeAgoText();
+                                                        }
 
-                                                            delegate: ColumnLayout {
-                                                                id: bodyDelegate
-                                                                required property var modelData
-                                                                required property int index
+                                                        function getTimeAgoText() {
+                                                            const timeTracked = summaryGroup.modelData.timeTracked;
+
+                                                            if (timeTracked == undefined)
+                                                                return "null";
+
+                                                            const currentTime = new Date();
+                                                            const diffMs = currentTime - timeTracked;
+
+                                                            const diffSeconds = Math.floor(diffMs / 1000);
+                                                            const diffMinutes = Math.floor(diffSeconds / 60);
+                                                            const diffHours = Math.floor(diffMinutes / 60);
+                                                            const diffDays = Math.floor(diffHours / 24);
+
+                                                            if (diffDays > 0)
+                                                                return `${diffDays}d ago`;
+                                                            if (diffHours > 0)
+                                                                return `${diffHours}h ago`;
+                                                            if (diffMinutes > 0)
+                                                                return `${diffMinutes}m ago`;
+                                                            return "now";
+                                                        }
+
+                                                        text: getTimeAgoText()
+                                                    }
+                                                }
+
+                                                // Notification bodies
+                                                ColumnLayout {
+                                                    Layout.fillWidth: true
+                                                    spacing: 2
+
+                                                    Repeater {
+                                                        model: summaryGroup.modelData.notifications
+
+                                                        delegate: ColumnLayout {
+                                                            id: bodyDelegate
+                                                            required property var modelData
+                                                            required property int index
+                                                            Layout.fillWidth: true
+                                                            spacing: 0
+
+                                                            Text {
                                                                 Layout.fillWidth: true
-                                                                spacing: 0
-
-                                                                Text {
-                                                                    Layout.fillWidth: true
-                                                                    text: bodyDelegate.modelData.body
-                                                                    font.pixelSize: 14
-                                                                    color: ShellSettings.colors["on_surface_variant"]
-                                                                    wrapMode: Text.WordWrap
-                                                                    maximumLineCount: 4
-                                                                    elide: Text.ElideRight
-                                                                    lineHeight: 1.3
-                                                                    visible: bodyDelegate.modelData.body != ""
-                                                                }
+                                                                text: bodyDelegate.modelData.body
+                                                                font.pixelSize: 14
+                                                                color: ShellSettings.colors.foreground
+                                                                wrapMode: Text.WordWrap
+                                                                maximumLineCount: 4
+                                                                elide: Text.ElideRight
+                                                                lineHeight: 1.3
+                                                                visible: bodyDelegate.modelData.body != ""
                                                             }
                                                         }
                                                     }

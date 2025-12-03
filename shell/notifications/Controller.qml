@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import ".."
 
 Scope {
     id: root
@@ -12,7 +11,12 @@ Scope {
         target: Notifications.notificationServer
 
         function onNotification(notification) {
-            notificationLoader.item.visible = true;
+            notification.timeTracked = new Date();
+            notification.toastSuppressed = NotificationCenter.notificationsOpen;
+
+            if (!notification.toastSuppressed) {
+                notificationLoader.item.visible = true;
+            }
         }
     }
 
@@ -22,6 +26,10 @@ Scope {
 
         PanelWindow {
             id: notificationWindow
+            color: "transparent"
+            implicitWidth: 500
+            exclusionMode: ExclusionMode.Normal
+
             property var visibleCount: {
                 let count = 0;
 
@@ -37,11 +45,7 @@ Scope {
             }
 
             onVisibleCountChanged: visible = visibleCount != 0
-
-            color: "transparent"
-            implicitWidth: 500 
-            visible: false
-            exclusionMode: ExclusionMode.Normal
+            visible: true
 
             mask: Region {
                 item: notifLayout
@@ -55,7 +59,7 @@ Scope {
 
             ColumnLayout {
                 id: notifLayout
-                spacing: 15
+                spacing: 4
 
                 anchors {
                     top: parent.top
@@ -66,8 +70,11 @@ Scope {
 
                 Repeater {
                     id: toastList
+
                     model: ScriptModel {
-                        values: Notifications.notificationServer.trackedNotifications.values.concat()
+                        values: Notifications.notificationServer.trackedNotifications.values
+                            .filter(notification => !notification.toastSuppressed)
+                            .concat()
                     }
 
                     delegate: ActiveToast {
