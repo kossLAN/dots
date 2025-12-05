@@ -9,17 +9,15 @@ import qs.widgets
 import qs.bar
 import qs
 
-// todo: redo the tray icon handling
 StyledMouseArea {
     id: root
-    implicitWidth: height + 8 // for margin
+    implicitWidth: height + 8
     visible: UPower.displayDevice.isLaptopBattery
     onClicked: showMenu = !showMenu
 
     required property var bar
     property bool showMenu: false
 
-    // Helper function to format time in seconds to human readable
     function formatTime(seconds) {
         if (seconds <= 0 || !isFinite(seconds))
             return "calculating...";
@@ -39,21 +37,13 @@ StyledMouseArea {
         const device = UPower.displayDevice;
         const percentage = device.percentage;
 
-        // Charging - use a blue/cyan color
-        if (device.state === 1) { // Charging state
-            return ShellSettings.colors.accent;
-        }
-
-        // Critical battery - red
         if (percentage < 0.10) {
             return "#ef5350";
-        } else
-        // Low battery - orange
-        if (percentage < 0.20) {
+        } else if (percentage < 0.20) {
             return "#ff9800";
         }
-        // Normal - use surface color
-        return ShellSettings.colors.background;
+
+        return ShellSettings.colors.foreground;
     }
 
     Item {
@@ -76,7 +66,7 @@ StyledMouseArea {
 
         Rectangle {
             id: batteryBackground
-            color: Qt.color(ShellSettings.colors.foregroundDim).lighter(4)
+            color: Qt.color(ShellSettings.colors.foregroundDim)
             opacity: 0.75
             anchors {
                 fill: parent
@@ -87,7 +77,7 @@ StyledMouseArea {
         Rectangle {
             id: batteryPercentage
             width: (parent.width - 4) * UPower.displayDevice.percentage
-            color: getBatteryColor()
+            color: root.getBatteryColor()
 
             anchors {
                 left: batteryBackground.left
@@ -99,6 +89,7 @@ StyledMouseArea {
             SequentialAnimation on opacity {
                 running: UPower.displayDevice.state === 1 // Charging
                 loops: Animation.Infinite
+
                 NumberAnimation {
                     to: 0.5
                     duration: 1000
@@ -289,25 +280,6 @@ StyledMouseArea {
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
-                }
-            }
-
-            // Power profile section
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 8
-
-                StyledText {
-                    text: "Power Profile"
-                    font.weight: Font.Bold
-                    font.pixelSize: 14
-                }
-
-                OptionSlider {
-                    Layout.fillWidth: true
-                    values: ["Power Save", "Balanced", "Performance"]
-                    index: PowerProfiles.profile
-                    onIndexChanged: PowerProfiles.profile = this.index
                 }
             }
         }

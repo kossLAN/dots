@@ -103,8 +103,7 @@ Variants {
                 // }
 
                 Clock {
-                    id: clock
-                    color: ShellSettings.colors.foreground
+                    bar: root
                     Layout.leftMargin: 5
                 }
             }

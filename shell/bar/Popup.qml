@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import qs.widgets
+import qs.notifications
 
 Scope {
     id: root
@@ -24,6 +25,11 @@ Scope {
 
             if (parentItem) {
                 activeItem.parent = parentItem;
+            }
+
+            // Notification Center is not part of the popup system
+            if (NotificationCenter.notificationsOpen) {
+                NotificationCenter.api.close();
             }
         }
 
