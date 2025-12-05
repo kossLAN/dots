@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Hyprland
-import ".."
+import qs
 
 PopupWindow {
     id: root

@@ -79,14 +79,12 @@ Scope {
                         }
                     }
 
-                    Rectangle {
+                    StyledRectangle {
                         id: sliderBackground
                         Layout.fillWidth: true
                         implicitHeight: 10
                         radius: height / 2
                         color: "transparent"
-                        border.color: ShellSettings.colors.trim
-                        border.width: 1
 
                         layer.enabled: true
                         layer.effect: OpacityMask {

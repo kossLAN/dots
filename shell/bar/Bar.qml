@@ -1,12 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "power"
-import "volume"
-import "systray"
-import "bluetooth"
-// import qs.widgets
 import qs
+import qs.bar.power
+import qs.bar.volume
+import qs.bar.systray
+import qs.bar.bluetooth
 
 Variants {
     model: Quickshell.screens
@@ -63,11 +62,6 @@ Variants {
                 // }
             }
 
-            // PowerMenu {
-            //     bar: root
-            //     Layout.fillHeight: true
-            // }
-
             // Right side of bar
             RowLayout {
                 spacing: 5
@@ -96,11 +90,6 @@ Variants {
                     bar: root
                     Layout.fillHeight: true
                 }
-
-                // Widgets.Separator {
-                //     Layout.leftMargin: 5
-                //     Layout.rightMargin: 5
-                // }
 
                 Clock {
                     bar: root

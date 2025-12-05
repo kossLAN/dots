@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Greetd
-import "../lockscreen"
+import qs.lockscreen
 
 Scope {
     id: root

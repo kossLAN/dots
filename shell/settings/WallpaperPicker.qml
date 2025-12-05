@@ -5,19 +5,15 @@ import QtQuick.Layouts
 import Quickshell.Widgets
 import Qt5Compat.GraphicalEffects
 import Qt.labs.folderlistmodel
-import ".."
+import qs
 
 ColumnLayout {
     id: container
     spacing: 5
 
-    // anchors {
-    //     fill: parent
-    //     margins: 10
-    // }
-
     ClippingRectangle {
         radius: 20
+
         Layout.preferredWidth: 464
         Layout.preferredHeight: 261
         Layout.alignment: Qt.AlignCenter
@@ -39,7 +35,7 @@ ColumnLayout {
         Layout.fillHeight: true
 
         Rectangle {
-            color: ShellSettings.colors["surface_container_high"]
+            color: ShellSettings.colors.trim
             Layout.fillWidth: true
             Layout.preferredHeight: 1
         }
@@ -76,7 +72,7 @@ ColumnLayout {
                         radius: 20
 
                         border {
-                            color: ShellSettings.colors["primary"]
+                            color: ShellSettings.colors.foreground
                             width: 2
                         }
 

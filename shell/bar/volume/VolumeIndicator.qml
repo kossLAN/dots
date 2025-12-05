@@ -103,8 +103,8 @@ StyledMouseArea {
 
                 delegate: VolumeCard {
                     id: appCard
-                    node: modelData.source
-                    label: node.properties["media.name"] ?? ""
+                    node: modelData?.source ?? null
+                    label: appCard.node?.properties["media.name"] ?? ""
                     width: ListView.view.width
                     height: menu.entryHeight
 
@@ -124,10 +124,14 @@ StyledMouseArea {
                             anchors.fill: parent
 
                             source: {
-                                if (appCard.node.properties["application.icon-name"] !== undefined)
-                                    return `image://icon/${appCard.node.properties["application.icon-name"]}`;
+                                const props = appCard.node?.properties;
+                                if (!props)
+                                    return "image://icon/image-missing";
 
-                                let applicationName = appCard.node.properties["application.name"];
+                                if (props["application.icon-name"] !== undefined)
+                                    return `image://icon/${props["application.icon-name"]}`;
+
+                                const applicationName = props["application.name"];
                                 return `image://icon/${applicationName?.toLowerCase() ?? "image-missing"}`;
                             }
                         }

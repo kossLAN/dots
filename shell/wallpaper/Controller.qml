@@ -1,6 +1,6 @@
 import Quickshell
 import QtQuick
-import ".."
+import qs
 
 Scope {
     id: root

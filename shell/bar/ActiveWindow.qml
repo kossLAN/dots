@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell.Wayland
-import ".."
+import qs
 
 Text {
     id: windowText

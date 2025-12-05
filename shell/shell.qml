@@ -3,15 +3,15 @@
 
 import Quickshell
 import QtQuick
-import "bar"
-import "notifications" as Notifications
-import "mpris" as Mpris
-import "volosd" as VolumeOSD
-import "settings" as Settings
-import "launcher" as Launcher
-import "lockscreen" as LockScreen
-import "wallpaper" as Wallpaper
-import "screencapture" as ScreenCapture
+import qs.bar
+import qs.notifications as Notifications
+import qs.mpris as Mpris
+import qs.volosd as VolumeOSD
+import qs.settings as Settings
+import qs.launcher as Launcher
+import qs.lockscreen as LockScreen
+import qs.wallpaper as Wallpaper
+import qs.screencapture as ScreenCapture
 
 ShellRoot {
     Bar {}

@@ -54,7 +54,6 @@ Scope {
 
     function onHidden(item: PopupItem) {
         if (item == lastActiveItem) {
-            console.log("triggered");
             lastActiveItem = null;
         }
     }

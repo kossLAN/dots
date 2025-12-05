@@ -3,7 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
-import ".."
+import qs
 
 Slider {
     id: slider

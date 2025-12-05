@@ -34,24 +34,22 @@ Singleton {
         id: loader
         activeAsync: persist.windowOpen
 
-        FloatingWindow {
-            color: ShellSettings.colors["background"]
-            implicitWidth: 840
-            implicitHeight: 845
+        property int width: 800
+        property int height: 650
 
-            // onWidthChanged: {
-            //     console.log("height: " + height);
-            //     console.log("width: " + width);
-            // }
+        FloatingWindow {
+            color: ShellSettings.colors.background
+            implicitWidth: loader.width
+            implicitHeight: loader.height
 
             maximumSize {
-                width: 880
-                height: 845
+                width: loader.width
+                height: loader.height
             }
 
             minimumSize {
-                width: 880
-                height: 845
+                width: loader.width
+                height: loader.height
             }
 
             onVisibleChanged: {
@@ -65,83 +63,98 @@ Singleton {
                 spacing: 2
                 anchors.fill: parent
 
-                property var pageDefinitions: [({
-                            title: "Wallpapers",
-                            description: "Pick a wallpaper"
-                        }), ({
-                            title: "Colors",
-                            description: "Adjust the palette"
-                        })]
-
                 property int currentPageIndex: 0
+                property var currentPage: pageDefinitions[currentPageIndex]
+                property var pageDefinitions: [
+                    {
+                        title: "Wallpapers",
+                        description: "Change your wallpaper"
+                    },
+                    {
+                        title: "Colors",
+                        description: "Edit your color scheme"
+                    }
+                ]
 
-                
-                Rectangle {
-                    color: ShellSettings.colors.background
-                    Layout.preferredWidth: 175
+                ColumnLayout {
+                    spacing: 4
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    ColumnLayout {
+                    StyledListView {
+                        clip: true
                         spacing: 4
+                        model: layoutRoot.pageDefinitions.length
 
-                        anchors {
-                            fill: parent 
-                            margins: 4
-                        }
+                        Layout.preferredWidth: 165
+                        Layout.fillHeight: true
+                        Layout.margins: 4
 
-                        // change to listview
-                        StyledListView {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            clip: true
-                            spacing: 4
-                            model: layoutRoot.pageDefinitions.length
+                        delegate: StyledMouseArea {
+                            id: entry
 
-                            delegate: Rectangle {
-                                required property int index
-                                readonly property bool selected: layoutRoot.currentPageIndex === index
-                                readonly property var pageInfo: layoutRoot.pageDefinitions[index]
+                            required property int index
+                            readonly property var title: layoutRoot.pageDefinitions[index].title
 
-                                // Layout.fillWidth: true
-                                
-                                implicitHeight: 24
-                                implicitWidth: ListView.view.width 
-                                // make sure children do NOT request to fill extra height:
-                                // remove any `Layout.fillHeight: true` from the delegate
+                            implicitHeight: 24
+                            implicitWidth: ListView.view.width
 
-                                radius: 6
-                                color: selected ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.04)
+                            radius: 6
+                            onClicked: layoutRoot.currentPageIndex = index
+                            checked: layoutRoot.currentPageIndex === index
 
-                                Text {
-                                    text: pageInfo.title
-                                    color: ShellSettings.colors.foreground
-                                    font.pixelSize: 12
-                                    anchors {
-                                        verticalCenter: parent.verticalCenter
-                                        left: parent.left
-                                        leftMargin: 8
-                                    }
-                                }
+                            Text {
+                                text: entry.title
+                                color: ShellSettings.colors.foreground
+                                font.pixelSize: 12
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: layoutRoot.currentPageIndex = index
-                                    hoverEnabled: true
+                                anchors {
+                                    verticalCenter: parent.verticalCenter
+                                    left: parent.left
+                                    leftMargin: 8
                                 }
                             }
                         }
                     }
                 }
 
-
-                StackLayout {
-                    id: pageStack
+                ColumnLayout {
+                    spacing: 0
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    currentIndex: layoutRoot.currentPageIndex
 
-                    WallpaperPicker {}
-                    ColorSettings {}
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 25
+
+                        StyledText {
+                            text: layoutRoot.currentPage.description
+                            font.bold: true
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            anchors.fill: parent
+                        }
+                    }
+
+                    Rectangle {
+                        color: ShellSettings.colors.background
+                        clip: true
+                        topLeftRadius: 12
+
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        // TODO: Add a border to this rectangle using a path arc or something
+
+                        StackLayout {
+                            id: pageStack
+                            currentIndex: layoutRoot.currentPageIndex
+                            anchors.fill: parent
+
+                            WallpaperPicker {}
+                            ColorSettings {}
+                        }
+                    }
                 }
             }
         }

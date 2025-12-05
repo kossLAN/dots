@@ -37,24 +37,29 @@ MouseArea {
 
         RowLayout {
             id: innerRow
+            // Layout.preferredHeight: 22
 
             Item {
+                // visible: checkBox.visible || radioButton.visible || icon.visible
                 implicitWidth: 22
                 implicitHeight: 22
 
                 MenuCheckBox {
+                    id: checkBox
                     anchors.centerIn: parent
                     visible: entry.buttonType == QsMenuButtonType.CheckBox
                     checkState: entry.checkState
                 }
 
                 MenuRadioButton {
+                    id: radioButton
                     anchors.centerIn: parent
                     visible: entry.buttonType == QsMenuButtonType.RadioButton
                     checkState: entry.checkState
                 }
 
                 IconImage {
+                    id: icon
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     source: entry.icon
@@ -70,7 +75,6 @@ MouseArea {
             }
 
             Item {
-                visible: entry.hasChildren
                 Layout.fillWidth: true
                 implicitWidth: 22
                 implicitHeight: 22
