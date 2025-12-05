@@ -103,7 +103,7 @@ Scope {
 
             // HyprlandWindow.opacity: root.scaleMul
 
-            HyprlandWindow.visibleMask: popup.mask 
+            HyprlandWindow.visibleMask: popup.mask
 
             Connections {
                 target: root
@@ -164,11 +164,9 @@ Scope {
                     }
                 }
 
-                // TODO: Make a close animation, a little complicated, will need to track if an animation is running
-                // and stop unload from occuring until its done, in the LazyLoader.
-
                 Behavior on x {
-                    enabled: root.lastActiveItem != null
+                    enabled: root.lastActiveItem != null && root.shownItem.animate
+
                     SmoothedAnimation {
                         duration: 200
                         easing.type: Easing.InOutQuad
@@ -176,7 +174,8 @@ Scope {
                 }
 
                 Behavior on width {
-                    enabled: root.lastActiveItem != null
+                    enabled: root.lastActiveItem != null && root.shownItem.animate
+
                     SmoothedAnimation {
                         duration: 200
                         easing.type: Easing.InOutQuad
@@ -184,7 +183,8 @@ Scope {
                 }
 
                 Behavior on height {
-                    enabled: root.lastActiveItem != null
+                    enabled: root.lastActiveItem != null && root.shownItem.animate
+
                     SmoothedAnimation {
                         duration: 200
                         easing.type: Easing.InOutQuad

@@ -15,11 +15,6 @@ MouseArea {
         radius: root.radius
         anchors.fill: parent
 
-        border {
-            width: root.containsMouse ? 1 : 0
-            color: ShellSettings.colors.trim
-        }
-
         Behavior on color {
             ColorAnimation {
                 duration: 200

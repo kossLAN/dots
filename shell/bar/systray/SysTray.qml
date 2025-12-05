@@ -2,91 +2,81 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 import qs.bar
 import qs.widgets
 
-// TODO:
-// 1. Get rid of leftItem/rightItem properties on menu
-// 2. Animate height of subTrayMenu's on expand 
-// 3. Fix bug that causes close on update (nm-applet wifi networks updating)
-
 RowLayout {
     id: root
-    spacing: 5
     visible: SystemTray.items.values.length > 0
+    implicitWidth: childrenRect.width
+    spacing: 5
 
     required property var bar
 
     Repeater {
-        id: repeater
         model: SystemTray.items
 
-        delegate: StyledMouseArea {
-            id: button
-            Layout.preferredWidth: parent.height
-            Layout.fillHeight: true
-
+        delegate: Item {
+            id: item
             required property SystemTrayItem modelData
+
             property bool showMenu: false
 
-            onClicked: {
-                menuOpener.menu = modelData.menu;
-                showMenu = !showMenu;
-            }
+            Layout.preferredWidth: height
+            Layout.fillHeight: true
 
-            IconImage {
-                id: trayIcon
-                anchors.fill: parent
-                source: {
-                    // console.log(trayField.modelData.id);
-                    switch (button.modelData.id) {
-                    case "obs":
-                        return "image://icon/obs-tray";
-                    default:
-                        return button.modelData.icon;
+            StyledMouseArea {
+                id: mouseArea
+                width: height
+                acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+
+                IconImage {
+                    source: item.modelData.icon
+                    anchors.fill: parent
+                }
+
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    horizontalCenter: parent.horizontalCenter
+                }
+
+                onClicked: event => {
+                    event.accepted = true;
+
+                    if (event.button == Qt.LeftButton && item.modelData.hasMenu) {
+                        item.showMenu = !item.showMenu;
+                    } else if (event.button == Qt.RightButton) {
+                        item.modelData.activate();
+                    } else if (event.button == Qt.MiddleButton) {
+                        item.modelData.secondaryActivate();
                     }
                 }
-            }
 
-            QsMenuOpener {
-                id: menuOpener
-            }
+                property var menu: PopupItem {
+                    id: menu
+                    owner: mouseArea
+                    popup: root.bar.popup
 
-            property PopupItem menu: PopupItem {
-                id: menu
-                owner: button
-                popup: root.bar.popup
-                show: button.showMenu
-                onClosed: button.showMenu = false
+                    show: item.showMenu
+                    animate: !(menuContentLoader?.item?.animating ?? false)
 
-                implicitWidth: content.implicitWidth + (2 * 8)
-                implicitHeight: content.implicitHeight + (2 * 8)
+                    implicitWidth: menuContentLoader.width + (2 * 4) 
+                    implicitHeight: menuContentLoader.height + (2 * 4)
 
-                property var leftItem: false
-                property var rightItem: false
+                    onClosed: item.showMenu = false;
 
-                ColumnLayout {
-                    id: content
-                    spacing: 2
-                    anchors.centerIn: parent
+                    Loader {
+                        id: menuContentLoader
+                        active: item.showMenu || menu.visible
 
-                    Repeater {
-                        model: menuOpener.children
+                        anchors.centerIn: parent
 
-                        delegate: TrayMenuItem {
-                            id: sysTrayContent
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            rootMenu: menu
-
-                            onInteracted: {
-                                button.showMenu = false;
-                                menuOpener.menu = null;
-                            }
+                        sourceComponent: MenuView {
+                            menu: item.modelData.menu
+                            onClose: item.showMenu = false
                         }
                     }
                 }

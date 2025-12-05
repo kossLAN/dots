@@ -19,7 +19,6 @@ Item {
             visible = true;
             targetOpacity = 1;
         } else {
-            console.log("closed");
             closed();
             targetOpacity = 0;
         }
@@ -51,6 +50,7 @@ Item {
     required property var owner
     property bool centered: false
     property bool show: false
+    property bool animate: true
 
     signal closed
 
