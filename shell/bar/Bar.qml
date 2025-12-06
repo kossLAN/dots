@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs
+import qs.notifications
 import qs.bar.power
 import qs.bar.volume
 import qs.bar.systray
@@ -26,6 +27,13 @@ Variants {
 
         readonly property Popup popup: Popup {
             bar: root
+
+            // Closing logic for windows that aren't part of the Popup system.
+            onPopupClosed: {
+                if (NotificationCenter.notificationsOpen) {
+                    NotificationCenter.api.close();
+                }
+            }
         }
 
         RowLayout {

@@ -13,7 +13,9 @@ StyledMouseArea {
     required property var bar
 
     onClicked: {
+        NotificationCenter.bar = bar;
         NotificationCenter.api.toggle();
+
         bar.popup.activeItem = null;
     }
 

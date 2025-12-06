@@ -60,7 +60,7 @@ Singleton {
 
             RowLayout {
                 id: layoutRoot
-                spacing: 2
+                spacing: 0
                 anchors.fill: parent
 
                 property int currentPageIndex: 0
@@ -76,46 +76,58 @@ Singleton {
                     }
                 ]
 
-                ColumnLayout {
-                    spacing: 4
-                    Layout.fillWidth: true
+                Rectangle {
+                    color: ShellSettings.colors.background
+
+                    Layout.preferredWidth: 165
                     Layout.fillHeight: true
 
-                    StyledListView {
-                        clip: true
+                    ColumnLayout {
                         spacing: 4
-                        model: layoutRoot.pageDefinitions.length
+                        anchors.fill: parent
 
-                        Layout.preferredWidth: 165
-                        Layout.fillHeight: true
-                        Layout.margins: 4
+                        StyledListView {
+                            clip: true
+                            spacing: 4
+                            model: layoutRoot.pageDefinitions.length
 
-                        delegate: StyledMouseArea {
-                            id: entry
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 4
 
-                            required property int index
-                            readonly property var title: layoutRoot.pageDefinitions[index].title
+                            delegate: StyledMouseArea {
+                                id: entry
 
-                            implicitHeight: 24
-                            implicitWidth: ListView.view.width
+                                required property int index
+                                readonly property var title: layoutRoot.pageDefinitions[index].title
 
-                            radius: 6
-                            onClicked: layoutRoot.currentPageIndex = index
-                            checked: layoutRoot.currentPageIndex === index
+                                implicitHeight: 24
+                                implicitWidth: ListView.view.width
 
-                            Text {
-                                text: entry.title
-                                color: ShellSettings.colors.foreground
-                                font.pixelSize: 12
+                                radius: 6
+                                onClicked: layoutRoot.currentPageIndex = index
+                                checked: layoutRoot.currentPageIndex === index
 
-                                anchors {
-                                    verticalCenter: parent.verticalCenter
-                                    left: parent.left
-                                    leftMargin: 8
+                                Text {
+                                    text: entry.title
+                                    color: ShellSettings.colors.foreground
+                                    font.pixelSize: 12
+
+                                    anchors {
+                                        verticalCenter: parent.verticalCenter
+                                        left: parent.left
+                                        leftMargin: 8
+                                    }
                                 }
                             }
                         }
                     }
+                }
+
+                Rectangle {
+                    color: ShellSettings.colors.trim
+                    Layout.preferredWidth: 1
+                    Layout.fillHeight: true
                 }
 
                 ColumnLayout {
@@ -136,24 +148,15 @@ Singleton {
                         }
                     }
 
-                    Rectangle {
-                        color: ShellSettings.colors.background
-                        clip: true
-                        topLeftRadius: 12
+                    StackLayout {
+                        id: pageStack
+                        currentIndex: layoutRoot.currentPageIndex
 
                         Layout.fillWidth: true
                         Layout.fillHeight: true
 
-                        // TODO: Add a border to this rectangle using a path arc or something
-
-                        StackLayout {
-                            id: pageStack
-                            currentIndex: layoutRoot.currentPageIndex
-                            anchors.fill: parent
-
-                            WallpaperPicker {}
-                            ColorSettings {}
-                        }
+                        WallpaperPicker {}
+                        ColorSettings {}
                     }
                 }
             }

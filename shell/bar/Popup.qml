@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import qs.widgets
-import qs.notifications
 
 Scope {
     id: root
@@ -19,6 +18,8 @@ Scope {
 
     property PopupItem shownItem: activeItem ?? lastActiveItem
 
+    signal popupClosed 
+
     onActiveItemChanged: {
         if (activeItem != null) {
             activeItem.targetVisible = true;
@@ -27,10 +28,7 @@ Scope {
                 activeItem.parent = parentItem;
             }
 
-            // Notification Center is not part of the popup system
-            if (NotificationCenter.notificationsOpen) {
-                NotificationCenter.api.close();
-            }
+            popupClosed();
         }
 
         if (lastActiveItem != null && lastActiveItem != activeItem) {
