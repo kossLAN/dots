@@ -13,7 +13,7 @@ ShellRoot {
 
         onLaunch: {
             lock.locked = false;
-            const session = Quickshell.env("GREETER_SESSION") || "hyprland";
+            const session = Quickshell.env("GREETER_SESSION") || "start-hyprland";
             Greetd.launch([session]);
         }
     }
