@@ -13,11 +13,7 @@ ShellRoot {
 
         onLaunch: {
             lock.locked = false;
-<<<<<<< HEAD
-            const session = Quickshell.env("GREETER_SESSION") || "start-hyprland";
-=======
             const session = Quickshell.env("GREETER_SESSION") || "niri-session";
->>>>>>> 0f59023 (bar: convert workspaces to niri)
             Greetd.launch([session]);
         }
     }
