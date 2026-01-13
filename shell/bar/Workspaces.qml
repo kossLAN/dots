@@ -1,54 +1,54 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Hyprland
+import Quickshell.Io
 import qs
 
 RowLayout {
-    spacing: 6
-    visible: Hyprland.workspaces.values.some(ws => ws.monitor === Hyprland.monitorFor(screen))
+    id: root
 
     required property var screen
+    property string socketPath: Quickshell.env("NIRI_SOCKET")
+    property var workspaces: []
 
     Repeater {
-        id: workspaceButtons
-
         model: ScriptModel {
-            values: Hyprland.workspaces.values.slice().filter(workspace => workspace.monitor === Hyprland.monitorFor(screen))
+            objectProp: "idx"
+
+            values: root.workspaces.filter(workspace => {
+                return workspace.output === root.screen.name;
+            }).sort((a, b) => a.idx - b.idx)
         }
 
-        Rectangle {
+        delegate: Rectangle {
+            id: wsButton
             radius: height / 2
 
             color: {
-                let value = ShellSettings.colors.trim;
+                if (modelData.is_active)
+                    return ShellSettings.colors.highlight;
+                else if (modelData.is_urgent)
+                    return ShellSettings.colors.accent;
 
-                if (!modelData?.id || !Hyprland.focusedMonitor?.activeWorkspace?.id)
-                    return value;
-
-                if (workspaceButton.containsMouse) {
-                    value = ShellSettings.colors.highlight;
-                } else if (Hyprland.focusedMonitor.activeWorkspace.id === modelData.id) {
-                    value = ShellSettings.colors.highlight;
-                }
-
-                return value;
-            }
-
-            Layout.alignment: Qt.AlignVCenter
-            Layout.preferredHeight: 12
-            Layout.preferredWidth: {
-                if (Hyprland.focusedMonitor?.activeWorkspace?.id === modelData?.id)
-                    return 25;
-
-                return 12;
+                return ShellSettings.colors.trim;
             }
 
             required property var modelData
 
-            Behavior on Layout.preferredWidth {
+            Layout.preferredWidth: modelData.is_active ? 25 : 12
+            Layout.preferredHeight: 12
+            Layout.alignment: Qt.AlignVCenter
+
+            // Text {
+            //     text: wsButton.modelData.idx
+            //     anchors.centerIn: parent
+            // }
+
+            Behavior on width {
                 SmoothedAnimation {
-                    duration: 150
+                    duration: 5000
                     velocity: 200
                     easing.type: Easing.OutCubic
                 }
@@ -62,11 +62,99 @@ RowLayout {
             }
 
             MouseArea {
-                id: workspaceButton
-                anchors.fill: parent
                 hoverEnabled: true
-                onPressed: Hyprland.dispatch(`workspace ${parent.modelData.id}`)
+                onClicked: querySocket.focusWorkspace(wsButton.modelData.idx)
+                anchors.fill: parent
             }
+        }
+    }
+
+    Socket {
+        id: eventStreamSocket
+        path: root.socketPath
+        connected: true
+
+        parser: SplitParser {
+            onRead: data => {
+                if (data.trim() === "")
+                    return;
+
+                try {
+                    let response = JSON.parse(data);
+                    eventStreamSocket.processEventStream(response);
+                } catch (e) {
+                    console.error("Failed to parse Niri event:", e, data);
+                }
+            }
+        }
+
+        onConnectedChanged: {
+            if (connected) {
+                // Listen to event stream
+                write('"EventStream"\n');
+                flush();
+
+                // Call update for initial state
+                querySocket.update();
+            }
+        }
+
+        function processEventStream(msg) {
+            // If workspace is changed/activated/etc we call for an update
+            if (msg.WorkspaceActivated || msg.WorkspacesChanged || msg.WorkspaceUrgencyChanged) {
+                querySocket.update();
+            }
+        }
+    }
+
+    Socket {
+        id: querySocket
+        path: root.socketPath
+        connected: true
+
+        parser: SplitParser {
+            onRead: data => {
+                if (data.trim() === "")
+                    return;
+
+                // console.log(data);
+
+                try {
+                    let response = JSON.parse(data);
+                    querySocket.processQueryResponse(response);
+                } catch (e) {
+                    console.error("Failed to parse Niri event:", e, data);
+                }
+            }
+        }
+
+        function processQueryResponse(msg) {
+            if (!msg.Ok)
+                return;
+
+            if (msg.Ok.Workspaces) {
+                root.workspaces = msg.Ok.Workspaces;
+                return;
+            }
+        }
+
+        // Updates the workspace state
+        function update() {
+            querySocket.write('"Workspaces"\n');
+        }
+
+        function focusWorkspace(id) {
+            let action = {
+                Action: {
+                    FocusWorkspace: {
+                        reference: {
+                            Index: id
+                        }
+                    }
+                }
+            };
+
+            querySocket.write(`${JSON.stringify(action)}\n`);
         }
     }
 }

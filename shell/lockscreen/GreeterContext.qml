@@ -11,8 +11,7 @@ Scope {
         onTryUnlock: {
             this.unlockInProgress = true;
 
-            // TODO: env var for user 
-            Greetd.createSession("koss");
+            Greetd.createSession(Quickshell.env("GREETER_USER") || "koss");
         }
     }
 

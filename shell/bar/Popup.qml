@@ -18,7 +18,7 @@ Scope {
 
     property PopupItem shownItem: activeItem ?? lastActiveItem
 
-    signal popupClosed 
+    signal popupClosed
 
     onActiveItemChanged: {
         if (activeItem != null) {
@@ -87,20 +87,16 @@ Scope {
                 item: parentItem
             }
 
-            HyprlandFocusGrab {
-                id: grab
-                active: true
-                windows: [popup, root.bar]
-                onCleared: {
-                    if (!active) {
-                        root.shownItem.closed();
-                    }
-                }
-            }
-
-            // HyprlandWindow.opacity: root.scaleMul
-
-            HyprlandWindow.visibleMask: popup.mask
+            // HyprlandFocusGrab {
+            //     id: grab
+            //     active: true
+            //     windows: [popup, root.bar]
+            //     onCleared: {
+            //         if (!active) {
+            //             root.shownItem.closed();
+            //         }
+            //     }
+            // }
 
             Connections {
                 target: root

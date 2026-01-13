@@ -55,13 +55,7 @@ Variants {
                 Workspaces {
                     screen: root.screen
                     Layout.fillHeight: true
-                    Layout.preferredWidth: height
-                }
-
-                NiriWorkspaces {
-                    screen: root.screen
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: height
+                    // Layout.preferredWidth: height
                 }
 
                 // ActiveWindow {
