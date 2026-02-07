@@ -13,10 +13,12 @@ Item {
     property int currentIndex: 0
     property real spacing: 4
     property real radius: 8
+    property real itemSize: 24
 
-    signal clicked(int index)
-
-    implicitWidth: model.length * (height + spacing)
+    implicitWidth: model.length * itemSize + (model.length - 1) * spacing
+    implicitHeight: itemSize
+    width: implicitWidth
+    height: implicitHeight
 
     ListView {
         id: listView
@@ -31,7 +33,8 @@ Item {
         highlightRangeMode: ListView.ApplyRange
         snapMode: ListView.SnapToItem
 
-        anchors.fill: parent
+        width: root.width
+        height: root.height
 
         highlight: Rectangle {
             color: ShellSettings.colors.active.light
@@ -47,12 +50,10 @@ Item {
             property bool checked: ListView.isCurrentItem
 
             radius: root.radius
-            width: (ListView.view.width - root.spacing) / root.model.length - 1
-            height: ListView.view.height
+            width: root.itemSize
+            height: root.itemSize
 
-            onClicked: {
-                root.clicked(button.index);
-            }
+            onClicked: root.currentIndex = index
 
             IconImage {
                 source: Quickshell.iconPath(button.modelData)

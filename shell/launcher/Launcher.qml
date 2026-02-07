@@ -6,7 +6,8 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import qs
+
+import qs.widgets
 import qs.launcher.settings
 
 Singleton {
@@ -38,6 +39,7 @@ Singleton {
 
         PanelWindow {
             id: panel
+            visible: true
             color: "transparent"
             exclusiveZone: 0
 
@@ -61,25 +63,11 @@ Singleton {
                 color: Qt.rgba(0, 0, 0, 0.5)
             }
 
-            Rectangle {
+            StyledRectangle {
                 id: content
                 clip: true
-                radius: 12
-                color: ShellSettings.colors.active.window
-
-                property int currentIndex: 0
-                property int displayedIndex: 0
-
-                readonly property var pages: [appLauncher, settings]
-                readonly property var currentPage: pages[displayedIndex]
-
-                implicitWidth: currentPage.implicitWidth
-                implicitHeight: currentPage.implicitHeight
-
-                border {
-                    width: 1
-                    color: ShellSettings.colors.active.light
-                }
+                implicitWidth: manager.implicitWidth
+                implicitHeight: manager.implicitHeight
 
                 anchors {
                     horizontalCenter: parent.horizontalCenter
@@ -87,44 +75,13 @@ Singleton {
                     topMargin: (panel.screen.height / 2) - 325
                 }
 
-                Item {
-                    id: pageContainer
-                    anchors.fill: parent
-                    opacity: content.currentIndex === content.displayedIndex ? 1 : 0
+                LauncherManager {
+                    id: manager
 
-                    onOpacityChanged: {
-                        if (opacity === 0 && content.currentIndex !== content.displayedIndex) {
-                            content.displayedIndex = content.currentIndex;
-                        }
-                    }
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: 100
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-
-                    ApplicationLauncher {
-                        id: appLauncher
-                        visible: content.displayedIndex === 0
-                        onAccepted: persist.launcherOpen = false
-                    }
-
-                    Settings {
-                        id: settings
-                        visible: content.displayedIndex === 1
-                    }
-                }
-
-                Switcher {
-                    id: switcher
-                    model: ["search", "settings"]
-                    currentIndex: content.currentIndex
-                    height: 28
-                    parent: content.displayedIndex === 0 ? appLauncher.switcherParent : settings.switcherParent
-
-                    onClicked: index => content.currentIndex = index
+                    model: [
+                        ApplicationLauncher {},
+                        Settings {}
+                    ]
                 }
 
                 Keys.onPressed: event => {
@@ -132,7 +89,7 @@ Singleton {
                         persist.launcherOpen = false;
                         event.accepted = true;
                     } else if (event.key === Qt.Key_Tab) {
-                        content.currentIndex = (content.currentIndex + 1) % 2;
+                        manager.currentIndex = (manager.currentIndex + 1) % 2;
                         event.accepted = true;
                     }
                 }

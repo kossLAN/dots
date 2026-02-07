@@ -4,6 +4,7 @@ import qs
 StyledRectangle {
     id: root
 
+    clip: true
     radius: 6
     color: ShellSettings.colors.active.alternateBase
 
@@ -14,7 +15,7 @@ StyledRectangle {
     property bool shaking: false
 
     // TODO: only do this for the polkit version of this, this thing needs to be cleaned up in general though.
-    property bool takeFocus: true
+    // property bool takeFocus: true
 
     signal accepted
 
@@ -39,7 +40,7 @@ StyledRectangle {
     TextInput {
         id: textInput
         color: ShellSettings.colors.active.text
-        focus: root.takeFocus
+        focus: true 
         verticalAlignment: TextInput.AlignVCenter
         echoMode: root.isSensitive ? TextInput.Password : TextInput.Normal
         inputMethodHints: root.isSensitive ? Qt.ImhSensitiveData : Qt.ImhNone
@@ -50,9 +51,9 @@ StyledRectangle {
             leftMargin: 8
         }
 
-        Component.onCompleted: if (root.takeFocus) {
-            forceActiveFocus();
-        }
+        // Component.onCompleted: if (root.takeFocus) {
+        //     forceActiveFocus();
+        // }
 
         onAccepted: root.accepted()
 

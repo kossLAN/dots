@@ -16,7 +16,6 @@ import qs.services.mpris
 
 ShellRoot {
     Bar {}
-    // NotificationsPopup {}
     Wallpaper {}
     VolumeOSD {}
     Polkit {}

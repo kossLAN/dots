@@ -13,7 +13,6 @@ StyledRectangle {
 
     required property AuthFlow flow
 
-    focus: true
     width: loader.width + 16
     height: loader.height + 16
 
@@ -70,11 +69,10 @@ StyledRectangle {
                     id: textInput
                     isSensitive: !root.flow.responseVisible
                     placeholderText: root.flow.inputPrompt
+                    focus: true
 
-                    Layout.preferredWidth: 256
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
-
-                    Component.onCompleted: forceActiveFocus()
 
                     onAccepted: root.flow.submit(text)
 

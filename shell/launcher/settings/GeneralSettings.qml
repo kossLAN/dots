@@ -243,7 +243,6 @@ Item {
 
             StyledTextInput {
                 text: ShellSettings.settings.wallpapersPath
-                takeFocus: false
                 width: 250
                 height: 28
 
