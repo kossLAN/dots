@@ -11,6 +11,8 @@ in
   mkIf cfg.enable {
     environment = {
       systemPackages = with pkgs; [
+        quickshell
+
         # qt packages needed for some functionality
         qt6.qtwayland
         qt6.qt5compat

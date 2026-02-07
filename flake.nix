@@ -27,7 +27,7 @@
       (system: fn system (nixpkgs.legacyPackages.${system}));
   in {
     nixosModules.default = import ./nix/modules inputs;
-    overlays.default = import ./nix/overlay.nix {inherit inputs;};
+    overlays.default = import ./nix/overlay.nix inputs;
 
     # Not reccomended to use this method of running the shell
     packages = forEachSystem (system: pkgs: rec {

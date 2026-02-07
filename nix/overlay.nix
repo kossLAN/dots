@@ -1,4 +1,4 @@
-{inputs, ...}: (final: _prev: let
+inputs: (final: _prev: let
   system = final.stdenv.hostPlatform.system;
 in {
   quickshell = inputs.quickshell.packages.${system}.default.override {
