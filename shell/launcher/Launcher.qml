@@ -55,8 +55,8 @@ Singleton {
             }
 
             RectangularShadow {
-                anchors.fill: content
-                radius: content.radius
+                anchors.fill: view
+                radius: view.radius
                 blur: 16
                 spread: 2
                 offset: Qt.vector2d(0, 4)
@@ -64,7 +64,7 @@ Singleton {
             }
 
             StyledRectangle {
-                id: content
+                id: view
                 clip: true
                 implicitWidth: manager.implicitWidth
                 implicitHeight: manager.implicitHeight
@@ -79,7 +79,9 @@ Singleton {
                     id: manager
 
                     model: [
-                        ApplicationLauncher {},
+                        ApplicationLauncher {
+                            onAccepted: persist.launcherOpen = false
+                        },
                         Settings {}
                     ]
                 }

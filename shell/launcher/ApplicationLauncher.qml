@@ -10,15 +10,14 @@ import qs.services.nix
 LauncherBacker {
     id: root
 
-    icon: "search"
+    signal accepted
 
+    icon: "search"
     switcherParent: switcherParent
 
     content: WrapperItem {
         id: menu
         margin: 6
-
-        property Switcher pageSwitcher
 
         property alias currentIndex: list.currentIndex
         property alias currentItem: list.currentItem
@@ -31,8 +30,6 @@ LauncherBacker {
         property var nixPackages: []
         property bool nixLoading: false
         property string nixOutput: ""
-
-        signal accepted
 
         Timer {
             id: nixSearchDebounce
@@ -133,7 +130,7 @@ LauncherBacker {
         function runNixPackage(attrName: string): void {
             // Notifications.runNixPackage(attrName);
             NixRunner.runNixPackage(attrName);
-            menu.accepted();
+            root.accepted();
         }
 
         ColumnLayout {
@@ -375,7 +372,7 @@ LauncherBacker {
                             menu.runNixPackage(modelData.nixAttr);
                         } else {
                             modelData.execute();
-                            menu.accepted();
+                            root.accepted();
                         }
                     }
 
