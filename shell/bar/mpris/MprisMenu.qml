@@ -4,7 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Wayland
+import Quickshell.Io
 
 import qs
 import qs.bar
@@ -118,6 +118,53 @@ StyledMouseArea {
         rescaleSize: 64
     }
 
+    // Cava-based audio visualization
+    property var cavaData: []
+    property real cavaPeak: {
+        if (cavaData.length === 0)
+            return 0;
+        let max = 0;
+        for (let i = 0; i < cavaData.length; i++) {
+            if (cavaData[i] > max)
+                max = cavaData[i];
+        }
+        return max;
+    }
+
+    Process {
+        id: cavaProc
+
+        property string cavaConf: {
+            let qtUrl = Qt.resolvedUrl("root:bar/mpris/cava.conf").toString();
+            return qtUrl.split("file://")[1];
+        }
+
+        running: root.showMenu && root.isPlaying
+        command: ["cava", "-p", cavaConf]
+
+        stdout: SplitParser {
+            onRead: data => {
+                let newPoints = data.split(";").map(p => parseFloat(p.trim()) / 1000).filter(p => !isNaN(p));
+                let smoothFactor = 0.3;
+
+                if (root.cavaData.length === 0 || root.cavaData.length !== newPoints.length) {
+                    root.cavaData = newPoints;
+                } else {
+                    let smoothed = [];
+
+                    for (let i = 0; i < newPoints.length; i++) {
+                        let oldVal = root.cavaData[i];
+                        let newVal = newPoints[i];
+
+                        smoothed.push(oldVal + (newVal - oldVal) * smoothFactor);
+                    }
+
+                    root.cavaData = smoothed;
+                }
+            }
+        }
+    }
+
     property PopupItem menu: PopupItem {
         id: menu
         owner: root
@@ -136,62 +183,57 @@ StyledMouseArea {
             contentUnderBorder: true
 
             ShaderEffect {
-                fragmentShader: "root:resources/shaders/vertexgradient.frag.qsb"
-                vertexShader: "root:resources/shaders/vertexgradient.vert.qsb"
+                fragmentShader: "root:resources/shaders/audioplasma.frag.qsb"
+                vertexShader: "root:resources/shaders/audioplasma.vert.qsb"
                 anchors.fill: parent
 
-                property color topLeftColor: colorQuantizer.colors[0] ?? Qt.rgba(0, 0, 0, 1)
-                property color topCenterColor: colorQuantizer.colors[1] ?? Qt.rgba(0, 0, 0, 1)
-                property color topRightColor: colorQuantizer.colors[2] ?? Qt.rgba(0, 0, 0, 1)
-                property color middleLeftColor: colorQuantizer.colors[3] ?? Qt.rgba(0, 0, 0, 1)
-                property color middleRightColor: colorQuantizer.colors[4] ?? Qt.rgba(0, 0, 0, 1)
-                property color bottomLeftColor: colorQuantizer.colors[5] ?? Qt.rgba(0, 0, 0, 1)
-                property color bottomCenterColor: colorQuantizer.colors[6] ?? Qt.rgba(0, 0, 0, 1)
-                property color bottomRightColor: colorQuantizer.colors[7] ?? Qt.rgba(0, 0, 0, 1)
+                property color color0: colorQuantizer.colors[0] ?? Qt.rgba(0.1, 0.1, 0.2, 1)
+                property color color1: colorQuantizer.colors[1] ?? Qt.rgba(0.2, 0.1, 0.3, 1)
+                property color color2: colorQuantizer.colors[2] ?? Qt.rgba(0.1, 0.2, 0.3, 1)
+                property color color3: colorQuantizer.colors[3] ?? Qt.rgba(0.15, 0.15, 0.25, 1)
+                property color waveColor: colorQuantizer.colors[5] ?? Qt.rgba(0.4, 0.3, 0.5, 1)
+                property real animTime: 0
+                property vector4d params: Qt.vector4d(animTime, 0, 0, 0)
 
-                Behavior on topLeftColor {
+                function getBar(i) {
+                    return 1.5 * root.cavaData[i] ?? 0.0;
+                }
+
+                property vector4d bars0: Qt.vector4d(getBar(0), getBar(1), getBar(2), getBar(3))
+                property vector4d bars1: Qt.vector4d(getBar(4), getBar(5), getBar(6), getBar(7))
+                property vector4d bars2: Qt.vector4d(getBar(8), getBar(9), getBar(10), getBar(11))
+                property vector4d bars3: Qt.vector4d(getBar(12), getBar(13), getBar(14), getBar(15))
+                property vector4d bars4: Qt.vector4d(getBar(16), getBar(17), getBar(18), getBar(19))
+
+                NumberAnimation on animTime {
+                    from: 0
+                    to: 1
+                    duration: 10000
+                    loops: Animation.Infinite
+                    running: root.showMenu && root.isPlaying
+                }
+
+                Behavior on color0 {
                     ColorAnimation {
                         duration: 300
                     }
                 }
-
-                Behavior on topCenterColor {
+                Behavior on color1 {
                     ColorAnimation {
                         duration: 300
                     }
                 }
-
-                Behavior on topRightColor {
+                Behavior on color2 {
                     ColorAnimation {
                         duration: 300
                     }
                 }
-
-                Behavior on middleLeftColor {
+                Behavior on color3 {
                     ColorAnimation {
                         duration: 300
                     }
                 }
-
-                Behavior on middleRightColor {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
-
-                Behavior on bottomLeftColor {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
-
-                Behavior on bottomCenterColor {
-                    ColorAnimation {
-                        duration: 300
-                    }
-                }
-
-                Behavior on bottomRightColor {
+                Behavior on waveColor {
                     ColorAnimation {
                         duration: 300
                     }

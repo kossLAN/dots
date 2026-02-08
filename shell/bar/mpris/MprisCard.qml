@@ -6,7 +6,6 @@ import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Services.Mpris
 
-import qs
 import qs.widgets
 
 Loader {
@@ -38,26 +37,69 @@ Loader {
     }
 
     readonly property color accentColor: {
-        if (!colors || colors.length < 1 || !colors[0])
+        if (!colors || colors.length < 5 || !colors[4])
             return Qt.color("purple");
 
-        if (isLightBackground) {
-            return Qt.darker(colors[0], 1.5);
-        }
+        // Use color[4] for accent (different from text which uses color[6])
+        let accent = colors[4];
+        let accentLum = 0.299 * accent.r + 0.587 * accent.g + 0.114 * accent.b;
 
-        // Lighten the accent for dark backgrounds to make it more visible
-        return Qt.lighter(colors[0], 1.3);
+        if (isLightBackground) {
+            // For light bg, want a rich saturated accent in mid-dark range
+            if (accentLum > 0.5) {
+                return Qt.darker(accent, 2.0);
+            }
+            return Qt.darker(accent, 1.4);
+        } else {
+            // For dark bg, want accent to be vibrant but not white
+            // Keep it in the mid-brightness range (0.4-0.7) so it stands out from white text
+            if (accentLum < 0.25) {
+                return Qt.lighter(accent, 2.2);
+            } else if (accentLum > 0.7) {
+                return Qt.darker(accent, 1.5);
+            }
+            return Qt.lighter(accent, 1.5);
+        }
     }
 
     readonly property color railColor: {
         if (isLightBackground) {
-            return Qt.rgba(0, 0, 0, 0.15);
+            return Qt.rgba(0, 0, 0, 0.55);
         }
 
-        return Qt.rgba(1, 1, 1, 0.2);
+        return Qt.rgba(1, 1, 1, 0.35);
     }
 
-    readonly property color textColor: isLightBackground ? Qt.rgba(0, 0, 0, 0.85) : Qt.rgba(1, 1, 1, 0.95)
+    readonly property color textColor: {
+        if (!colors || colors.length < 7 || !colors[6])
+            return isLightBackground ? Qt.rgba(0, 0, 0, 0.85) : Qt.rgba(1, 1, 1, 0.95);
+
+        // Use a quantizer color as base
+        let baseColor = colors[6];
+        let baseLuminance = 0.299 * baseColor.r + 0.587 * baseColor.g + 0.114 * baseColor.b;
+
+        if (isLightBackground) {
+            let darkened = Qt.darker(baseColor, 1.5);
+            let darkLum = 0.299 * darkened.r + 0.587 * darkened.g + 0.114 * darkened.b;
+
+            // If still too light, blend with black
+            if (darkLum > 0.3) {
+                return Qt.rgba(darkened.r * 0.3, darkened.g * 0.3, darkened.b * 0.3, 0.9);
+            }
+
+            return Qt.rgba(darkened.r, darkened.g, darkened.b, 0.9);
+        } else {
+            let lightened = Qt.lighter(baseColor, 2.0);
+            let lightLum = 0.299 * lightened.r + 0.587 * lightened.g + 0.114 * lightened.b;
+
+            // If still too dark, blend with white
+            if (lightLum < 0.7) {
+                return Qt.rgba(0.7 + lightened.r * 0.3, 0.7 + lightened.g * 0.3, 0.7 + lightened.b * 0.3, 0.95);
+            }
+
+            return Qt.rgba(lightened.r, lightened.g, lightened.b, 0.95);
+        }
+    }
 
     active: player !== null
 

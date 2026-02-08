@@ -36,7 +36,7 @@ void main() {
     float d6 = 1.0 / (distance(coord, p6) + 0.001);
     float d7 = 1.0 / (distance(coord, p7) + 0.001);
 
-    // Power for sharper/softer falloff
+    // Power for falloff sharpness
     float power = 2.5;
     d0 = pow(d0, power);
     d1 = pow(d1, power);

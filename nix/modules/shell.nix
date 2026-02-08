@@ -13,6 +13,9 @@ in
       systemPackages = with pkgs; [
         quickshell
 
+        # other dependencies for extra functionality
+        cava
+
         # qt packages needed for some functionality
         qt6.qtwayland
         qt6.qt5compat

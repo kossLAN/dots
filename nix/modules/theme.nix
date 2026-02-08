@@ -8,6 +8,9 @@
   inherit (lib.modules) mkIf;
 
   cfg = config.programs.nixi;
+
+  font = "Rubix";
+  fontFixed = "DejaVuSansM Nerd Font";
 in {
   config = mkIf cfg.appThemes {
     environment = {
@@ -30,6 +33,27 @@ in {
       variables = {
         XCURSOR_THEME = "macOS";
         XCURSOR_SIZE = 24;
+      };
+    };
+
+    # System-wide font configuration
+    fonts = {
+      fontDir.enable = true;
+      enableDefaultPackages = true;
+
+      packages = with pkgs; [
+        rubik
+        nerd-fonts.dejavu-sans-mono
+      ];
+
+      fontconfig = {
+        enable = true;
+
+        defaultFonts = {
+          serif = [font];
+          sansSerif = [font];
+          monospace = [fontFixed];
+        };
       };
     };
 
@@ -61,12 +85,12 @@ in {
             quickStyle = mkDefault "org.kde.desktop";
 
             font = {
-              family = mkDefault "DejaVu Sans";
+              family = mkDefault font;
               size = mkDefault 10;
             };
 
             fontFixed = {
-              family = mkDefault "DejaVu Sans Mono";
+              family = mkDefault fontFixed;
               size = mkDefault 10;
             };
           };
