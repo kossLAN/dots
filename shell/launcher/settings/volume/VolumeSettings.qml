@@ -3,86 +3,86 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Pipewire
+
 import qs
 import qs.widgets
+import qs.launcher.settings
 
-Item {
-    id: container
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+SettingsBacker {
+    icon: "multimedia-volume-control"
 
-    property int currentTab: 0
+    content: Item {
+        id: container
 
-    // Get all audio sinks (output devices) - filter out streams
-    property var audioSinks: {
-        if (!Pipewire.nodes)
-            return [];
-        return Pipewire.nodes.values.filter(node => node.isSink && node.audio !== null && !node.isStream);
-    }
+        property int currentTab: 0
 
-    property var audioSources: {
-        if (!Pipewire.nodes)
-            return [];
-
-        return Pipewire.nodes.values.filter(node => !node.isSink && node.audio !== null && !node.isStream);
-    }
-
-    // Link tracker for default sink to get applications
-    PwNodeLinkTracker {
-        id: linkTracker
-        node: Pipewire.defaultAudioSink
-    }
-
-    ColumnLayout {
-        id: root
-        spacing: 8
-
-        anchors {
-            fill: parent
-            margins: 8
+        // Get all audio sinks (output devices) - filter out streams
+        property var audioSinks: {
+            if (!Pipewire.nodes)
+                return [];
+            return Pipewire.nodes.values.filter(node => node.isSink && node.audio !== null && !node.isStream);
         }
 
-        // Tab Bar
-        TopBar {
-            id: tabBar
-            color: ShellSettings.colors.active.base
-            model: ["applications-multimedia", "audio-speakers", "audio-input-microphone"]
-            currentIndex: container.currentTab
-            onCurrentIndexChanged: container.currentTab = currentIndex
+        property var audioSources: {
+            if (!Pipewire.nodes)
+                return [];
 
-            Layout.fillWidth: true
-            Layout.preferredHeight: 36
+            return Pipewire.nodes.values.filter(node => !node.isSink && node.audio !== null && !node.isStream);
         }
 
-        StackLayout {
-            currentIndex: container.currentTab
+        // Link tracker for default sink to get applications
+        PwNodeLinkTracker {
+            id: linkTracker
+            node: Pipewire.defaultAudioSink
+        }
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        ColumnLayout {
+            id: root
+            spacing: 8
+            anchors.fill: parent
 
-            ApplicationsPage {
-                audioSinks: container.audioSinks
-                linkTracker: linkTracker
+            // Tab Bar
+            TopBar {
+                id: tabBar
+                color: ShellSettings.colors.active.base
+                model: ["applications-multimedia", "audio-speakers", "audio-input-microphone"]
+                currentIndex: container.currentTab
+                onCurrentIndexChanged: container.currentTab = currentIndex
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: 36
             }
 
-            NodePage {
-                nodes: container.audioSinks
-                defaultNode: Pipewire.defaultAudioSink
-                title: "Default Output"
-                icon: "audio-volume-high"
-                mutedIcon: "audio-volume-muted"
-                emptyText: "No output devices found"
-                onSetDefault: node => Pipewire.preferredDefaultAudioSink = node
-            }
+            StackLayout {
+                currentIndex: container.currentTab
 
-            NodePage {
-                nodes: container.audioSources
-                defaultNode: Pipewire.defaultAudioSource
-                title: "Default Input"
-                icon: "audio-input-microphone"
-                mutedIcon: "microphone-sensitivity-muted"
-                emptyText: "No input devices found"
-                onSetDefault: node => Pipewire.preferredDefaultAudioSource = node
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                ApplicationsPage {
+                    audioSinks: container.audioSinks
+                    linkTracker: linkTracker
+                }
+
+                NodePage {
+                    nodes: container.audioSinks
+                    defaultNode: Pipewire.defaultAudioSink
+                    title: "Default Output"
+                    icon: "audio-volume-high"
+                    mutedIcon: "audio-volume-muted"
+                    emptyText: "No output devices found"
+                    onSetDefault: node => Pipewire.preferredDefaultAudioSink = node
+                }
+
+                NodePage {
+                    nodes: container.audioSources
+                    defaultNode: Pipewire.defaultAudioSource
+                    title: "Default Input"
+                    icon: "audio-input-microphone"
+                    mutedIcon: "microphone-sensitivity-muted"
+                    emptyText: "No input devices found"
+                    onSetDefault: node => Pipewire.preferredDefaultAudioSource = node
+                }
             }
         }
     }

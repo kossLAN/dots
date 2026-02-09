@@ -10,9 +10,10 @@ Singleton {
 
     readonly property string homeDir: Quickshell.env("HOME")
     readonly property string configHome: Quickshell.env("XDG_CONFIG_HOME")
-    readonly property string folderName: "kdots"
+    readonly property string folderName: "nixi"
+    readonly property string folderPath: `${configHome}/${folderName}/`
 
-    readonly property string settingsPath: `${configHome}/${folderName}/settings.json`
+    readonly property string settingsPath: `${folderPath}/settings.json`
     readonly property string systemSettingsPath: `/etc/${folderName}/settings.json`
 
     property alias settings: userAdapter.settings
@@ -32,23 +33,25 @@ Singleton {
     FileView {
         id: userFile
         path: root.settingsPath
-        watchChanges: true
-        onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
-        onLoadFailed: writeAdapter()
         blockLoading: true
 
         JsonAdapter {
             id: userAdapter
 
             property JsonObject settings: JsonObject {
-                property string wallpaperUrl: Qt.resolvedUrl("root:resources/wallpapers/wallhaven-96y9qk.jpg")
-                property string wallpapersPath: `${root.homeDir}/Pictures/Wallpapers`
+                property string wallpaperUrl: "" 
+                property string wallpapersPath: `${root.homeDir}/.wallpapers`
                 property string wallpaperTransition: "circle" // circle, fade, slide, pixelate, dissolve
 
                 property bool bluetoothEnabled: true
-                property bool searchEnabled: true 
-                property bool debugEnabled: true 
+                property bool searchEnabled: true
+                property bool debugEnabled: true
+            }
+
+            property JsonObject gsr: JsonObject {
+                property int fps: 60
+                property int replayBufferSize: 30 // 30 secs
             }
 
             property JsonObject sizing: JsonObject {
@@ -61,9 +64,8 @@ Singleton {
         id: systemFile
         path: root.systemSettingsPath
         watchChanges: true
-        onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
-        onLoadFailed: writeAdapter()
+        // onLoadFailed: writeAdapter()
         blockLoading: true
 
         JsonAdapter {

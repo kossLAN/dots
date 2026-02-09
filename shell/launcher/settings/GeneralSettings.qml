@@ -2,56 +2,28 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+
 import qs
 import qs.widgets
 
-Item {
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+SettingsBacker {
+    icon: "settings"
 
-    ColumnLayout {
-        spacing: 4
+    content: Item {
+        id: menu
 
-        anchors {
-            fill: parent
-            margins: 12
-        }
+        property real cardHeight: 36
 
-        RowLayout {
-            spacing: 8
-            Layout.fillWidth: true
+        ColumnLayout {
+            spacing: 4
+            anchors.fill: parent
 
-            // Bar Height
-            StyledRectangle {
-                color: ShellSettings.colors.active.base
+            SettingsCard {
+                title: "Bluetooth"
+                summary: "Show bluetooth controls on the bar & in settings"
 
-                Layout.fillWidth: true
-                Layout.minimumWidth: 280
-                Layout.preferredHeight: 56
-
-                ColumnLayout {
-                    spacing: 2
-
-                    anchors {
-                        left: parent.left
-                        verticalCenter: parent.verticalCenter
-                        leftMargin: 12
-                    }
-
-                    StyledText {
-                        text: "Bar Height"
-                        font.pointSize: 9
-                    }
-
-                    StyledText {
-                        text: "Height of the status bar"
-                        font.pointSize: 9
-                        opacity: 0.7
-                    }
-                }
-
-                RowLayout {
-                    spacing: 8
+                controls: ToggleSwitch {
+                    checked: ShellSettings.settings.bluetoothEnabled
 
                     anchors {
                         right: parent.right
@@ -59,205 +31,104 @@ Item {
                         rightMargin: 12
                     }
 
-                    StyledSlider {
-                        id: barHeightSlider
-                        from: 20
-                        to: 50
-                        stepSize: 1
-                        value: ShellSettings.sizing.barHeight
-
-                        Layout.preferredWidth: 200
-
-                        onMoved: ShellSettings.sizing.barHeight = value
-                    }
-
-                    StyledText {
-                        text: ShellSettings.sizing.barHeight + "px"
-                        font.pointSize: 9
-                        Layout.preferredWidth: 30
-                        horizontalAlignment: Text.AlignRight
+                    onCheckedChanged: {
+                        if (ShellSettings.settings.bluetoothEnabled !== checked) {
+                            ShellSettings.settings.bluetoothEnabled = checked;
+                        }
                     }
                 }
-            }
-        }
 
-        // Bluetooth Toggle
-        StyledRectangle {
-            color: ShellSettings.colors.active.base
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: 56
-
-            ColumnLayout {
-                spacing: 2
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                    leftMargin: 12
-                }
-
-                StyledText {
-                    text: "Bluetooth"
-                    font.pointSize: 9
-                }
-
-                StyledText {
-                    text: "Show Bluetooth controls"
-                    font.pointSize: 9
-                    opacity: 0.7
-                }
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
             }
 
-            ToggleSwitch {
-                checked: ShellSettings.settings.bluetoothEnabled
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
 
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    rightMargin: 12
-                }
+            SettingsCard {
+                title: "Launcher"
+                summary: "Disable the launcher/search button on the bar"
 
-                onCheckedChanged: {
-                    if (ShellSettings.settings.bluetoothEnabled !== checked) {
-                        ShellSettings.settings.bluetoothEnabled = checked;
+                controls: ToggleSwitch {
+                    checked: ShellSettings.settings.searchEnabled
+
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        rightMargin: 12
+                    }
+
+                    onCheckedChanged: {
+                        if (ShellSettings.settings.searchEnabled !== checked) {
+                            ShellSettings.settings.searchEnabled = checked;
+                        }
                     }
                 }
-            }
-        }
 
-        // Search Toggle
-        StyledRectangle {
-            color: ShellSettings.colors.active.base
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: 56
-
-            ColumnLayout {
-                spacing: 2
-
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                    leftMargin: 12
-                }
-
-                StyledText {
-                    text: "Launcher"
-                    font.pointSize: 9
-                }
-
-                StyledText {
-                    text: "Disable the launcher/search button on the bar"
-                    font.pointSize: 9
-                    opacity: 0.7
-                }
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
             }
 
-            ToggleSwitch {
-                checked: ShellSettings.settings.searchEnabled
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
 
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    rightMargin: 12
-                }
+            SettingsCard {
+                title: "Debug"
+                summary: "Disable the debug widgets in the shell"
 
-                onCheckedChanged: {
-                    if (ShellSettings.settings.searchEnabled !== checked) {
-                        ShellSettings.settings.searchEnabled = checked;
+                controls: ToggleSwitch {
+                    checked: ShellSettings.settings.debugEnabled
+
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        rightMargin: 12
+                    }
+
+                    onCheckedChanged: {
+                        if (ShellSettings.settings.debugEnabled !== checked) {
+                            ShellSettings.settings.debugEnabled = checked;
+                        }
                     }
                 }
-            }
-        }
 
-        // Debug Toggle
-        StyledRectangle {
-            color: ShellSettings.colors.active.base
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: 56
-
-            ColumnLayout {
-                spacing: 2
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                    leftMargin: 12
-                }
-
-                StyledText {
-                    text: "Debug"
-                    font.pointSize: 9
-                }
-
-                StyledText {
-                    text: "Show debug widgets"
-                    font.pointSize: 9
-                    opacity: 0.7
-                }
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
             }
 
-            ToggleSwitch {
-                checked: ShellSettings.settings.debugEnabled
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
 
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    rightMargin: 12
-                }
+            SettingsCard {
+                title: "Wallpaper Path"
+                summary: "Change the path to your local wallpapers"
 
-                onCheckedChanged: {
-                    if (ShellSettings.settings.debugEnabled !== checked) {
-                        ShellSettings.settings.debugEnabled = checked;
+                controls: StyledTextInput {
+                    text: ShellSettings.settings.wallpapersPath
+                    width: 250
+
+                    onAccepted: ShellSettings.settings.wallpapersPath = text
+
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        rightMargin: 12
                     }
                 }
-            }
-        }
 
-        // Wallpapers Path
-        StyledRectangle {
-            color: ShellSettings.colors.active.base
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: 56
-
-            ColumnLayout {
-                spacing: 2
-                anchors {
-                    left: parent.left
-                    verticalCenter: parent.verticalCenter
-                    leftMargin: 12
-                }
-
-                StyledText {
-                    text: "Wallpapers Path"
-                    font.pointSize: 9
-                }
-
-                StyledText {
-                    text: "Additional folder for wallpapers"
-                    font.pointSize: 9
-                    opacity: 0.7
-                }
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
             }
 
-            StyledTextInput {
-                text: ShellSettings.settings.wallpapersPath
-                width: 250
-                height: 28
-
-                onAccepted: ShellSettings.settings.wallpapersPath = text
-
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                    rightMargin: 12
-                }
+            Item {
+                Layout.fillHeight: true
             }
-        }
-
-        Item {
-            Layout.fillHeight: true
         }
     }
 }

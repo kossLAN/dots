@@ -34,17 +34,18 @@ RowLayout {
                 acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
                 IconImage {
-                    // property bool iconFromTheme: {
-                    //     const iconName = item.modelData.icon.split("current-iconimage://icon/")[1];
-                    //
-                    //     return Quickshell.hasThemeIcon(iconName);
-                    // }
+                    property bool iconFromTheme: {
+                        if (item.modelData.icon.startsWith("image://icon/"))
+                            return true;
+
+                        return false;
+                    }
 
                     source: item.modelData.icon
 
                     anchors {
                         fill: parent
-                        // margins: iconFromTheme ? 2 : 0
+                        margins: iconFromTheme ? 0 : 4
                     }
                 }
 

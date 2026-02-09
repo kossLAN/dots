@@ -46,7 +46,7 @@ Variants {
         // Gotta make good use of this somehow
         ColorQuantizer {
             id: colorQuantizer
-            source: ShellSettings.settings.wallpaperUrl
+            source: Qt.resolvedUrl(ShellSettings.settings.wallpaperUrl)
             depth: 3
             rescaleSize: 64
         }

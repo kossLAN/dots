@@ -79,7 +79,7 @@ Singleton {
                 maximumLineCount: 1
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: contentHeight
+                Layout.preferredHeight: contentHeight + 4
 
                 text: {
                     let lines = notification.stdout.trim().split("\n");
@@ -88,12 +88,13 @@ Singleton {
                 }
             }
 
-            // TODO: redo the animation on this
             StyledRectangle {
                 id: stdoutContainer
                 radius: 8
                 clip: true
-                visible: notification.stdout != "" && (notification.hidden || notification.isExpanded)
+                visible: false
+
+                property bool targetVisible: notification.stdout != "" && (notification.hidden || notification.isExpanded)
 
                 color: {
                     if (notification.hidden) {
@@ -104,13 +105,35 @@ Singleton {
                 }
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: 150
 
-                Behavior on Layout.preferredHeight {
-                    NumberAnimation {
-                        duration: 200
-                        easing.type: Easing.OutCubic
+                onTargetVisibleChanged: {
+                    if (targetVisible) {
+                        visible = true;
+                        stdoutOpenAnim.restart();
+                    } else {
+                        stdoutCloseAnim.restart();
                     }
+                }
+
+                NumberAnimation {
+                    id: stdoutOpenAnim
+                    target: stdoutContainer
+                    property: "implicitHeight"
+                    from: 0
+                    to: 150
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                NumberAnimation {
+                    id: stdoutCloseAnim
+                    target: stdoutContainer
+                    property: "implicitHeight"
+                    from: 150
+                    to: 0
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                    onFinished: stdoutContainer.visible = false
                 }
 
                 Flickable {

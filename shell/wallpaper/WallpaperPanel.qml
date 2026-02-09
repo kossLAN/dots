@@ -66,7 +66,6 @@ Variants {
             hideSource: true
         }
 
-        property string transitionType: ShellSettings.settings.wallpaperTransition
         property real randomOriginX: 0.5
         property real randomOriginY: 0.5
         property real randomAngle: 45.0

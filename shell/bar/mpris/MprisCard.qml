@@ -167,12 +167,14 @@ Loader {
                     font.pointSize: 11
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter
+                    textColor: root.textColor
+
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
-                    textColor: root.textColor
                 }
 
                 StyledText {
+                    textColor: root.textColor
                     opacity: 0.7
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter
@@ -180,7 +182,6 @@ Loader {
 
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignHCenter
-                    textColor: root.textColor
 
                     text: {
                         const artist = root.player?.trackArtist || "Unknown Artist";

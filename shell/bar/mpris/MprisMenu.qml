@@ -84,7 +84,7 @@ StyledMouseArea {
             source: Quickshell.iconPath(root.displayedIsPlaying ? "media-pause" : "media-play")
         }
 
-        Text {
+        StyledText {
             id: windowText
             text: root.displayedTitle
             color: ShellSettings.colors.active.windowText
@@ -93,75 +93,6 @@ StyledMouseArea {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true
-        }
-    }
-
-    // GET RID OF THIS WHENEVER POSSIBLE ITS BAD!
-    CachedImage {
-        id: artCache
-
-        source: {
-            const idx = players.currentIndex;
-
-            if (idx >= 0 && idx < Mpris.sortedPlayers.length) {
-                return Mpris.sortedPlayers[idx]?.trackArtUrl ?? "";
-            }
-
-            return "";
-        }
-    }
-
-    ColorQuantizer {
-        id: colorQuantizer
-        source: artCache.ready ? artCache.cachedSource : ""
-        depth: 3
-        rescaleSize: 64
-    }
-
-    // Cava-based audio visualization
-    property var cavaData: []
-    property real cavaPeak: {
-        if (cavaData.length === 0)
-            return 0;
-        let max = 0;
-        for (let i = 0; i < cavaData.length; i++) {
-            if (cavaData[i] > max)
-                max = cavaData[i];
-        }
-        return max;
-    }
-
-    Process {
-        id: cavaProc
-
-        property string cavaConf: {
-            let qtUrl = Qt.resolvedUrl("root:bar/mpris/cava.conf").toString();
-            return qtUrl.split("file://")[1];
-        }
-
-        running: root.showMenu && root.isPlaying
-        command: ["cava", "-p", cavaConf]
-
-        stdout: SplitParser {
-            onRead: data => {
-                let newPoints = data.split(";").map(p => parseFloat(p.trim()) / 1000).filter(p => !isNaN(p));
-                let smoothFactor = 0.3;
-
-                if (root.cavaData.length === 0 || root.cavaData.length !== newPoints.length) {
-                    root.cavaData = newPoints;
-                } else {
-                    let smoothed = [];
-
-                    for (let i = 0; i < newPoints.length; i++) {
-                        let oldVal = root.cavaData[i];
-                        let newVal = newPoints[i];
-
-                        smoothed.push(oldVal + (newVal - oldVal) * smoothFactor);
-                    }
-
-                    root.cavaData = smoothed;
-                }
-            }
         }
     }
 
@@ -175,6 +106,75 @@ StyledMouseArea {
 
         implicitWidth: 525
         implicitHeight: 150
+
+        // GET RID OF THIS WHENEVER POSSIBLE ITS BAD!
+        CachedImage {
+            id: artCache
+
+            source: {
+                const idx = players.currentIndex;
+
+                if (idx >= 0 && idx < Mpris.sortedPlayers.length) {
+                    return Mpris.sortedPlayers[idx]?.trackArtUrl ?? "";
+                }
+
+                return "";
+            }
+        }
+
+        ColorQuantizer {
+            id: colorQuantizer
+            source: artCache.ready ? artCache.cachedSource : ""
+            depth: 3
+            rescaleSize: 64
+        }
+
+        // Cava-based audio visualization
+        property var cavaData: []
+        property real cavaPeak: {
+            if (cavaData.length === 0)
+                return 0;
+            let max = 0;
+            for (let i = 0; i < cavaData.length; i++) {
+                if (cavaData[i] > max)
+                    max = cavaData[i];
+            }
+            return max;
+        }
+
+        Process {
+            id: cavaProc
+
+            property string cavaConf: {
+                let qtUrl = Qt.resolvedUrl("root:bar/mpris/cava.conf").toString();
+                return qtUrl.split("file://")[1];
+            }
+
+            running: root.showMenu && root.isPlaying
+            command: ["cava", "-p", cavaConf]
+
+            stdout: SplitParser {
+                onRead: data => {
+                    let newPoints = data.split(";").map(p => parseFloat(p.trim()) / 1000).filter(p => !isNaN(p));
+                    let smoothFactor = 0.3;
+
+                    if (menu.cavaData.length === 0 || menu.cavaData.length !== newPoints.length) {
+                        menu.cavaData = newPoints;
+                    } else {
+                        let smoothed = [];
+
+                        for (let i = 0; i < newPoints.length; i++) {
+                            let oldVal = menu.cavaData[i];
+                            let newVal = newPoints[i];
+
+                            smoothed.push(oldVal + (newVal - oldVal) * smoothFactor);
+                        }
+
+                        menu.cavaData = smoothed;
+                    }
+                }
+            }
+        }
 
         backgroundComponent: ClippingRectangle {
             clip: true
@@ -196,7 +196,7 @@ StyledMouseArea {
                 property vector4d params: Qt.vector4d(animTime, 0, 0, 0)
 
                 function getBar(i) {
-                    return 1.5 * root.cavaData[i] ?? 0.0;
+                    return 1.5 * menu.cavaData[i] ?? 0.0;
                 }
 
                 property vector4d bars0: Qt.vector4d(getBar(0), getBar(1), getBar(2), getBar(3))

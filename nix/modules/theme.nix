@@ -9,8 +9,8 @@
 
   cfg = config.programs.nixi;
 
-  font = "Rubix";
-  fontFixed = "DejaVuSansM Nerd Font";
+  font = "Rubik";
+  fontFixed = "JetBrains Mono";
 in {
   config = mkIf cfg.appThemes {
     environment = {
@@ -44,6 +44,7 @@ in {
       packages = with pkgs; [
         rubik
         nerd-fonts.dejavu-sans-mono
+        jetbrains-mono
       ];
 
       fontconfig = {

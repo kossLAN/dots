@@ -62,7 +62,7 @@ StyledRectangle {
                 visible: root.flow.isResponseRequired
                 spacing: 4
 
-                Layout.fillWidth: true
+                Layout.preferredWidth: 300
                 Layout.preferredHeight: 32
 
                 StyledTextInput {
