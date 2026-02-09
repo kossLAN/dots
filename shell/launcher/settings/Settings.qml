@@ -34,6 +34,7 @@ LauncherBacker {
                 VolumeSettings {},
                 WifiSettings {},
                 BluetoothSettings {},
+                GsrSettings {},
                 DebugViewer {}
             ]
         }

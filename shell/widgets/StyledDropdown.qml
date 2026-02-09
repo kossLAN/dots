@@ -7,8 +7,10 @@ import qs
 Item {
     id: root
 
+    property color color: ShellSettings.colors.active.button
     property var model: []
     property string currentValue: ""
+
     property string displayText: {
         for (let i = 0; i < model.length; i++) {
             if (model[i].value === currentValue) {
@@ -36,11 +38,12 @@ Item {
 
     StyledRectangle {
         id: button
+
         color: {
             if (mouseArea.containsMouse)
-                return ShellSettings.colors.active.button.lighter(1.5);
+                return root.color.lighter(1.5);
 
-            return ShellSettings.colors.active.button;
+            return root.color;
         }
 
         radius: 6
@@ -60,6 +63,7 @@ Item {
 
             ExpandArrow {
                 expanded: dropdownOverlay.visible
+                animate: false
                 Layout.preferredWidth: 16
                 Layout.preferredHeight: 16
             }
@@ -102,7 +106,7 @@ Item {
         StyledRectangle {
             id: dropdown
             radius: 6
-            color: ShellSettings.colors.active.button
+            color: root.color 
             x: dropdownOverlay.dropdownX
             y: dropdownOverlay.dropdownY
             width: root.width

@@ -18,11 +18,12 @@ Item {
     property alias currentIndex: switcher.currentIndex
 
     RowLayout {
-        spacing: 12
+        spacing: 8
         anchors.fill: parent
 
         StyledRectangle {
             color: ShellSettings.colors.active.mid
+            radius: 8
 
             Layout.preferredWidth: 40
             Layout.fillHeight: true
@@ -32,7 +33,8 @@ Item {
                 spacing: 2
                 interactive: false
                 highlightFollowsCurrentItem: true
-                highlightResizeDuration: 0
+                highlightMoveVelocity: -1
+                highlightMoveDuration: 200
                 highlightRangeMode: ListView.ApplyRange
                 snapMode: ListView.SnapToItem
 

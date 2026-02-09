@@ -15,8 +15,20 @@ SettingsBacker {
         property real cardHeight: 36
 
         ColumnLayout {
-            spacing: 4
+            spacing: 8
             anchors.fill: parent
+
+            StyledText {
+                text: "General Settings"
+                font.pointSize: 9
+                font.weight: Font.Medium
+                Layout.topMargin: 8
+            }
+
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
 
             SettingsCard {
                 title: "Bluetooth"
@@ -40,11 +52,6 @@ SettingsBacker {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: menu.cardHeight
-            }
-
-            Separator {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
             }
 
             SettingsCard {
@@ -71,11 +78,6 @@ SettingsBacker {
                 Layout.preferredHeight: menu.cardHeight
             }
 
-            Separator {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-            }
-
             SettingsCard {
                 title: "Debug"
                 summary: "Disable the debug widgets in the shell"
@@ -100,11 +102,6 @@ SettingsBacker {
                 Layout.preferredHeight: menu.cardHeight
             }
 
-            Separator {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-            }
-
             SettingsCard {
                 title: "Wallpaper Path"
                 summary: "Change the path to your local wallpapers"
@@ -119,6 +116,30 @@ SettingsBacker {
                         right: parent.right
                         verticalCenter: parent.verticalCenter
                         rightMargin: 12
+                    }
+                }
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
+            }
+
+            SettingsCard {
+                title: "Screen Recording"
+                summary: "Show GPU Screen Recorder controls on the bar & in settings"
+
+                controls: ToggleSwitch {
+                    checked: ShellSettings.settings.gsrEnabled
+
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        rightMargin: 12
+                    }
+
+                    onCheckedChanged: {
+                        if (ShellSettings.settings.gsrEnabled !== checked) {
+                            ShellSettings.settings.gsrEnabled = checked;
+                        }
                     }
                 }
 

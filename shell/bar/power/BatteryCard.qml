@@ -1,7 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Widgets
 import Quickshell.Services.UPower
 import qs.widgets
 import qs
@@ -36,42 +34,12 @@ Item {
         return "Device";
     }
 
-    function getBatteryIcon() {
-        if (!root.device)
-            return Quickshell.iconPath("gpm-battery-missing");
-
-        const percentage = root.device.percentage;
-        const isCharging = root.device.state === 1;
-
-        let iconName = "gpm-primary-";
-
-        if (percentage >= 0.95) {
-            iconName += "100";
-        } else if (percentage >= 0.75) {
-            iconName += "080";
-        } else if (percentage >= 0.55) {
-            iconName += "060";
-        } else if (percentage >= 0.35) {
-            iconName += "040";
-        } else if (percentage >= 0.15) {
-            iconName += "020";
-        } else {
-            iconName += "000";
-        }
-
-        if (isCharging) {
-            iconName += "-charging";
-        }
-
-        return Quickshell.iconPath(iconName);
-    }
-
     RowLayout {
         spacing: 8
         anchors.fill: parent
 
-        IconImage {
-            source: root.getBatteryIcon()
+        BatteryIcon {
+            device: root.device
             Layout.preferredWidth: this.height
             Layout.fillHeight: true
             Layout.margins: 4

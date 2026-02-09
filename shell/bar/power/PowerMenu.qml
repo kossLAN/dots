@@ -35,38 +35,8 @@ StyledMouseArea {
         return devices;
     }
 
-    IconImage {
+    BatteryIcon {
         anchors.fill: parent
-        source: {
-            if (!UPower.displayDevice || !UPower.displayDevice.ready)
-                return Quickshell.iconPath("gpm-battery-missing");
-
-            const percentage = UPower.displayDevice.percentage;
-            const isCharging = UPower.displayDevice.state === 1; // 1 = Charging
-
-            // Use gpm-primary icons for laptop battery
-            let iconName = "gpm-primary-";
-
-            if (percentage >= 0.95) {
-                iconName += "100";
-            } else if (percentage >= 0.75) {
-                iconName += "080";
-            } else if (percentage >= 0.55) {
-                iconName += "060";
-            } else if (percentage >= 0.35) {
-                iconName += "040";
-            } else if (percentage >= 0.15) {
-                iconName += "020";
-            } else {
-                iconName += "000";
-            }
-
-            if (isCharging) {
-                iconName += "-charging";
-            }
-
-            return Quickshell.iconPath(iconName);
-        }
     }
 
     property PopupItem menu: PopupItem {

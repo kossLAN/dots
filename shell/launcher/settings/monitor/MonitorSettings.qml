@@ -76,13 +76,15 @@ SettingsBacker {
 
         Connections {
             target: Niri.state
+
             function onOutputsChanged() {
                 container.outputs = Niri.state.outputs;
                 container.outputList = Object.keys(Niri.state.outputs);
+
                 if (container.outputList.length > 0 && container.selectedOutput === "") {
                     container.selectedOutput = container.outputList[0];
                 }
-                // Save after outputs are refreshed if a save was requested
+
                 if (container.pendingSave) {
                     container.pendingSave = false;
                     container.saveCurrentConfig();

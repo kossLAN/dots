@@ -14,6 +14,7 @@ import qs.bar.wifi
 import qs.bar.notifications
 import qs.bar.mpris
 import qs.bar.debug
+import qs.bar.gsr
 
 Variants {
     model: Quickshell.screens
@@ -122,6 +123,12 @@ Variants {
                     }
 
                     BluetoothMenu {
+                        bar: root
+                        Layout.preferredWidth: this.height
+                        Layout.fillHeight: true
+                    }
+
+                    GsrMenu {
                         bar: root
                         Layout.preferredWidth: this.height
                         Layout.fillHeight: true

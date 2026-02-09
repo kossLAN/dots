@@ -11,8 +11,10 @@ import qs.lockscreen
 import qs.wallpaper
 import qs.launcher
 import qs.polkit
+
 import qs.services.idlehandler
 import qs.services.mpris
+import qs.services.gsr
 
 ShellRoot {
     Bar {}

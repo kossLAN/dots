@@ -68,11 +68,7 @@ Variants {
 
         property real randomOriginX: 0.5
         property real randomOriginY: 0.5
-        property real randomAngle: 45.0
 
-        // This was vibe slopped, because I'm too lazy to make shaders, not sure why
-        // the clanker didnt't just design each shader with roughly the same property so
-        // it didn't need to make a new shaderEffect each time but w/e. I'll probably fix eventually
         ShaderEffect {
             id: circleEffect
             anchors.fill: parent
@@ -80,10 +76,9 @@ Variants {
             property variant fromImage: fromImage
             property variant toImage: toImage
             property real progress: panel.transitionProgress
-            property real _pad: 0.0
+            property vector2d aspectRatio: Qt.vector2d(panel.width / panel.height, 1.0)
             property vector2d origin: Qt.vector2d(panel.randomOriginX, panel.randomOriginY)
 
-            vertexShader: "root:resources/shaders/wallpapertransition.vert.qsb"
             fragmentShader: "root:resources/shaders/wallpapertransition.frag.qsb"
         }
 
@@ -104,7 +99,6 @@ Variants {
         function startTransition() {
             panel.randomOriginX = Math.random();
             panel.randomOriginY = Math.random();
-            panel.randomAngle = Math.random() * 360;
             if (toImageSource.status === Image.Ready) {
                 transitionAnimation.start();
             }

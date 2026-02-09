@@ -19,6 +19,7 @@ StyledRectangle {
 
     visible: selectedOutput !== ""
     color: ShellSettings.colors.active.base
+    radius: 8
 
     Flickable {
         anchors.fill: parent

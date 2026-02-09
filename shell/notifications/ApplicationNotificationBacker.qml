@@ -12,7 +12,7 @@ NotificationBacker {
     id: root
 
     required property Notification serverNotification
-    property int closeAnimDuration: 5000
+    property int closeAnimDuration: 10000
 
     summary: serverNotification?.summary ?? ""
 

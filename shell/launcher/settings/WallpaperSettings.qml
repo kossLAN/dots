@@ -45,6 +45,7 @@ SettingsBacker {
 
             StyledRectangle {
                 color: ShellSettings.colors.active.base
+                radius: 8
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -84,7 +85,7 @@ SettingsBacker {
 
                         ClippingRectangle {
                             color: ShellSettings.colors.active.base
-                            radius: 8
+                            radius: 4
 
                             anchors {
                                 fill: parent
@@ -93,6 +94,7 @@ SettingsBacker {
 
                             Image {
                                 source: wallpaper.filePath
+                                fillMode: Image.PreserveAspectCrop
                                 anchors.fill: parent
                             }
 

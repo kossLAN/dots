@@ -11,7 +11,7 @@ Singleton {
     readonly property string homeDir: Quickshell.env("HOME")
     readonly property string configHome: Quickshell.env("XDG_CONFIG_HOME")
     readonly property string folderName: "nixi"
-    readonly property string folderPath: `${configHome}/${folderName}/`
+    readonly property string folderPath: `${configHome}/${folderName}`
 
     readonly property string settingsPath: `${folderPath}/settings.json`
     readonly property string systemSettingsPath: `/etc/${folderName}/settings.json`
@@ -47,6 +47,7 @@ Singleton {
                 property bool bluetoothEnabled: true
                 property bool searchEnabled: true
                 property bool debugEnabled: true
+                property bool gsrEnabled: true
             }
 
             property JsonObject gsr: JsonObject {
