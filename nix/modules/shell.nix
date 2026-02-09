@@ -11,6 +11,8 @@
 in
   mkIf cfg.enable {
     environment = {
+      etc."xdg/quickshell".source = ../../shell;
+
       systemPackages = with pkgs; [
         quickshell
 
@@ -40,7 +42,7 @@ in
         "f /etc/nixi/settings.json 0777 root root -"
       ];
 
-      user.services.quickshell = {
+      user.services.nixi = {
         enable = true;
         description = "Nixi Service";
         wantedBy = ["graphical-session.target"];
@@ -48,7 +50,7 @@ in
 
         serviceConfig = {
           Type = "simple";
-          ExecStart = "${lib.getExe pkgs.quickshell} --config ${../../shell}";
+          ExecStart = "${lib.getExe pkgs.quickshell} --config /etc/xdg/quickshell";
           Restart = "on-failure";
         };
       };
