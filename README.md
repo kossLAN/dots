@@ -13,3 +13,4 @@ These "dots" are just my niri related config files, seperated into its own flake
 - [ ] (Waiting on quickshell pull request) Finish Wifi Systray Widget
 - [x]  LLM Chat Launcher Widget
 - [ ] KDL Generator, with niri flake source
+- [ ] Make a custom file picker, to replace the default one

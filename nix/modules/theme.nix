@@ -26,8 +26,9 @@ in {
         apple-cursor
 
         # qt5/6 Theme
-        darkly
-        darkly-qt5
+        kdePackages.qqc2-breeze-style
+        kdePackages.breeze
+        kdePackages.breeze.qt5
       ];
 
       variables = {
@@ -43,8 +44,8 @@ in {
 
       packages = with pkgs; [
         rubik
-        nerd-fonts.dejavu-sans-mono
         jetbrains-mono
+        noto-fonts-cjk-sans
       ];
 
       fontconfig = {
@@ -80,10 +81,10 @@ in {
 
         config = {
           theme = {
-            colorScheme = mkDefault ./Darkly.colors;
+            colorScheme = mkDefault ./Nixi.colors;
             iconTheme = mkDefault "Papirus-Dark";
-            style = mkDefault "Darkly";
-            quickStyle = mkDefault "org.kde.desktop";
+            style = mkDefault "Breeze";
+            quickStyle = mkDefault "org.kde.breeze";
 
             font = {
               family = mkDefault font;
