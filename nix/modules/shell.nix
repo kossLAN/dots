@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  inherit (lib) mkDefault;
+  inherit (lib) mkDefault optionals;
   inherit (lib.modules) mkIf;
 
   cfg = config.programs.nixi;
@@ -13,24 +13,27 @@ in
     environment = {
       etc."xdg/quickshell".source = ../../shell;
 
-      systemPackages = with pkgs; [
-        quickshell
+      systemPackages = with pkgs;
+        [
+          quickshell
 
-        # other dependencies for extra functionality
-        cava # music visualizer (will probably get rid of in the future)
-        gpu-screen-recorder # recording
-        kdePackages.syntax-highlighting # ai chat syntax-highlighting
+          # other dependencies for extra functionality
+          cava # music visualizer (will probably get rid of in the future)
+          kdePackages.syntax-highlighting # ai chat syntax-highlighting
 
-        # qt packages needed for some functionality
-        qt6.qtwayland
-        qt6.qt5compat
-        qt6.qtdeclarative
+          # qt packages needed for some functionality
+          qt6.qtwayland
+          qt6.qt5compat
+          qt6.qtdeclarative
 
-        # kde dependencies for qqc2-desktop
-        kdePackages.qqc2-desktop-style
-        kdePackages.kirigami.unwrapped
-        kdePackages.sonnet
-      ];
+          # kde dependencies for qqc2-desktop
+          kdePackages.qqc2-desktop-style
+          kdePackages.kirigami.unwrapped
+          kdePackages.sonnet
+        ]
+        ++ optionals config.programs.gpu-screen-recorder.enable [
+          gpu-screen-recorder # recording
+        ];
     };
 
     # Extra functionality for clipping and screen record
