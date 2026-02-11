@@ -16,7 +16,7 @@ in (mkIf cfg.enable {
       user = "greeter";
 
       command = "${getExe' pkgs.niri "niri"} --config ${pkgs.writeText "greetd-quickshell" ''
-        spawn-sh-at-startup "${getExe' pkgs.quickshell "qs"} -p ${../../shell}/etc/quickshell/greeter.qml && pkill niri"
+        spawn-sh-at-startup "${getExe' pkgs.quickshell "qs"} -p ${../../shell}/greeter.qml && pkill niri"
 
         hotkey-overlay {
           skip-at-startup

@@ -57,21 +57,10 @@ Variants {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.alignment: Qt.AlignLeft
 
-                RowLayout {
-                    spacing: 15
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    height: parent.height
-                    width: Math.min(implicitWidth, leftSide.width)
-
-                    Workspaces {
-                        screen: root.screen
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.maximumWidth: Layout.preferredWidth
-                    }
+                Workspaces {
+                    screen: root.screen
+                    anchors.fill: parent
                 }
             }
 

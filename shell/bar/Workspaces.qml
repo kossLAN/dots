@@ -32,8 +32,6 @@ Item {
 
     property int itemSize: height + layout.spacing
 
-    Layout.preferredWidth: (workspaceList.count + 1) * itemSize
-
     RowLayout {
         id: layout
         anchors.fill: parent
