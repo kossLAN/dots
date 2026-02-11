@@ -8,11 +8,13 @@ Item {
 
     required property list<LauncherBacker> model
 
+    property list<LauncherBacker> enabledModel: model.filter(x => x.enabled)
+
     property alias currentIndex: root.switcher.currentIndex
 
     property Switcher switcher: Switcher {
-        model: root.model.map(x => x.icon)
-        parent: root.model[currentIndex].switcherParent
+        model: root.enabledModel.map(x => x.icon)
+        parent: root.enabledModel[currentIndex].switcherParent
     }
 
     implicitWidth: wrapper.implicitWidth
@@ -20,7 +22,7 @@ Item {
 
     WrapperItem {
         id: wrapper
-        child: root.model[root.currentIndex].content
+        child: root.enabledModel[root.currentIndex].content
 
         onChildChanged: opacityAnim.restart()
 
@@ -30,8 +32,8 @@ Item {
             property: "opacity"
             from: 0
             to: 1
-            duration: 400
-            easing.type: Easing.OutCubic
+            duration: 100
+            easing.type: Easing.InCubic
         }
     }
 }

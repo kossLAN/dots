@@ -16,7 +16,7 @@ Item {
     IconButton {
         source: Quickshell.iconPath("window-close")
         color: ShellSettings.colors.active.light
-        hoverColor: "#FF474D"
+        hoverColor: ShellSettings.colors.extra.close
         onClicked: root.clicked()
 
         anchors {

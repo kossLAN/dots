@@ -15,6 +15,8 @@ SettingsBacker {
 
     enabled: ShellSettings.settings.bluetoothEnabled 
 
+    summary: "Bluetooth Settings"
+
     content: Item {
         ColumnLayout {
             spacing: 6

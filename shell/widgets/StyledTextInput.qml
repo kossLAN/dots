@@ -14,9 +14,6 @@ StyledRectangle {
     property bool isSensitive: false
     property bool shaking: false
 
-    // TODO: only do this for the polkit version of this, this thing needs to be cleaned up in general though.
-    // property bool takeFocus: true
-
     signal accepted
 
     function forceActiveFocus() {
@@ -37,42 +34,44 @@ StyledRectangle {
         x: 0
     }
 
-    TextInput {
-        id: textInput
-        color: ShellSettings.colors.active.text
-        focus: true 
-        verticalAlignment: TextInput.AlignVCenter
-        echoMode: root.isSensitive ? TextInput.Password : TextInput.Normal
-        inputMethodHints: root.isSensitive ? Qt.ImhSensitiveData : Qt.ImhNone
-        scale: root.isSensitive && activeFocus ? 1.02 : 1.0
+    Item {
+        clip: true
 
         anchors {
             fill: parent
             leftMargin: 8
+            rightMargin: 8
         }
 
-        // Component.onCompleted: if (root.takeFocus) {
-        //     forceActiveFocus();
-        // }
-
-        onAccepted: root.accepted()
-
-        Behavior on scale {
-            enabled: root.isSensitive
-
-            NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
-            }
-        }
-
-        Text {
-            id: placeholder
+        TextInput {
+            id: textInput
             color: ShellSettings.colors.active.text
-            opacity: 0.5
-            visible: !textInput.text
+            focus: true 
+            verticalAlignment: TextInput.AlignVCenter
+            echoMode: root.isSensitive ? TextInput.Password : TextInput.Normal
+            inputMethodHints: root.isSensitive ? Qt.ImhSensitiveData : Qt.ImhNone
+            scale: root.isSensitive && activeFocus ? 1.02 : 1.0
             anchors.fill: parent
-            verticalAlignment: Text.AlignVCenter
+            
+            onAccepted: root.accepted()
+
+            Behavior on scale {
+                enabled: root.isSensitive
+
+                NumberAnimation {
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            Text {
+                id: placeholder
+                color: ShellSettings.colors.active.text
+                opacity: 0.5
+                visible: !textInput.text
+                anchors.fill: parent
+                verticalAlignment: Text.AlignVCenter
+            }
         }
     }
 

@@ -12,6 +12,8 @@ SettingsBacker {
 
     enabled: ShellSettings.settings.gsrEnabled
 
+    summary: "Screen Recording"
+
     content: Item {
         id: menu
 
@@ -20,18 +22,6 @@ SettingsBacker {
         ColumnLayout {
             spacing: 8
             anchors.fill: parent
-
-            StyledText {
-                text: "Screen Recording"
-                font.pointSize: 9
-                font.weight: Font.Medium
-                Layout.topMargin: 8
-            }
-
-            Separator {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-            }
 
             SettingsCard {
                 title: "Capture"
@@ -144,22 +134,6 @@ SettingsBacker {
                         {
                             label: "VP9",
                             value: "vp9"
-                        },
-                        {
-                            label: "HEVC HDR",
-                            value: "hevc_hdr"
-                        },
-                        {
-                            label: "AV1 HDR",
-                            value: "av1_hdr"
-                        },
-                        {
-                            label: "HEVC 10bit",
-                            value: "hevc_10bit"
-                        },
-                        {
-                            label: "AV1 10bit",
-                            value: "av1_10bit"
                         }
                     ]
 

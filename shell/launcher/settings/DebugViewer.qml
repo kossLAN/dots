@@ -10,6 +10,8 @@ SettingsBacker {
 
     enabled: ShellSettings.settings.debugEnabled
 
+    summary: "Debug Viewer"
+
     content: Item {
         ColumnLayout {
             Text {

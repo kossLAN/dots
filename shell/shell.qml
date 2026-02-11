@@ -21,16 +21,13 @@ ShellRoot {
     Wallpaper {}
     VolumeOSD {}
     Polkit {}
-
-    IdleHandler {
-        minsToLock: 15
-        minsToMonitorOff: 5
-    }
+    IdleHandler {}
 
     Component.onCompleted: {
         Notifications.init();
         Launcher.init();
         LockScreen.init();
         Mpris.init();
+        GpuScreenRecord.init();
     }
 }

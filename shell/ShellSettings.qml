@@ -28,6 +28,10 @@ Singleton {
         property SystemPalette inactive: SystemPalette {
             colorGroup: SystemPalette.Inactive
         }
+
+        property QtObject extra: QtObject {
+            property color close: Qt.color("#FF474D") 
+        }
     }
 
     FileView {
@@ -42,17 +46,12 @@ Singleton {
             property JsonObject settings: JsonObject {
                 property string wallpaperUrl: "" 
                 property string wallpapersPath: `${root.homeDir}/.wallpapers`
-                property string wallpaperTransition: "circle" // circle, fade, slide, pixelate, dissolve
 
                 property bool bluetoothEnabled: true
                 property bool searchEnabled: true
                 property bool debugEnabled: true
                 property bool gsrEnabled: true
-            }
-
-            property JsonObject gsr: JsonObject {
-                property int fps: 60
-                property int replayBufferSize: 30 // 30 secs
+                property bool chatEnabled: true
             }
 
             property JsonObject sizing: JsonObject {

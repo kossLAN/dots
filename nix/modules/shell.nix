@@ -17,8 +17,9 @@ in
         quickshell
 
         # other dependencies for extra functionality
-        cava
-        gpu-screen-recorder
+        cava # music visualizer (will probably get rid of in the future)
+        gpu-screen-recorder # recording
+        kdePackages.syntax-highlighting # ai chat syntax-highlighting
 
         # qt packages needed for some functionality
         qt6.qtwayland

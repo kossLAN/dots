@@ -11,6 +11,8 @@ import qs.launcher.settings
 SettingsBacker {
     icon: "multimedia-volume-control"
 
+    summary: "Volume Settings"
+
     content: Item {
         id: container
 

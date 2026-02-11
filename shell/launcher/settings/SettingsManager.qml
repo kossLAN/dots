@@ -21,22 +21,23 @@ Item {
         spacing: 8
         anchors.fill: parent
 
-        StyledRectangle {
-            color: ShellSettings.colors.active.mid
-            radius: 8
-
-            Layout.preferredWidth: 40
+        ColumnLayout {
+            spacing: 4
+            Layout.preferredWidth: 24
             Layout.fillHeight: true
 
             ListView {
                 id: switcher
-                spacing: 2
+                spacing: 4
                 interactive: false
                 highlightFollowsCurrentItem: true
                 highlightMoveVelocity: -1
                 highlightMoveDuration: 200
                 highlightRangeMode: ListView.ApplyRange
                 snapMode: ListView.SnapToItem
+
+                Layout.preferredWidth: 24
+                Layout.fillHeight: true
 
                 model: root.enabledModel.map(x => x.icon)
 
@@ -46,6 +47,7 @@ Item {
                     required property var modelData
                     required property var index
 
+                    radius: 4
                     implicitWidth: ListView.view.width
                     implicitHeight: ListView.view.width
 
@@ -59,34 +61,52 @@ Item {
 
                 highlight: Rectangle {
                     color: ShellSettings.colors.active.light
-                    radius: 10 
-                }
-
-                anchors {
-                    fill: parent
-                    margins: 6
+                    radius: 4
                 }
             }
         }
 
-        Loader {
-            id: wrapper
-            active: root.enabledModel[root.currentIndex].content
-            sourceComponent: root.enabledModel[root.currentIndex].content
+        Separator {
+            Layout.preferredWidth: 1
+            Layout.fillHeight: true
+        }
 
+        ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            onSourceComponentChanged: opacityAnim.restart()
+            StyledText {
+                text: root.enabledModel[root.currentIndex].summary
+                font.pointSize: 9
+                font.weight: Font.Medium
+                Layout.topMargin: 8
+            }
 
-            NumberAnimation {
-                id: opacityAnim
-                target: wrapper
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: 400
-                easing.type: Easing.OutCubic
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
+
+            Loader {
+                id: wrapper
+                active: root.enabledModel[root.currentIndex].content
+                sourceComponent: root.enabledModel[root.currentIndex].content
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.margins: 4
+
+                onSourceComponentChanged: opacityAnim.restart()
+
+                NumberAnimation {
+                    id: opacityAnim
+                    target: wrapper
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                    duration: 400
+                    easing.type: Easing.OutCubic
+                }
             }
         }
     }

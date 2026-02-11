@@ -9,6 +9,8 @@ import qs.widgets
 SettingsBacker {
     icon: "settings"
 
+    summary: "General Settings"
+
     content: Item {
         id: menu
 
@@ -18,30 +20,12 @@ SettingsBacker {
             spacing: 8
             anchors.fill: parent
 
-            StyledText {
-                text: "General Settings"
-                font.pointSize: 9
-                font.weight: Font.Medium
-                Layout.topMargin: 8
-            }
-
-            Separator {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-            }
-
             SettingsCard {
                 title: "Bluetooth"
                 summary: "Show bluetooth controls on the bar & in settings"
 
                 controls: ToggleSwitch {
                     checked: ShellSettings.settings.bluetoothEnabled
-
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: 12
-                    }
 
                     onCheckedChanged: {
                         if (ShellSettings.settings.bluetoothEnabled !== checked) {
@@ -61,12 +45,6 @@ SettingsBacker {
                 controls: ToggleSwitch {
                     checked: ShellSettings.settings.searchEnabled
 
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: 12
-                    }
-
                     onCheckedChanged: {
                         if (ShellSettings.settings.searchEnabled !== checked) {
                             ShellSettings.settings.searchEnabled = checked;
@@ -85,15 +63,45 @@ SettingsBacker {
                 controls: ToggleSwitch {
                     checked: ShellSettings.settings.debugEnabled
 
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: 12
-                    }
-
                     onCheckedChanged: {
                         if (ShellSettings.settings.debugEnabled !== checked) {
                             ShellSettings.settings.debugEnabled = checked;
+                        }
+                    }
+                }
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
+            }
+
+            SettingsCard {
+                title: "Screen Recording"
+                summary: "Show GPU Screen Recorder controls on the bar & in settings"
+
+                controls: ToggleSwitch {
+                    checked: ShellSettings.settings.gsrEnabled
+
+                    onCheckedChanged: {
+                        if (ShellSettings.settings.gsrEnabled !== checked) {
+                            ShellSettings.settings.gsrEnabled = checked;
+                        }
+                    }
+                }
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
+            }
+
+            SettingsCard {
+                title: "LLM Chat"
+                summary: "Show the LLM Chat in the launcher & settings"
+
+                controls: ToggleSwitch {
+                    checked: ShellSettings.settings.chatEnabled
+
+                    onCheckedChanged: {
+                        if (ShellSettings.settings.chatEnabled !== checked) {
+                            ShellSettings.settings.chatEnabled = checked;
                         }
                     }
                 }
@@ -111,36 +119,6 @@ SettingsBacker {
                     width: 250
 
                     onAccepted: ShellSettings.settings.wallpapersPath = text
-
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: 12
-                    }
-                }
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: menu.cardHeight
-            }
-
-            SettingsCard {
-                title: "Screen Recording"
-                summary: "Show GPU Screen Recorder controls on the bar & in settings"
-
-                controls: ToggleSwitch {
-                    checked: ShellSettings.settings.gsrEnabled
-
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: 12
-                    }
-
-                    onCheckedChanged: {
-                        if (ShellSettings.settings.gsrEnabled !== checked) {
-                            ShellSettings.settings.gsrEnabled = checked;
-                        }
-                    }
                 }
 
                 Layout.fillWidth: true

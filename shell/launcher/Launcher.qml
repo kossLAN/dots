@@ -9,6 +9,7 @@ import Quickshell.Wayland
 
 import qs.widgets
 import qs.launcher.settings
+import qs.launcher.chat
 
 Singleton {
     property alias launcherOpen: persist.launcherOpen
@@ -47,6 +48,10 @@ Singleton {
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
+            mask: Region {
+                item: view
+            }
+
             anchors {
                 top: true
                 bottom: true
@@ -82,7 +87,8 @@ Singleton {
                         ApplicationLauncher {
                             onAccepted: persist.launcherOpen = false
                         },
-                        Settings {}
+                        Settings {},
+                        Chat {}
                     ]
                 }
 
@@ -91,7 +97,7 @@ Singleton {
                         persist.launcherOpen = false;
                         event.accepted = true;
                     } else if (event.key === Qt.Key_Tab) {
-                        manager.currentIndex = (manager.currentIndex + 1) % 2;
+                        manager.currentIndex = (manager.currentIndex + 1) % manager.enabledModel.length;
                         event.accepted = true;
                     }
                 }

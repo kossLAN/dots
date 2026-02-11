@@ -12,6 +12,8 @@ import qs.widgets
 SettingsBacker {
     icon: "preferences-desktop-wallpaper"
 
+    summary: "Wallpaper Settings"
+
     content: Item {
         ColumnLayout {
             spacing: 4

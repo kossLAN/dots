@@ -11,5 +11,5 @@ These "dots" are just my niri related config files, seperated into its own flake
 - [x] Add shell notifications to the notification center 
 - [ ] Add system tray menu like kde/windows with pinning etc.
 - [ ] (Waiting on quickshell pull request) Finish Wifi Systray Widget
-- [ ]  LLM Chat Launcher Widget
+- [x]  LLM Chat Launcher Widget
 - [ ] KDL Generator, with niri flake source

@@ -7,8 +7,8 @@ import qs.services.niri
 Scope {
     id: root
 
-    property var minsToLock: 10
-    property var minsToMonitorOff: 5
+    property var minsToLock: 5
+    property var minsToMonitorOff: 10
 
     Component.onCompleted: console.info("Started IdleHandler")
 

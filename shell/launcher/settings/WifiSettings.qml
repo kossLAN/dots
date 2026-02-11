@@ -12,6 +12,8 @@ import qs.widgets
 SettingsBacker {
     icon: "network-wireless"
 
+    summary: "Network Settings"
+
     content: Item {
         id: container
 
