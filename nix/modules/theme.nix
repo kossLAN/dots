@@ -45,6 +45,7 @@ in {
       packages = with pkgs; [
         rubik
         jetbrains-mono
+        nerd-fonts.dejavu-sans-mono
         noto-fonts-cjk-sans
       ];
 
