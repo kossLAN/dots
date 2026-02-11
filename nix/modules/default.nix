@@ -1,6 +1,7 @@
 inputs: {
   self,
   lib,
+  config,
   ...
 }: let
   inherit (lib.options) mkEnableOption mkOption;
@@ -26,13 +27,13 @@ in {
 
     appThemes = mkOption {
       type = bool;
-      default = true;
+      default = config.programs.nixi.enable;
       description = "Enable qt/gtk theming";
     };
 
     greeter.enable = mkOption {
       type = bool;
-      default = true;
+      default = config.programs.nixi.enable;
       description = "Enable nixi greeter";
     };
   };
