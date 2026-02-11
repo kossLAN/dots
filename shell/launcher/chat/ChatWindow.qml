@@ -92,6 +92,8 @@ ColumnLayout {
                 atBottom = true;
             }
 
+            Component.onCompleted: scrollToBottom()
+
             Connections {
                 target: ChatConnector
 
@@ -118,16 +120,13 @@ ColumnLayout {
                 implicitWidth: messagesList.width
                 implicitHeight: messageBubble.height
 
-                StyledRectangle {
+                WrapperRectangle {
                     id: messageBubble
 
                     property bool hasImages: messageDelegate.isUser && (messageDelegate.modelData.images ?? []).length > 0
-                    property real contentWidth: messageDelegate.isUser ? userContent.width : markdownContent.width
-                    property real contentHeight: messageDelegate.isUser ? userContent.height : markdownContent.height
-
+                    child: messageDelegate.isUser ? userContent : markdownContent
+                    margin: 8
                     clip: true
-                    implicitWidth: contentWidth + 24
-                    implicitHeight: contentHeight + 16
                     color: messageDelegate.isUser ? ShellSettings.colors.active.accent : ShellSettings.colors.active.mid
                     radius: 12
 
@@ -219,17 +218,22 @@ ColumnLayout {
                     return streamingBubble.height;
                 }
 
+                onHeightChanged: {
+                    if (messagesList.atBottom)
+                        messagesList.scrollToBottom();
+                }
+
                 property real maxBubbleWidth: messagesList.width * 0.7
 
-                StyledRectangle {
+                WrapperRectangle {
                     id: streamingBubble
-                    width: Math.min(streamingContent.width + 24, streamingFooter.maxBubbleWidth)
-                    height: streamingContent.height + 16
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
+                    child: streamingContent
+                    margin: 8
+                    clip: true
                     color: ShellSettings.colors.active.mid
                     radius: 12
-                    clip: true
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
 
                     MarkdownText {
                         id: streamingContent
