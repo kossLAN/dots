@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
@@ -12,19 +13,21 @@ import qs.services.chat
 ColumnLayout {
     id: root
 
-    spacing: 8
+    spacing: 0
 
     RowLayout {
         spacing: 16
 
         Layout.fillWidth: true
         Layout.preferredHeight: 32
-        Layout.leftMargin: 8
+        Layout.margins: 4
+        Layout.leftMargin: 16
 
         Rectangle {
             width: 8
             height: 8
             radius: 4
+
             color: {
                 if (ChatConnector.busy)
                     return ShellSettings.colors.active.accent;
@@ -71,175 +74,89 @@ ColumnLayout {
 
         ListView {
             id: messagesList
-            anchors.fill: parent
-            spacing: 16
-            clip: true
 
-            property bool atBottom: atYEnd
+            property bool autoScroll: true
+
+            spacing: 0
+            clip: true
+            cacheBuffer: 2000 // needs to be a pretty big buffer, otherwise scrolling will freak out
+            anchors.fill: parent
+
+            ScrollBar.vertical: ScrollBar {}
 
             onMovingChanged: {
-                if (!moving)
-                    atBottom = atYEnd;
-            }
-
-            model: {
-                let _ = ChatConnector.historyVersion;
-                return ChatConnector.history;
-            }
-
-            function scrollToBottom() {
-                positionViewAtEnd();
-                atBottom = true;
-            }
-
-            Component.onCompleted: scrollToBottom()
-
-            Connections {
-                target: ChatConnector
-
-                function onHistoryUpdated() {
-                    messagesList.scrollToBottom();
-                }
-
-                function onResponseChunk() {
-                    if (messagesList.atBottom) {
-                        messagesList.scrollToBottom();
+                if (moving) {
+                    autoScroll = false;
+                } else {
+                    if (atYEnd) {
+                        autoScroll = true;
                     }
                 }
             }
 
-            delegate: Item {
+            model: ChatConnector.history
+
+            footer: Rectangle {
+                width: messagesList.width
+                height: ChatConnector.currentResponse !== "" ? streamingContent.height + 16 : 0
+                color: "transparent"
+
+                ChatResponse {
+                    id: streamingContent
+                    visible: ChatConnector.currentResponse !== ""
+                    text: ChatConnector.currentResponse
+                    implicitWidth: messagesList.width - 16
+
+                    anchors {
+                        top: parent.top
+                        right: parent.right
+                        margins: 8
+                    }
+                }
+            }
+
+            delegate: Rectangle {
                 id: messageDelegate
 
                 required property var modelData
                 required property int index
 
                 property bool isUser: modelData.role === "user"
-                property real maxBubbleWidth: messagesList.width * 0.7
 
-                implicitWidth: messagesList.width
-                implicitHeight: messageBubble.height
+                implicitWidth: ListView.view.width
+                implicitHeight: (isUser ? userRequest.height : markdownContent.height) + 16
+                color: messageHover.hovered ? ShellSettings.colors.active.light : "transparent"
 
-                WrapperRectangle {
-                    id: messageBubble
+                HoverHandler {
+                    id: messageHover
+                }
 
-                    property bool hasImages: messageDelegate.isUser && (messageDelegate.modelData.images ?? []).length > 0
-                    child: messageDelegate.isUser ? userContent : markdownContent
-                    margin: 8
-                    clip: true
-                    color: messageDelegate.isUser ? ShellSettings.colors.active.accent : ShellSettings.colors.active.mid
-                    radius: 12
+                // User message
+                ChatRequest {
+                    id: userRequest
+                    visible: messageDelegate.isUser
+                    text: messageDelegate.modelData.content
+                    images: messageDelegate.modelData.images ?? []
+                    implicitWidth: messagesList.width - 16
 
                     anchors {
-                        right: messageDelegate.isUser ? parent.right : undefined
-                        left: messageDelegate.isUser ? undefined : parent.left
-                    }
-
-                    ColumnLayout {
-                        id: userContent
-                        visible: messageDelegate.isUser
-                        spacing: 8
-
-                        implicitWidth: Math.max(messageText.width, imageRow.width)
-                        anchors.centerIn: parent
-
-                        // Image row
-                        Flow {
-                            id: imageRow
-                            visible: messageBubble.hasImages
-                            spacing: 6
-                            Layout.preferredWidth: Math.min(implicitWidth, messageDelegate.maxBubbleWidth - 24)
-
-                            Repeater {
-                                model: messageDelegate.modelData.images ?? []
-
-                                delegate: Item {
-                                    id: imagePreviewDelegate
-
-                                    required property string modelData
-
-                                    width: 80
-                                    height: 80
-
-                                    ClippingRectangle {
-                                        color: "transparent"
-                                        radius: 6
-                                        anchors.fill: parent
-
-                                        Image {
-                                            source: "data:image/png;base64," + imagePreviewDelegate.modelData
-                                            fillMode: Image.PreserveAspectCrop
-                                            smooth: true
-                                            anchors.fill: parent
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        TextEdit {
-                            id: messageText
-                            color: ShellSettings.colors.active.text
-                            text: messageDelegate.modelData.content
-                            wrapMode: Text.Wrap
-                            font.pixelSize: 13
-                            textFormat: TextEdit.MarkdownText
-                            readOnly: true
-                            selectByMouse: true
-                            selectedTextColor: ShellSettings.colors.active.highlightedText
-                            selectionColor: ShellSettings.colors.active.highlight
-
-                            Layout.preferredWidth: Math.min(implicitWidth, messageDelegate.maxBubbleWidth - 24)
-                        }
-                    }
-
-                    MarkdownText {
-                        id: markdownContent
-                        visible: !messageDelegate.isUser
-                        anchors.centerIn: parent
-                        text: messageDelegate.modelData.content
-                        maxWidth: messageDelegate.maxBubbleWidth - 24
+                        top: parent.top
+                        right: parent.right
+                        margins: 8
                     }
                 }
-            }
 
-            // Streaming response indicator
-            footer: Item {
-                id: streamingFooter
-                visible: ChatConnector.currentResponse !== ""
-                width: messagesList.width
-                height: {
-                    if (ChatConnector.currentResponse === "")
-                        return 0;
+                // Assistant message
+                ChatResponse {
+                    id: markdownContent
+                    visible: !messageDelegate.isUser
+                    text: messageDelegate.modelData.content
+                    implicitWidth: messagesList.width - 16
 
-                    if (ChatConnector.history.length > 0)
-                        return streamingBubble.height + messagesList.spacing;
-
-                    return streamingBubble.height;
-                }
-
-                onHeightChanged: {
-                    if (messagesList.atBottom)
-                        messagesList.scrollToBottom();
-                }
-
-                property real maxBubbleWidth: messagesList.width * 0.7
-
-                WrapperRectangle {
-                    id: streamingBubble
-                    child: streamingContent
-                    margin: 8
-                    clip: true
-                    color: ShellSettings.colors.active.mid
-                    radius: 12
-                    anchors.left: parent.left
-                    anchors.bottom: parent.bottom
-
-                    MarkdownText {
-                        id: streamingContent
-                        anchors.centerIn: parent
-                        text: ChatConnector.currentResponse
-                        maxWidth: streamingFooter.maxBubbleWidth - 24
+                    anchors {
+                        top: parent.top
+                        right: parent.right
+                        margins: 8
                     }
                 }
             }
@@ -258,19 +175,58 @@ ColumnLayout {
                     return "Connecting to service...";
                 }
             }
+
+            function scrollToBottom() {
+                positionViewAtEnd();
+            }
+
+            function scrollToBottomDelayed() {
+                positionViewAtEnd();
+                Qt.callLater(positionViewAtEnd);
+            }
+
+            Component.onCompleted: scrollToBottomDelayed()
+
+            Connections {
+                target: ChatConnector
+
+                function onHistoryUpdated() {
+                    messagesList.scrollToBottomDelayed();
+                }
+
+                function onResponseChunk() {
+                    if (messagesList.autoScroll) {
+                        messagesList.scrollToBottom();
+                    }
+                }
+            }
+
+            Connections {
+                target: root
+
+                function onVisibleChanged() {
+                    if (root.visible) {
+                        messagesList.scrollToBottomDelayed();
+                    }
+                }
+            }
         }
 
         StyledButton {
-            visible: !messagesList.atBottom
-            color: ShellSettings.colors.active.mid
+            visible: !messagesList.autoScroll
+            color: ShellSettings.colors.active.dark
+            hoverColor: color.lighter(1.25)
             width: 32
             height: 32
-            onClicked: messagesList.scrollToBottom()
+            onClicked: {
+                messagesList.autoScroll = true;
+                messagesList.scrollToBottomDelayed();
+            }
 
             anchors {
                 right: parent.right
                 bottom: parent.bottom
-                margins: 8
+                margins: 16
             }
 
             IconImage {
@@ -291,6 +247,9 @@ ColumnLayout {
 
         Layout.fillWidth: true
         Layout.preferredHeight: errorText.implicitHeight + 12
+        Layout.leftMargin: 8
+        Layout.rightMargin: 8
+        Layout.topMargin: 8
 
         Text {
             id: errorText
@@ -310,6 +269,7 @@ ColumnLayout {
         supportsImages: ChatConnector.currentProvider?.supportsImages ?? false
 
         Layout.fillWidth: true
+        Layout.margins: 8
 
         onAccepted: (message, images) => {
             ChatConnector.sendMessage(message, images);

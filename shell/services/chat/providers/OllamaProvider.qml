@@ -12,7 +12,7 @@ ChatProvider {
 
     enabled: true
     name: "Ollama"
-    icon: "ollama"
+    icon: "root:resources/chat/ollama.png"
     providerId: "ollama"
     apiEndpoint: "http://localhost:11434"
 

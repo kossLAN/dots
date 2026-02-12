@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import qs
 import qs.widgets
 import qs.services.chat
+import qs.launcher.settings
 
 SettingsBacker {
     icon: "applications-chat-panel"
@@ -75,39 +76,26 @@ SettingsBacker {
                     spacing: 8
                     Layout.fillWidth: true
 
-                    SettingsCard {
-                        title: providerSection.modelData.name
+                    RowLayout {
+                        spacing: 8
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: menu.cardHeight
 
-                        summary: {
-                            if (providerSection.modelData.available)
-                                return `${providerSection.modelData.models.length} models available`;
-
-                            return providerSection.modelData.errorMessage || "Not available";
+                        ProviderCard {
+                            provider: providerSection.modelData
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: menu.cardHeight
                         }
 
-                        controls: RowLayout {
-                            spacing: 8
+                        ToggleSwitch {
+                            checked: providerSection.modelData.enabled
 
-                            Rectangle {
-                                radius: 4
-                                color: providerSection.modelData.available ? "#4ade80" : "#ef4444"
-                                Layout.preferredWidth: 8
-                                Layout.preferredHeight: 8
-                            }
-
-                            ToggleSwitch {
-                                checked: providerSection.modelData.enabled
-
-                                onCheckedChanged: {
-                                    if (providerSection.modelData.enabled !== checked) {
-                                        ChatConnector.setProviderEnabled(providerSection.modelData.providerId, checked);
-                                    }
+                            onCheckedChanged: {
+                                if (providerSection.modelData.enabled !== checked) {
+                                    ChatConnector.setProviderEnabled(providerSection.modelData.providerId, checked);
                                 }
                             }
                         }
-
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: menu.cardHeight
                     }
 
                     // Provider-specific settings
@@ -116,6 +104,11 @@ SettingsBacker {
                         sourceComponent: providerSection.modelData.settings
 
                         Layout.fillWidth: true
+                    }
+
+                    Separator {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 1
                     }
                 }
             }

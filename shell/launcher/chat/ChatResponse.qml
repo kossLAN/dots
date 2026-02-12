@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
@@ -8,80 +9,106 @@ import org.kde.syntaxhighlighting
 
 import qs
 import qs.widgets
+import qs.services.chat
 
-WrapperItem {
+Item {
     id: root
 
     required property string text
-    required property real maxWidth
     property color textColor: ShellSettings.colors.active.text
     property color selectedTextColor: ShellSettings.colors.active.highlightedText
     property color selectionColor: ShellSettings.colors.active.highlight
     property int fontSize: 13
+
+    implicitHeight: contentColumn.implicitHeight
 
     // Convert markdown headers to bold text to avoid oversized headings
     function normalizeHeaders(content) {
         return content.replace(/^(#{1,6})\s+(.+)$/gm, "**$2**");
     }
 
-    // Convert single newlines to markdown line breaks (double space + newline)
-    // Skip lines that already have trailing spaces or are part of lists/code
-    function preserveNewlines(content) {
-        return content.replace(/([^\s\n])(\n)(?!\n|[-*+\d]|\s*```)/g, "$1  $2");
-    }
-
-    property var segments: {
-        let result = [];
-        let content = root.text;
-        let codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
-        let lastIndex = 0;
-        let match;
-
-        while ((match = codeBlockRegex.exec(content)) !== null) {
-            if (match.index > lastIndex) {
-                let textBefore = content.substring(lastIndex, match.index);
-                if (textBefore.trim()) {
-                    result.push({
-                        type: "markdown",
-                        content: textBefore
-                    });
-                }
-            }
-
-            result.push({
-                type: "code",
-                language: match[1] || "",
-                content: match[2]
-            });
-
-            lastIndex = match.index + match[0].length;
-        }
-
-        if (lastIndex < content.length) {
-            let remaining = content.substring(lastIndex);
-            if (remaining.trim()) {
-                result.push({
-                    type: "markdown",
-                    content: remaining
-                });
-            }
-        }
-
-        if (result.length === 0 && content.trim()) {
-            result.push({
-                type: "markdown",
-                content: content
-            });
-        }
-
-        return result;
-    }
-
     ColumnLayout {
+        id: contentColumn
+        width: root.width
         spacing: 8
 
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            Image {
+                source: ChatConnector.currentProvider?.icon ?? ""
+                sourceSize.width: 16
+                sourceSize.height: 16
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+                visible: source != ""
+            }
+
+            Text {
+                text: ChatConnector.currentModel
+                color: root.textColor
+                font.pixelSize: root.fontSize
+                Layout.fillWidth: true
+            }
+        }
+
         Repeater {
-            model: root.segments
+            model: ScriptModel {
+                objectProp: "id"
+
+                values: {
+                    let result = [];
+                    let content = root.text;
+                    let codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
+                    let lastIndex = 0;
+                    let match;
+                    let segmentId = 0;
+
+                    while ((match = codeBlockRegex.exec(content)) !== null) {
+                        if (match.index > lastIndex) {
+                            let textBefore = content.substring(lastIndex, match.index);
+                            if (textBefore.trim()) {
+                                result.push({
+                                    id: segmentId++,
+                                    type: "markdown",
+                                    content: textBefore
+                                });
+                            }
+                        }
+
+                        result.push({
+                            id: segmentId++,
+                            type: "code",
+                            language: match[1] || "",
+                            content: match[2]
+                        });
+
+                        lastIndex = match.index + match[0].length;
+                    }
+
+                    if (lastIndex < content.length) {
+                        let remaining = content.substring(lastIndex);
+                        if (remaining.trim()) {
+                            result.push({
+                                id: segmentId++,
+                                type: "markdown",
+                                content: remaining
+                            });
+                        }
+                    }
+
+                    if (result.length === 0 && content.trim()) {
+                        result.push({
+                            id: segmentId++,
+                            type: "markdown",
+                            content: content
+                        });
+                    }
+
+                    return result;
+                }
+            }
 
             delegate: Loader {
                 id: segmentLoader
@@ -89,7 +116,7 @@ WrapperItem {
                 required property var modelData
                 required property int index
 
-                Layout.preferredWidth: item ? item.width : 0
+                Layout.fillWidth: true
                 Layout.preferredHeight: item ? item.height : 0
 
                 sourceComponent: modelData.type === "code" ? codeBlockComponent : markdownComponent
@@ -98,9 +125,9 @@ WrapperItem {
                     id: markdownComponent
 
                     TextEdit {
-                        width: Math.min(implicitWidth, root.maxWidth)
+                        width: root.width
                         color: root.textColor
-                        text: root.preserveNewlines(root.normalizeHeaders(segmentLoader.modelData.content))
+                        text: root.normalizeHeaders(segmentLoader.modelData.content)
                         wrapMode: Text.Wrap
                         font.pixelSize: root.fontSize
                         textFormat: TextEdit.MarkdownText
@@ -121,7 +148,7 @@ WrapperItem {
                         property string code: segmentLoader.modelData.content.replace(/\n$/, "")
                         property bool copied: false
 
-                        width: root.maxWidth
+                        width: root.width
                         height: codeEdit.contentHeight + 16
                         color: Qt.darker(ShellSettings.colors.active.window, 1.2)
                         radius: 6
@@ -133,6 +160,10 @@ WrapperItem {
                             contentHeight: codeEdit.contentHeight
                             flickableDirection: Flickable.HorizontalFlick
                             boundsBehavior: Flickable.StopAtBounds
+
+                            ScrollBar.horizontal: ScrollBar {
+                                policy: ScrollBar.AsNeeded
+                            }
 
                             anchors {
                                 fill: parent
@@ -163,7 +194,7 @@ WrapperItem {
                             color: Qt.darker(ShellSettings.colors.active.window, 1.4)
 
                             anchors.right: parent.right
-                            anchors.bottom: parent.bottom
+                            anchors.top: parent.top
                             anchors.margins: 6
 
                             onClicked: {

@@ -5,9 +5,9 @@ Scope {
     id: root
 
     property bool enabled: false
-    property string name: "Provider"
-    property string icon: "chat"
-    property string providerId: "generic"
+    property string name: ""
+    property string icon: ""
+    property string providerId: "default"
 
     property string apiEndpoint: ""
     property string currentModel: ""

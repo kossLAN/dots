@@ -1,10 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
-import qs
 import qs.widgets
 import qs.bar
 import qs.notifications
@@ -30,7 +27,7 @@ IconButton {
         popup: root.bar.popup
         show: root.showMenu
         onClosed: root.showMenu = false
-        implicitWidth: 475
+        implicitWidth: 525
         fullHeight: true
         expand: Popup.ExpandRight
 

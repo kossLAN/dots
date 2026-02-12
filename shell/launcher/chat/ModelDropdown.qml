@@ -14,7 +14,8 @@ Item {
     property var groupedModels: {
         let groups = [];
         for (let provider of ChatConnector.providers) {
-            if (!provider.enabled) continue;
+            if (!provider.enabled)
+                continue;
 
             let items = [];
 
@@ -29,6 +30,7 @@ Item {
             groups.push({
                 providerId: provider.providerId,
                 providerName: provider.name,
+                providerIcon: provider.icon,
                 available: provider.available,
                 models: items
             });
@@ -39,14 +41,17 @@ Item {
 
     property bool hasModels: {
         for (let group of groupedModels) {
-            if (group.models.length > 0) return true;
+            if (group.models.length > 0)
+                return true;
         }
         return false;
     }
 
     property string displayText: {
-        if (!hasModels) return "N/A";
-        if (ChatConnector.currentModel === "") return "N/A";
+        if (!hasModels)
+            return "N/A";
+        if (ChatConnector.currentModel === "")
+            return "N/A";
         return ChatConnector.currentModel;
     }
 
@@ -80,6 +85,15 @@ Item {
             anchors.leftMargin: 10
             anchors.rightMargin: 10
             spacing: 6
+
+            Image {
+                source: ChatConnector.currentProvider?.icon ?? ""
+                sourceSize.width: 16
+                sourceSize.height: 16
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+                visible: source != ""
+            }
 
             StyledText {
                 text: root.displayText
@@ -173,6 +187,15 @@ Item {
                                     anchors.rightMargin: 8
                                     spacing: 6
 
+                                    Image {
+                                        source: providerGroup.modelData.providerIcon ?? ""
+                                        sourceSize.width: 14
+                                        sourceSize.height: 14
+                                        Layout.preferredWidth: 14
+                                        Layout.preferredHeight: 14
+                                        visible: source != ""
+                                    }
+
                                     StyledText {
                                         text: providerGroup.modelData.providerName
                                         font.weight: Font.Medium
@@ -185,7 +208,7 @@ Item {
                                         width: 6
                                         height: 6
                                         radius: 3
-                                        color: providerGroup.modelData.available ? "#4ade80" : "#ef4444"
+                                        color: providerGroup.modelData.available ? ShellSettings.colors.extra.open : ShellSettings.colors.extra.close
                                     }
                                 }
                             }
@@ -205,11 +228,10 @@ Item {
 
                                     color: {
                                         if (modelMouse.containsMouse)
-                                            return ShellSettings.colors.inactive.highlight;
-
-                                        if (modelData.value === ChatConnector.currentModel &&
-                                            modelData.providerId === ChatConnector.currentProviderId)
                                             return ShellSettings.colors.active.highlight;
+
+                                        if (modelData.value === ChatConnector.currentModel && modelData.providerId === ChatConnector.currentProviderId)
+                                            return ShellSettings.colors.inactive.highlight;
 
                                         return "transparent";
                                     }

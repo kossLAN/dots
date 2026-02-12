@@ -51,7 +51,7 @@ float getBarValue(int index) {
 float sampleBars(float x) {
     float idx = x * 19.0;
     int i0 = int(floor(idx));
-    int i1 = min(i0 + 1, 19);
+    int i1 = int(min(float(i0 + 1), 19.0));
     float frac = fract(idx);
     
     float v0 = getBarValue(i0);

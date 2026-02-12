@@ -36,7 +36,6 @@ Singleton {
 
     // Conversation history: [{id: int, role: "user"|"assistant", content: string, timestamp: date}]
     property var history: []
-    property int historyVersion: 0  // Increment to force UI updates
 
     // Current conversation
     property int currentConversationId: -1
@@ -201,7 +200,6 @@ Singleton {
 
         currentConversationId = conversationId;
         history = msgs;
-        historyVersion++;
         historyUpdated();
     }
 
@@ -216,7 +214,6 @@ Singleton {
         if (currentConversationId === conversationId) {
             currentConversationId = -1;
             history = [];
-            historyVersion++;
             historyUpdated();
         }
 
@@ -473,7 +470,6 @@ Singleton {
         newHistory.push(historyEntry);
 
         history = newHistory;
-        historyVersion++;
 
         historyUpdated();
         loadConversations();
@@ -483,7 +479,6 @@ Singleton {
         currentConversationId = -1;
         history = [];
         currentResponse = "";
-        historyVersion++;
 
         historyUpdated();
     }
@@ -495,7 +490,6 @@ Singleton {
         currentConversationId = -1;
         history = [];
         currentResponse = "";
-        historyVersion++;
 
         historyUpdated();
     }

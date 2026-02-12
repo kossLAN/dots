@@ -11,6 +11,7 @@ Item {
     property list<LauncherBacker> enabledModel: model.filter(x => x.enabled)
 
     property alias currentIndex: root.switcher.currentIndex
+    readonly property LauncherBacker currentItem: enabledModel[root.switcher.currentIndex]
 
     property Switcher switcher: Switcher {
         model: root.enabledModel.map(x => x.icon)
@@ -24,15 +25,22 @@ Item {
         id: wrapper
         child: root.enabledModel[root.currentIndex].content
 
-        onChildChanged: opacityAnim.restart()
+        property bool firstChild: true
+
+        Component.onCompleted: firstChild = false
+
+        onChildChanged: {
+            if (!firstChild)
+                opacityAnim.restart();
+        }
 
         NumberAnimation {
             id: opacityAnim
-            target: wrapper 
+            target: wrapper
             property: "opacity"
             from: 0
             to: 1
-            duration: 100
+            duration: 200
             easing.type: Easing.InCubic
         }
     }

@@ -7,6 +7,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 
+import qs
 import qs.widgets
 import qs.launcher.settings
 import qs.launcher.chat
@@ -74,14 +75,50 @@ Singleton {
                 implicitWidth: manager.implicitWidth
                 implicitHeight: manager.implicitHeight
 
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    top: parent.top
-                    topMargin: (panel.screen.height / 2) - 325
+                x: manager.centerX - (view.width / 2)
+
+                y: {
+                    if (ShellSettings.sizing.launcherPosition.y === -1)
+                        return (panel.screen.height / 2) - 325;
+
+                    return ShellSettings.sizing.launcherPosition.y;
+                }
+
+                function setPositon() {
+                    manager.centerX = view.x + view.width / 2;
+                    ShellSettings.sizing.launcherPosition.centerX = manager.centerX;
+                    ShellSettings.sizing.launcherPosition.y = view.y;
+                    view.x = Qt.binding(() => manager.centerX - (view.width / 2));
+                }
+
+                Item {
+                    id: dragArea
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 8
+                    z: 1
+
+                    HoverHandler {
+                        cursorShape: Qt.SizeAllCursor
+                    }
+
+                    DragHandler {
+                        id: handler
+                        target: view
+
+                        onActiveChanged: {
+                            if (!active) {
+                                view.setPositon();
+                            }
+                        }
+                    }
                 }
 
                 LauncherManager {
                     id: manager
+
+                    property real centerX: ShellSettings.sizing.launcherPosition.centerX === -1 ? panel.screen.width / 2 : ShellSettings.sizing.launcherPosition.centerX
 
                     model: [
                         ApplicationLauncher {
@@ -90,6 +127,10 @@ Singleton {
                         Settings {},
                         Chat {}
                     ]
+
+                    onCurrentIndexChanged: {
+                        centerX = view.x + view.width / 2;
+                    }
                 }
 
                 Keys.onPressed: event => {
@@ -103,6 +144,8 @@ Singleton {
                 }
 
                 Behavior on implicitWidth {
+                    enabled: manager.currentItem.animate
+
                     NumberAnimation {
                         duration: 200
                         easing.type: Easing.OutCubic
@@ -110,6 +153,8 @@ Singleton {
                 }
 
                 Behavior on implicitHeight {
+                    enabled: manager.currentItem.animate
+
                     NumberAnimation {
                         duration: 200
                         easing.type: Easing.OutCubic

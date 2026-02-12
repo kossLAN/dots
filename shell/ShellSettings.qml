@@ -30,6 +30,7 @@ Singleton {
         }
 
         property QtObject extra: QtObject {
+            property color open: Qt.color("#4ade80") 
             property color close: Qt.color("#FF474D") 
         }
     }
@@ -37,8 +38,12 @@ Singleton {
     FileView {
         id: userFile
         path: root.settingsPath
-        onAdapterUpdated: writeAdapter()
         blockLoading: true
+        onAdapterUpdated: writeAdapter()
+        onLoadFailed: (error) => {
+            if (error === FileViewError.FileNotFound)
+                writeAdapter();
+        }
 
         JsonAdapter {
             id: userAdapter
@@ -56,6 +61,16 @@ Singleton {
 
             property JsonObject sizing: JsonObject {
                 property int barHeight: 25
+
+                property JsonObject launcherPosition: JsonObject {
+                    property real centerX: -1
+                    property real y: -1
+                }
+
+                property JsonObject chatSize: JsonObject {
+                    property real width: 950
+                    property real height: 600
+                }
             }
         }
     }

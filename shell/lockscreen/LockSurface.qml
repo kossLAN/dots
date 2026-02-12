@@ -97,8 +97,6 @@ Item {
                 samples: 41
                 color: Qt.rgba(1, 1, 1, 0.3)
             }
-
-            Component.onCompleted: console.log(font.family)
         }
     }
 
@@ -183,7 +181,7 @@ Item {
 
     // testing button
     Button {
-        visible: false 
+        visible: ShellSettings.settings.debugEnabled 
         text: "Emergency Unlock"
         onClicked: root.state.unlocked()
 

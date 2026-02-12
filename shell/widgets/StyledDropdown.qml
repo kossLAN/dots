@@ -131,10 +131,10 @@ Item {
                     radius: 4
                     color: {
                         if (itemMouse.containsMouse)
-                            return ShellSettings.colors.inactive.highlight;
+                            return ShellSettings.colors.active.highlight;
 
                         if (modelData.value === root.currentValue)
-                            return ShellSettings.colors.active.highlight;
+                            return ShellSettings.colors.inactive.highlight;
 
                         return "transparent";
                     }

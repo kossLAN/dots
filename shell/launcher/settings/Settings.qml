@@ -6,6 +6,7 @@ import qs
 import qs.launcher
 import qs.widgets
 
+import qs.launcher.settings.chat
 import qs.launcher.settings.monitor
 import qs.launcher.settings.volume
 

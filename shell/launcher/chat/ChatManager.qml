@@ -9,11 +9,13 @@ Item {
     id: root
 
     RowLayout {
-        spacing: 8
+        // spacing: 8
+        spacing: 0
         anchors.fill: parent
 
         ChatSidebar {
             Layout.fillHeight: true
+            Layout.margins: 8
         }
 
         Separator {

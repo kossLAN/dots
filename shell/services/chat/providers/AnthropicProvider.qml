@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
-import qs
 import qs.widgets
 import qs.services.chat
 import qs.launcher.settings
@@ -13,7 +12,7 @@ ChatProvider {
 
     enabled: false
     name: "Anthropic"
-    icon: "anthropic"
+    icon: "root:resources/chat/claude.svg"
     providerId: "anthropic"
     apiEndpoint: "https://api.anthropic.com"
 
