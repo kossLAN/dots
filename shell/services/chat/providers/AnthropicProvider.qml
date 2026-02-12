@@ -19,31 +19,10 @@ ChatProvider {
     property string apiKey: ""
 
     available: false
-    // Anthropic Claude models support images (vision capability)
-    supportsImages: _isVisionModel(currentModel)
+    // All current Anthropic Claude models support images
+    supportsImages: true
 
-    // Check if current model supports vision
-    function _isVisionModel(modelName) {
-        if (!modelName) return false;
-        let lower = modelName.toLowerCase();
-        // Claude 3+ models support vision (Haiku, Sonnet, Opus)
-        // Claude 2.x and earlier do not support images
-        return lower.includes("claude-3") ||
-               lower.includes("claude-sonnet") ||
-               lower.includes("claude-haiku") ||
-               lower.includes("claude-opus");
-    }
 
-    // Helper to detect media type from base64 data
-    function _detectMediaType(base64Data) {
-        // Check for common image signatures in base64
-        if (base64Data.startsWith("/9j/")) return "image/jpeg";
-        if (base64Data.startsWith("iVBOR")) return "image/png";
-        if (base64Data.startsWith("R0lGO")) return "image/gif";
-        if (base64Data.startsWith("UklGR")) return "image/webp";
-        // Default to JPEG if unknown
-        return "image/jpeg";
-    }
 
     settings: ColumnLayout {
         spacing: 4
@@ -187,6 +166,7 @@ ChatProvider {
     }
 
     // Build content array for Anthropic API (supports text and images)
+    // images: array of {base64: string, mediaType: string}
     function _buildContentArray(text, images) {
         let content = [];
 
@@ -197,8 +177,8 @@ ChatProvider {
                     type: "image",
                     source: {
                         type: "base64",
-                        media_type: _detectMediaType(img),
-                        data: img
+                        media_type: img.mediaType,
+                        data: img.base64
                     }
                 });
             }

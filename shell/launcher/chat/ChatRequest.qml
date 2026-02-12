@@ -36,7 +36,7 @@ Item {
                 ClippingRectangle {
                     id: imageContainer
 
-                    required property string modelData
+                    required property var modelData
                     required property int index
 
                     width: 64
@@ -45,7 +45,7 @@ Item {
                     color: "transparent"
 
                     Image {
-                        source: "data:image/png;base64," + imageContainer.modelData
+                        source: "data:" + imageContainer.modelData.mediaType + ";base64," + imageContainer.modelData.base64
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
                         anchors.fill: parent

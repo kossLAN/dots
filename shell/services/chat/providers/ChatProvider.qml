@@ -37,8 +37,8 @@ Scope {
     }
 
     // Sends a message with conversation history, streams response
-    // history: array of {role: "user"|"assistant", content: string, images?: string[]}
-    // images: optional array of base64-encoded image data for the current message
+    // history: array of {role: "user"|"assistant", content: string, images?: [{base64: string, mediaType: string}]}
+    // images: optional array of image objects {base64: string, mediaType: string} for the current message
     function sendMessage(message, history, images = null) {
         console.error(`${name}: sendMessage() not implemented`);
     }

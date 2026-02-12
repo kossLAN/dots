@@ -207,9 +207,9 @@ ChatProvider {
                     role: msg.role,
                     content: msg.content
                 };
-                // Include images from history if present
+                // Include images from history if present (extract base64 from image objects)
                 if (msg.images && Array.isArray(msg.images) && msg.images.length > 0) {
-                    historyMsg.images = msg.images;
+                    historyMsg.images = msg.images.map(img => img.base64);
                 }
                 messages.push(historyMsg);
             }
@@ -223,7 +223,7 @@ ChatProvider {
 
         // Add images if provided (Ollama expects base64 strings in images array)
         if (images && Array.isArray(images) && images.length > 0) {
-            currentMsg.images = images;
+            currentMsg.images = images.map(img => img.base64);
         }
 
         messages.push(currentMsg);

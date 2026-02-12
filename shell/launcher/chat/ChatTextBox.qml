@@ -25,7 +25,7 @@ StyledRectangle {
     property bool busy: false
     property bool supportsImages: false
 
-    // List of selected images as base64 strings
+    // List of selected images as objects: [{base64: string, mediaType: string}]
     property var pendingImages: []
 
     // Dynamic height based on content
@@ -53,12 +53,21 @@ StyledRectangle {
     FileDialog {
         id: imageDialog
         title: "Select Image"
-        nameFilters: ["Image files (*.png *.jpg *.jpeg)", "All files (*)"]
+        nameFilters: ["Image files (*.png *.jpg *.jpeg *.gif *.webp)", "All files (*)"]
         popupType: Popup.Item
 
         onAccepted: {
             let filePath = selectedFile.toString().replace("file://", "");
+            // Detect media type from file extension
+            let ext = filePath.split('.').pop().toLowerCase();
+            let mediaType = "image/jpeg"; // default
+            if (ext === "png") mediaType = "image/png";
+            else if (ext === "jpg" || ext === "jpeg") mediaType = "image/jpeg";
+            else if (ext === "gif") mediaType = "image/gif";
+            else if (ext === "webp") mediaType = "image/webp";
+
             imageReader.path = filePath;
+            imageReader.mediaType = mediaType;
             imageReader.reload();
         }
     }
@@ -68,6 +77,7 @@ StyledRectangle {
         id: imageReader
 
         property string path: ""
+        property string mediaType: "image/jpeg"
 
         command: ["base64", "-w", "0", path]
         running: false
@@ -75,7 +85,10 @@ StyledRectangle {
         stdout: SplitParser {
             onRead: data => {
                 let newImages = root.pendingImages.slice();
-                newImages.push(data.trim());
+                newImages.push({
+                    base64: data.trim(),
+                    mediaType: imageReader.mediaType
+                });
                 root.pendingImages = newImages;
             }
         }
@@ -111,7 +124,7 @@ StyledRectangle {
                 Item {
                     id: imagePreview
 
-                    required property string modelData
+                    required property var modelData
                     required property int index
 
                     width: 48
@@ -123,7 +136,7 @@ StyledRectangle {
                         anchors.fill: parent
 
                         Image {
-                            source: "data:image/png;base64," + imagePreview.modelData
+                            source: "data:" + imagePreview.modelData.mediaType + ";base64," + imagePreview.modelData.base64
                             fillMode: Image.PreserveAspectCrop
                             smooth: true
                             anchors.fill: parent
