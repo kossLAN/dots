@@ -17,10 +17,13 @@ LauncherBacker {
         implicitWidth: resizeArea.currentSize.width
         implicitHeight: resizeArea.currentSize.height
 
-        ChatManager {
-            anchors {
-                fill: parent
-            }
+        // Only load if visible, resource intensive, and problem occur loading in the
+        // background
+        Loader {
+            active: container.parent != null
+            sourceComponent: ChatManager {}
+            focus: true
+            anchors.fill: parent
         }
 
         StyledRectangle {
@@ -53,7 +56,11 @@ LauncherBacker {
             property size startSize
             property size currentSize: Qt.size(ShellSettings.sizing.chatSize.width, ShellSettings.sizing.chatSize.height)
 
-            drag.target: Item { id: dragTarget; x: 0; y: 0 }
+            drag.target: Item {
+                id: dragTarget
+                x: 0
+                y: 0
+            }
             drag.axis: Drag.XAndYAxis
 
             onPressed: {

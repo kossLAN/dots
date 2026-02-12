@@ -23,7 +23,7 @@ Item {
 
     WrapperItem {
         id: wrapper
-        child: root.enabledModel[root.currentIndex].content
+        child: root.currentItem.content
 
         property bool firstChild: true
 
