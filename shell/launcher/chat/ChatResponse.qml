@@ -22,9 +22,16 @@ Item {
 
     implicitHeight: contentColumn.implicitHeight
 
-    // Convert markdown headers to bold text to avoid oversized headings
-    function normalizeHeaders(content) {
-        return content.replace(/^(#{1,6})\s+(.+)$/gm, "**$2**");
+    function preprocessMarkdown(content) {
+        let result = content;
+        
+        // Convert markdown headers to bold text to avoid oversized headings
+        result = result.replace(/^(#{1,6})\s+(.+)$/gm, "**$2**");
+        
+        // Convert single newlines to hard line breaks
+        result = result.replace(/\n/g, "  \n");
+        
+        return result;
     }
 
     ColumnLayout {
@@ -64,16 +71,28 @@ Item {
                     let lastIndex = 0;
                     let match;
                     let segmentId = 0;
+                    
+                    function addMarkdownSegments(text) {
+                        let paragraphs = text.split(/\n\n+/);
+
+                        for (let i = 0; i < paragraphs.length; i++) {
+                            let para = paragraphs[i];
+
+                            if (para.trim()) {
+                                result.push({
+                                    id: segmentId++,
+                                    type: "markdown",
+                                    content: para
+                                });
+                            }
+                        }
+                    }
 
                     while ((match = codeBlockRegex.exec(content)) !== null) {
                         if (match.index > lastIndex) {
                             let textBefore = content.substring(lastIndex, match.index);
                             if (textBefore.trim()) {
-                                result.push({
-                                    id: segmentId++,
-                                    type: "markdown",
-                                    content: textBefore
-                                });
+                                addMarkdownSegments(textBefore);
                             }
                         }
 
@@ -90,11 +109,7 @@ Item {
                     if (lastIndex < content.length) {
                         let remaining = content.substring(lastIndex);
                         if (remaining.trim()) {
-                            result.push({
-                                id: segmentId++,
-                                type: "markdown",
-                                content: remaining
-                            });
+                            addMarkdownSegments(remaining);
                         }
                     }
 
@@ -127,7 +142,7 @@ Item {
                     TextEdit {
                         width: root.width
                         color: root.textColor
-                        text: root.normalizeHeaders(segmentLoader.modelData.content)
+                        text: root.preprocessMarkdown(segmentLoader.modelData.content)
                         wrapMode: Text.Wrap
                         font.pixelSize: root.fontSize
                         textFormat: TextEdit.MarkdownText
