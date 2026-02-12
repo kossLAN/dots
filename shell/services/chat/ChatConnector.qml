@@ -19,7 +19,8 @@ Singleton {
     // All registered providers
     property list<ChatProvider> providers: [
         OllamaProvider {},
-        AnthropicProvider {}
+        AnthropicProvider {},
+        GitHubCopilotProvider {}
     ]
 
     // Current active provider
