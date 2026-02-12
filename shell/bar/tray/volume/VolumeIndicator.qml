@@ -8,36 +8,35 @@ import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 import qs.widgets
 import qs.bar
+import qs.bar.tray
 
-StyledMouseArea {
+TrayBacker {
     id: root
-    onClicked: showMenu = !showMenu
 
-    required property var bar
-    property bool showMenu: false
+    trayId: "volume"
+
     property PwNode sink: Pipewire.defaultAudioSink
 
-    IconImage {
-        id: icon
-        anchors.fill: parent
-        source: if (root.sink?.audio?.muted) {
-            return Quickshell.iconPath("audio-volume-muted");
-        } else if (root.sink?.audio && root.sink.audio.volume > 0.66) {
-            return Quickshell.iconPath("audio-volume-high");
-        } else if (root.sink?.audio && root.sink.audio.volume > 0.33) {
-            return Quickshell.iconPath("audio-volume-medium");
-        } else {
-            return Quickshell.iconPath("audio-volume-low");
+    icon: StyledMouseArea {
+        onClicked: root.clicked()
+
+        IconImage {
+            id: icon
+            anchors.fill: parent
+            source: if (root.sink?.audio?.muted) {
+                return Quickshell.iconPath("audio-volume-muted");
+            } else if (root.sink?.audio && root.sink.audio.volume > 0.66) {
+                return Quickshell.iconPath("audio-volume-high");
+            } else if (root.sink?.audio && root.sink.audio.volume > 0.33) {
+                return Quickshell.iconPath("audio-volume-medium");
+            } else {
+                return Quickshell.iconPath("audio-volume-low");
+            }
         }
     }
 
-    property PopupItem menu: PopupItem {
+    menu: Item {
         id: menu
-        owner: root
-        popup: root.bar.popup
-        show: root.showMenu
-        onClosed: root.showMenu = false
-
         implicitWidth: 300
         implicitHeight: container.implicitHeight + (2 * container.anchors.margins)
 

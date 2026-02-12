@@ -7,14 +7,13 @@ import Quickshell.Widgets
 import Quickshell.Networking
 import qs.widgets
 import qs.bar
+import qs.bar.tray
 import qs
 
-StyledMouseArea {
+TrayBacker {
     id: root
-    onClicked: showMenu = !showMenu
 
-    required property var bar
-    property bool showMenu: false
+    trayId: "wifi"
 
     property WifiDevice wifiDevice: {
         if (!Networking.devices)
@@ -42,63 +41,48 @@ StyledMouseArea {
         return false;
     }
 
-    IconImage {
-        anchors.fill: parent
-        source: {
-            if (root.ethernetConnected) {
-                return Quickshell.iconPath("network-wired");
-            }
+    icon: StyledMouseArea {
+        onClicked: root.clicked()
 
-            if (Networking.wifiEnabled && root.wifiDevice && root.wifiDevice.connected) {
-                if (root.wifiDevice.networks) {
-                    for (let i = 0; i < root.wifiDevice.networks.values.length; i++) {
-                        const net = root.wifiDevice.networks.values[i];
+        IconImage {
+            anchors.fill: parent
+            source: {
+                if (root.ethernetConnected) {
+                    return Quickshell.iconPath("network-wired");
+                }
 
-                        if (net.connected) {
-                            const strength = net.signalStrength;
+                if (Networking.wifiEnabled && root.wifiDevice && root.wifiDevice.connected) {
+                    if (root.wifiDevice.networks) {
+                        for (let i = 0; i < root.wifiDevice.networks.values.length; i++) {
+                            const net = root.wifiDevice.networks.values[i];
 
-                            if (strength >= 0.75)
-                                return Quickshell.iconPath("network-wireless-80");
-                            if (strength >= 0.5)
-                                return Quickshell.iconPath("network-wireless-60");
-                            if (strength >= 0.25)
-                                return Quickshell.iconPath("network-wireless-40");
+                            if (net.connected) {
+                                const strength = net.signalStrength;
 
-                            return Quickshell.iconPath("network-wireless-20");
+                                if (strength >= 0.75)
+                                    return Quickshell.iconPath("network-wireless-80");
+                                if (strength >= 0.5)
+                                    return Quickshell.iconPath("network-wireless-60");
+                                if (strength >= 0.25)
+                                    return Quickshell.iconPath("network-wireless-40");
+
+                                return Quickshell.iconPath("network-wireless-20");
+                            }
                         }
                     }
                 }
-            }
 
-            return Quickshell.iconPath("network-wireless-100");
+                return Quickshell.iconPath("network-wireless-100");
+            }
         }
     }
 
-    property PopupItem menu: PopupItem {
+    menu: Item {
         id: menu
-        owner: root
-        popup: root.bar.popup
-        show: root.showMenu
         implicitWidth: 300
         implicitHeight: container.implicitHeight + (2 * container.anchors.margins)
 
         property var entryHeight: 35
-
-        onClosed: {
-            root.showMenu = false;
-
-            if (root.wifiDevice) {
-                console.info("Stopped scanning for Wifi Networks");
-                root.wifiDevice.scannerEnabled = false;
-            }
-        }
-
-        onShowChanged: {
-            if (show && root.wifiDevice && Networking.wifiEnabled) {
-                console.info("Started scanning for Wifi Networks");
-                root.wifiDevice.scannerEnabled = true;
-            }
-        }
 
         ColumnLayout {
             id: container

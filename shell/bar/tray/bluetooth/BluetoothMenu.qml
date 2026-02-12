@@ -7,33 +7,32 @@ import Quickshell.Widgets
 import Quickshell.Bluetooth
 import qs.widgets
 import qs.bar
+import qs.bar.tray
 import qs
 
-StyledMouseArea {
+TrayBacker {
     id: root
-    onClicked: showMenu = !showMenu
-    visible: ShellSettings.settings.bluetoothEnabled
 
-    required property var bar
-    property bool showMenu: false
+    trayId: "bluetooth"
+    enabled: ShellSettings.settings.bluetoothEnabled
 
-    IconImage {
-        anchors.fill: parent
-        source: {
-            if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled) {
-                return Quickshell.iconPath("bluetooth-online");
-            } else {
-                return Quickshell.iconPath("bluetooth-offline");
+    icon: StyledMouseArea {
+        onClicked: root.clicked()
+
+        IconImage {
+            anchors.fill: parent
+            source: {
+                if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled) {
+                    return Quickshell.iconPath("bluetooth-online");
+                } else {
+                    return Quickshell.iconPath("bluetooth-offline");
+                }
             }
         }
     }
 
-    property PopupItem menu: PopupItem {
+    menu: Item {
         id: menu
-        owner: root
-        popup: root.bar.popup
-        show: root.showMenu
-        onClosed: root.showMenu = false
         implicitWidth: 300
         implicitHeight: container.implicitHeight + (2 * container.anchors.margins)
 

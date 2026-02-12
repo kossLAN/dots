@@ -6,15 +6,10 @@ import Quickshell.Wayland
 import qs
 import qs.notifications
 
-import qs.bar.power
-import qs.bar.volume
-import qs.bar.systray
-import qs.bar.bluetooth
-import qs.bar.wifi
-import qs.bar.notifications
 import qs.bar.mpris
+import qs.bar.tray
+import qs.bar.notifications
 import qs.bar.debug
-import qs.bar.gsr
 
 Variants {
     model: Quickshell.screens
@@ -83,48 +78,18 @@ Variants {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     height: parent.height
-
+                    
                     NotificationSpawner {
                         Layout.preferredWidth: this.height
                         Layout.fillHeight: true
                     }
 
-                    SysTray {
+                    Tray {
                         bar: root
                         Layout.fillHeight: true
                     }
 
                     SearchButton {
-                        Layout.preferredWidth: this.height
-                        Layout.fillHeight: true
-                    }
-
-                    GsrMenu {
-                        bar: root
-                        Layout.preferredWidth: this.height
-                        Layout.fillHeight: true
-                    }
-
-                    PowerMenu {
-                        bar: root
-                        Layout.preferredWidth: this.height
-                        Layout.fillHeight: true
-                    }
-
-                    VolumeIndicator {
-                        bar: root
-                        Layout.preferredWidth: this.height
-                        Layout.fillHeight: true
-                    }
-
-                    BluetoothMenu {
-                        bar: root
-                        Layout.preferredWidth: this.height
-                        Layout.fillHeight: true
-                    }
-
-                    WifiMenu {
-                        bar: root
                         Layout.preferredWidth: this.height
                         Layout.fillHeight: true
                     }

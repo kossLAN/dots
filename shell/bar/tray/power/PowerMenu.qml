@@ -7,16 +7,14 @@ import Quickshell.Widgets
 import Quickshell.Services.UPower
 import qs.widgets
 import qs.bar
+import qs.bar.tray
 import qs
 
-StyledMouseArea {
+TrayBacker {
     id: root
-    implicitWidth: height
-    onClicked: showMenu = !showMenu
-    visible: UPower.displayDevice.isLaptopBattery
 
-    required property var bar
-    property bool showMenu: false
+    trayId: "power"
+    enabled: UPower.displayDevice.isLaptopBattery
 
     // Filter devices that have batteries (percentage > 0), excluding laptop battery
     property var batteryDevices: {
@@ -35,17 +33,16 @@ StyledMouseArea {
         return devices;
     }
 
-    BatteryIcon {
-        anchors.fill: parent
+    icon: StyledMouseArea {
+        onClicked: root.clicked()
+
+        BatteryIcon {
+            anchors.fill: parent
+        }
     }
 
-    property PopupItem menu: PopupItem {
+    menu: Item {
         id: menu
-        owner: root
-        popup: root.bar.popup
-        show: root.showMenu
-        onClosed: root.showMenu = false
-
         implicitWidth: 270
         implicitHeight: container.implicitHeight + (2 * container.anchors.margins)
 

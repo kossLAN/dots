@@ -7,53 +7,31 @@ import Quickshell.Widgets
 
 import qs
 import qs.widgets
-import qs.bar
 import qs.services.gsr
 
-StyledMouseArea {
+import qs.bar
+import qs.bar.tray
+
+TrayBacker {
     id: root
-    onClicked: showMenu = !showMenu
-    visible: ShellSettings.settings.gsrEnabled
 
-    required property var bar
-    property bool showMenu: false
+    trayId: "gsr"
 
-    Rectangle {
-        radius: height / 2
-        color: "#DFDFDF"
-        opacity: GpuScreenRecord.isRunning ? 1 : 0.25
+    icon: StyledMouseArea {
+        onClicked: root.clicked()
 
-        SequentialAnimation on opacity {
+        GsrIcon {
             running: GpuScreenRecord.isRunning
-            loops: Animation.Infinite
 
-            NumberAnimation {
-                from: 1.0
-                to: 0.3
-                duration: 800
-                easing.type: Easing.InOutQuad
+            anchors {
+                fill: parent
+                margins: 5
             }
-
-            NumberAnimation {
-                from: 0.3
-                to: 1.0
-                duration: 800
-                easing.type: Easing.InOutQuad
-            }
-        }
-
-        anchors {
-            fill: parent
-            margins: 6
         }
     }
 
-    property PopupItem menu: PopupItem {
+    menu: Item {
         id: menu
-        owner: root
-        popup: root.bar.popup
-        show: root.showMenu
-        onClosed: root.showMenu = false
         implicitWidth: 280
         implicitHeight: container.implicitHeight + (2 * container.anchors.margins)
 
@@ -65,42 +43,21 @@ StyledMouseArea {
 
             anchors {
                 fill: parent
-                margins: 8
+                margins: 4
             }
 
             RowLayout {
                 spacing: 8
-                Layout.fillWidth: true 
+                Layout.fillWidth: true
                 // Layout.margins: 4
 
-                Rectangle {
-                    radius: height / 2
-                    color: "#DFDFDF"
-                    opacity: GpuScreenRecord.isRunning ? 1 : 0.25
+                GsrIcon {
+                    running: GpuScreenRecord.isRunning
 
-                    Layout.preferredHeight: 12
-                    Layout.preferredWidth: 12
-                    Layout.leftMargin: 10
-                    Layout.rightMargin: 10
-
-                    SequentialAnimation on opacity {
-                        running: GpuScreenRecord.isRunning
-                        loops: Animation.Infinite
-
-                        NumberAnimation {
-                            from: 1.0
-                            to: 0.3
-                            duration: 800
-                            easing.type: Easing.InOutQuad
-                        }
-
-                        NumberAnimation {
-                            from: 0.3
-                            to: 1.0
-                            duration: 800
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
+                    Layout.preferredHeight: 16
+                    Layout.preferredWidth: 16
+                    Layout.leftMargin: 8
+                    Layout.rightMargin: 8
                 }
 
                 ColumnLayout {
@@ -135,7 +92,7 @@ StyledMouseArea {
                 id: saveReplayButton
                 visible: GpuScreenRecord.isRunning && GpuScreenRecord.isReplayMode
                 color: containsMouse ? ShellSettings.colors.active.highlight : ShellSettings.colors.active.button
-                radius: 6
+                radius: 8
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: menu.entryHeight
@@ -151,6 +108,7 @@ StyledMouseArea {
                     anchors {
                         fill: parent
                         margins: 4
+                        rightMargin: 8
                     }
 
                     IconImage {
@@ -176,7 +134,7 @@ StyledMouseArea {
             StyledMouseArea {
                 id: modeToggle
                 color: containsMouse ? ShellSettings.colors.active.light : "transparent"
-                radius: 6
+                radius: 8
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: menu.entryHeight
@@ -187,6 +145,7 @@ StyledMouseArea {
                     anchors {
                         fill: parent
                         margins: 4
+                        rightMargin: 8
                     }
 
                     IconImage {

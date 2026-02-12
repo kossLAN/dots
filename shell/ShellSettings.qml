@@ -18,6 +18,7 @@ Singleton {
 
     property alias settings: userAdapter.settings
     property alias sizing: userAdapter.sizing
+
     property alias outputs: systemAdapter.outputs
 
     property QtObject colors: QtObject {
@@ -30,8 +31,8 @@ Singleton {
         }
 
         property QtObject extra: QtObject {
-            property color open: Qt.color("#4ade80") 
-            property color close: Qt.color("#FF474D") 
+            property color open: Qt.color("#4ade80")
+            property color close: Qt.color("#FF474D")
         }
     }
 
@@ -40,7 +41,7 @@ Singleton {
         path: root.settingsPath
         blockLoading: true
         onAdapterUpdated: writeAdapter()
-        onLoadFailed: (error) => {
+        onLoadFailed: error => {
             if (error === FileViewError.FileNotFound)
                 writeAdapter();
         }
@@ -49,7 +50,7 @@ Singleton {
             id: userAdapter
 
             property JsonObject settings: JsonObject {
-                property string wallpaperUrl: "" 
+                property string wallpaperUrl: ""
                 property string wallpapersPath: `${root.homeDir}/.wallpapers`
 
                 property bool bluetoothEnabled: true
@@ -57,6 +58,8 @@ Singleton {
                 property bool debugEnabled: true
                 property bool gsrEnabled: true
                 property bool chatEnabled: true
+
+                property list<string> pinnedTray: ["power", "volume", "wifi", "bluetooth"]
             }
 
             property JsonObject sizing: JsonObject {
@@ -80,7 +83,6 @@ Singleton {
         path: root.systemSettingsPath
         watchChanges: true
         onAdapterUpdated: writeAdapter()
-        // onLoadFailed: writeAdapter()
         blockLoading: true
 
         JsonAdapter {
