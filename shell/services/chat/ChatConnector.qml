@@ -20,6 +20,7 @@ Singleton {
     property list<ChatProvider> providers: [
         OllamaProvider {},
         AnthropicProvider {},
+        MinimaxProvider {},
         GitHubCopilotProvider {}
     ]
 
@@ -243,6 +244,7 @@ Singleton {
     function _restoreProviderState(): void {
         for (let provider of providers) {
             const state = chatAdapter.providerState[provider.providerId];
+            console.log("Restoring provider:", provider.providerId, "state:", JSON.stringify(state));
 
             if (state?.endpoint)
                 provider.apiEndpoint = state.endpoint;
@@ -250,8 +252,11 @@ Singleton {
             if (state?.enabled !== undefined)
                 provider.enabled = state.enabled;
 
-            if (state?.apiKey)
+            if (state?.apiKey) {
+                console.log("Setting API key for:", provider.providerId, "key length:", state.apiKey.length);
                 provider.apiKey = state.apiKey;
+                console.log("Provider apiKey after setting:", provider.providerId, "=", provider.apiKey ? "set" : "empty");
+            }
         }
 
         refreshAllModels();
@@ -384,6 +389,17 @@ Singleton {
     }
 
     function sendMessage(message, images = null) {
+        console.log("ChatConnector: sendMessage using provider:", currentProviderId, "currentProvider:", currentProvider?.name, "currentProvider.providerId:", currentProvider?.providerId);
+        
+        // Debug: manually set apiKey from state
+        const state = chatAdapter.providerState[currentProviderId];
+        if (state?.apiKey) {
+            console.log("ChatConnector: manually setting apiKey from state, length:", state.apiKey.length);
+            currentProvider.apiKey = state.apiKey;
+        }
+        
+        console.log("ChatConnector: currentProvider.apiKey:", currentProvider?.apiKey ? "set" : "empty", "enabled:", currentProvider?.enabled, "available:", currentProvider?.available);
+        
         if (!currentProvider) {
             errorMessage = "No provider selected";
             responseError(errorMessage);

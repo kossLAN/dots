@@ -2,9 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Io
 
+import qs
 import qs.widgets
 import qs.services.chat
 import qs.launcher.settings
@@ -75,6 +74,7 @@ ChatProvider {
 
                 StyledButton {
                     visible: !root.isAuthenticating
+                    color: ShellSettings.colors.active.alternateBase
                     onClicked: root.startOAuthFlow()
 
                     implicitWidth: loginText.implicitWidth + 24
@@ -89,6 +89,7 @@ ChatProvider {
 
                 StyledButton {
                     visible: root.isAuthenticating
+                    color: ShellSettings.colors.active.alternateBase
                     onClicked: root.cancelAuth()
 
                     implicitWidth: cancelText.implicitWidth + 24
@@ -113,10 +114,11 @@ ChatProvider {
             summary: "Go to " + root.verificationUrl + " and enter: " + root.userCode
 
             controls: StyledButton {
-                onClicked: Qt.openUrlExternally(root.verificationUrl)
-
+                color: ShellSettings.colors.active.alternateBase
                 implicitWidth: openBrowserText.implicitWidth + 24
                 implicitHeight: parent.height
+
+                onClicked: Qt.openUrlExternally(root.verificationUrl)
 
                 StyledText {
                     id: openBrowserText
@@ -135,10 +137,11 @@ ChatProvider {
             summary: "Authenticated with GitHub Copilot"
 
             controls: StyledButton {
-                onClicked: root.logout()
-
+                color: ShellSettings.colors.active.alternateBase
                 implicitWidth: logoutText.implicitWidth + 24
                 implicitHeight: parent.height
+
+                onClicked: root.logout()
 
                 StyledText {
                     id: logoutText
@@ -154,7 +157,7 @@ ChatProvider {
         Text {
             visible: root.authError !== ""
             text: root.authError
-            color: "#ef4444"
+            color: ShellSettings.colors.extra.close 
             font.pixelSize: 12
             wrapMode: Text.Wrap
             Layout.fillWidth: true

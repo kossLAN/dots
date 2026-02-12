@@ -10,19 +10,20 @@ import qs.launcher.settings
 ChatProvider {
     id: root
 
-    enabled: false
+    enabled: true
     name: "Anthropic"
     icon: "root:resources/chat/claude.svg"
     providerId: "anthropic"
     apiEndpoint: "https://api.anthropic.com"
 
+    property string apiVersion: "2023-06-01"
+    property string authHeader: "x-api-key"
+    property string authPrefix: ""
+
     property string apiKey: ""
 
     available: false
-    // All current Anthropic Claude models support images
     supportsImages: true
-
-
 
     settings: ColumnLayout {
         spacing: 4
@@ -34,7 +35,7 @@ ChatProvider {
             controls: StyledTextInput {
                 text: root.apiKey
                 width: 250
-                placeholderText: "sk-ant-..."
+                placeholderText: "Enter your API key"
                 echoMode: TextInput.Password
 
                 onAccepted: {
@@ -49,7 +50,6 @@ ChatProvider {
         }
     }
 
-    // Track current XMLHttpRequest for chat (to support cancellation)
     property var _chatRequest: null
     property int _lastProcessedIndex: 0
 
@@ -59,27 +59,31 @@ ChatProvider {
         let responseText = _chatRequest.responseText;
         if (responseText.length <= _lastProcessedIndex) return;
 
-        // Get new data since last processed
         let newData = responseText.substring(_lastProcessedIndex);
         let lines = newData.split("\n");
 
-        // Process complete lines (keep last incomplete line for next iteration)
         for (let i = 0; i < lines.length - 1; i++) {
             let line = lines[i].trim();
             if (line === "") continue;
 
-            // SSE format: lines starting with "data: "
             if (line.startsWith("data: ")) {
                 let jsonStr = line.substring(6);
-                if (jsonStr === "[DONE]") continue;
+                if (jsonStr === "[DONE]") {
+                    root.busy = false;
+                    root.responseComplete(root.currentResponse);
+                    root._chatRequest = null;
+                    return;
+                }
 
                 try {
                     let event = JSON.parse(jsonStr);
 
-                    if (event.type === "content_block_delta" && event.delta?.text) {
-                        let chunk = event.delta.text;
-                        root.currentResponse += chunk;
-                        root.responseChunk(chunk);
+                    if (event.type === "content_block_delta") {
+                        if (event.delta?.type === "text_delta" && event.delta?.text) {
+                            let chunk = event.delta.text;
+                            root.currentResponse += chunk;
+                            root.responseChunk(chunk);
+                        }
                     }
 
                     if (event.type === "message_stop") {
@@ -97,12 +101,10 @@ ChatProvider {
                         return;
                     }
                 } catch (e) {
-                    // Ignore parse errors for partial data
                 }
             }
         }
 
-        // Update last processed index (keep incomplete last line)
         let lastNewlineIndex = newData.lastIndexOf("\n");
         if (lastNewlineIndex >= 0) {
             _lastProcessedIndex += lastNewlineIndex + 1;
@@ -111,9 +113,8 @@ ChatProvider {
 
     function fetchModels(): void {
         if (root.apiKey === "") {
-            root.available = false;
             root.models = [];
-            root.errorMessage = "API key required";
+            root.available = false;
             return;
         }
 
@@ -133,7 +134,10 @@ ChatProvider {
                             }
                         }
 
-                        root.models = modelNames;
+                        if (modelNames.length > 0) {
+                            root.models = modelNames;
+                        }
+
                         root.available = modelNames.length > 0;
 
                         if (modelNames.length > 0 && root.currentModel === "") {
@@ -147,30 +151,27 @@ ChatProvider {
                         root.errorMessage = "Failed to parse models response";
                         root.available = false;
                     }
-                } else if (xhr.status === 401) {
-                    root.available = false;
-                    root.models = [];
-                    root.errorMessage = "Invalid API key";
                 } else {
                     root.available = false;
-                    root.models = [];
-                    root.errorMessage = "Failed to connect to Anthropic";
+                    root.errorMessage = "Failed to fetch models";
                 }
             }
         };
 
-        xhr.open("GET", `${root.apiEndpoint}/v1/models?limit=100`);
+        xhr.open("GET", `${root.apiEndpoint}/v1/models`);
         xhr.setRequestHeader("x-api-key", root.apiKey);
-        xhr.setRequestHeader("anthropic-version", "2023-06-01");
+        xhr.setRequestHeader("anthropic-version", root.apiVersion);
         xhr.send();
     }
 
-    // Build content array for Anthropic API (supports text and images)
-    // images: array of {base64: string, mediaType: string}
     function _buildContentArray(text, images) {
         let content = [];
 
-        // Add images first if present
+        content.push({
+            type: "text",
+            text: text
+        });
+
         if (images && Array.isArray(images)) {
             for (let img of images) {
                 content.push({
@@ -183,12 +184,6 @@ ChatProvider {
                 });
             }
         }
-
-        // Add text content
-        content.push({
-            type: "text",
-            text: text
-        });
 
         return content;
     }
@@ -206,7 +201,7 @@ ChatProvider {
         }
 
         if (root.apiKey === "") {
-            root.errorMessage = "API key required";
+            root.errorMessage = "No API key";
             root.responseError(root.errorMessage);
             return;
         }
@@ -216,12 +211,10 @@ ChatProvider {
         root.errorMessage = "";
         root._lastProcessedIndex = 0;
 
-        // Build messages array
         let messages = [];
 
         if (history && Array.isArray(history)) {
             for (let msg of history) {
-                // Check if history message has images
                 if (msg.images && Array.isArray(msg.images) && msg.images.length > 0) {
                     messages.push({
                         role: msg.role,
@@ -236,7 +229,6 @@ ChatProvider {
             }
         }
 
-        // Build current message - use content array if images are present
         if (images && Array.isArray(images) && images.length > 0) {
             messages.push({
                 role: "user",
@@ -251,29 +243,23 @@ ChatProvider {
 
         let payload = {
             model: root.currentModel,
-            max_tokens: 8192,
             messages: messages,
-            stream: true
+            stream: true,
+            max_tokens: 4096
         };
 
         let xhr = new XMLHttpRequest();
         root._chatRequest = xhr;
 
         xhr.onreadystatechange = function() {
-            // Process streaming data as it arrives
             if (xhr.readyState === XMLHttpRequest.LOADING) {
                 root._processStreamingResponse();
             }
 
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                // Process any remaining data
                 root._processStreamingResponse();
 
-                if (xhr.status === 401) {
-                    root.busy = false;
-                    root.errorMessage = "Invalid API key";
-                    root.responseError(root.errorMessage);
-                } else if (xhr.status !== 200 && root.busy) {
+                if (xhr.status !== 200 && root.busy) {
                     root.busy = false;
                     let errorMsg = "Chat request failed";
                     try {
@@ -283,9 +269,8 @@ ChatProvider {
                         }
                     } catch (e) {}
                     root.errorMessage = errorMsg;
-                    root.responseError(root.errorMessage);
+                    root.responseError(errorMsg);
                 } else if (root.busy && root.currentResponse !== "") {
-                    // Request completed but message_stop wasn't received
                     root.busy = false;
                     root.responseComplete(root.currentResponse);
                 }
@@ -297,8 +282,7 @@ ChatProvider {
         xhr.open("POST", `${root.apiEndpoint}/v1/messages`);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("x-api-key", root.apiKey);
-        xhr.setRequestHeader("anthropic-version", "2023-06-01");
-        xhr.setRequestHeader("anthropic-dangerous-direct-browser-access", "true");
+        xhr.setRequestHeader("anthropic-version", root.apiVersion);
         xhr.send(JSON.stringify(payload));
     }
 
@@ -312,6 +296,8 @@ ChatProvider {
     }
 
     function checkAvailability(): void {
-        fetchModels();
+        if (root.apiKey !== "") {
+            root.fetchModels();
+        }
     }
 }
