@@ -8,6 +8,7 @@ import Quickshell.Widgets
 import qs
 import qs.widgets
 import qs.bar
+import qs.bar.tray
 
 Item {
     id: root
@@ -168,57 +169,15 @@ Item {
                                 opacity: gridDelegate.isDragging ? 0.5 : 1
                             }
 
-                            MouseArea {
-                                id: gridMouseArea
-                                anchors.fill: parent
-                                drag.target: gridDragItem
-                                drag.axis: Drag.XAndYAxis
-                                drag.threshold: 5
+                            TrayItemDrag {
+                                modelData: gridDelegate.modelData
+                                rootRef: root.tray
+                                dragKey: "tray-item-unpin"
 
-                                onClicked: {
-                                    root.selectedTray = gridDelegate.modelData;
-                                }
+                                onClicked: root.selectedTray = gridDelegate.modelData
 
-                                onPressedChanged: {
-                                    if (!pressed) {
-                                        if (gridDelegate.isDragging) {
-                                            root.tray.pinItem(gridDelegate.modelData.trayId, -1);
-                                        }
-
-                                        gridDragItem.x = 0;
-                                        gridDragItem.y = 0;
-                                    }
-                                }
-                            }
-
-                            // Draggable visual for unpinned items
-                            Item {
-                                id: gridDragItem
-                                width: gridDelegate.width
-                                height: gridDelegate.height
-                                visible: gridDelegate.isDragging
-
-                                Drag.active: gridDelegate.isDragging
-                                Drag.keys: ["tray-item-unpin"]
-                                Drag.hotSpot.x: width / 2
-                                Drag.hotSpot.y: height / 2
-
-                                onXChanged: {
-                                    if (gridMouseArea.pressed && gridMouseArea.drag.active && root.tray.draggedItem === null) {
-                                        root.tray.draggedItem = gridDelegate.modelData;
-                                    }
-                                }
-
-                                Item {
-                                    opacity: 0.5
-                                    anchors.fill: parent
-
-                                    Loader {
-                                        active: gridDelegate.modelData.icon
-                                        sourceComponent: gridDelegate.modelData.icon
-                                        anchors.fill: parent
-                                        anchors.margins: 2
-                                    }
+                                onDragComplete: function(action, item) {
+                                    root.tray.pinItem(item.trayId, -1);
                                 }
                             }
                         }

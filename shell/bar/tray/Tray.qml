@@ -85,11 +85,11 @@ Rectangle {
             item: modelData
         }
 
-        onObjectAdded: (index, object) => {
+        onObjectAdded: function(index, object) {
             root.sysTrayItems = root.sysTrayItems.concat([object]);
         }
 
-        onObjectRemoved: (index, object) => {
+        onObjectRemoved: function(index, object) {
             root.sysTrayItems = root.sysTrayItems.filter(x => x !== object);
         }
     }
@@ -120,6 +120,8 @@ Rectangle {
                 required property TrayBacker modelData
                 required property int index
 
+                property Item rootRef: root
+
                 property bool showMenu: false
 
                 Layout.preferredWidth: height
@@ -145,12 +147,12 @@ Rectangle {
                         visible: dropArea.containsDrag
                     }
 
-                    onDropped: drop => {
-                        if (root.draggedItem && root.draggedItem.trayId !== delegate.modelData.trayId) {
-                            root.moveItem(root.draggedItem.trayId, delegate.index);
+                    onDropped: function(drop) {
+                        if (delegate.rootRef.draggedItem && delegate.rootRef.draggedItem.trayId !== delegate.modelData.trayId) {
+                            delegate.rootRef.moveItem(delegate.rootRef.draggedItem.trayId, delegate.index);
                         }
 
-                        root.draggedItem = null;
+                        delegate.rootRef.draggedItem = null;
                     }
                 }
 
@@ -164,7 +166,7 @@ Rectangle {
                     anchors.bottom: parent.bottom
 
                     keys: ["tray-item"]
-                    visible: delegate.index === root.pinnedModel.length - 1
+                    visible: delegate.index === delegate.rootRef.pinnedModel.length - 1
 
                     Rectangle {
                         visible: dropAreaRight.containsDrag
@@ -175,12 +177,12 @@ Rectangle {
                         anchors.bottom: parent.bottom
                     }
 
-                    onDropped: drop => {
-                        if (root.draggedItem) {
-                            root.moveItem(root.draggedItem.trayId, delegate.index + 1);
+                    onDropped: function(drop) {
+                        if (delegate.rootRef.draggedItem) {
+                            delegate.rootRef.moveItem(delegate.rootRef.draggedItem.trayId, delegate.index + 1);
                         }
 
-                        root.draggedItem = null;
+                        delegate.rootRef.draggedItem = null;
                     }
                 }
 
@@ -188,69 +190,25 @@ Rectangle {
                     id: iconLoader
                     active: delegate.modelData.icon
                     sourceComponent: delegate.modelData.icon
-                    opacity: root.draggedItem === delegate.modelData ? 0.5 : 1
+                    opacity: delegate.rootRef.draggedItem === delegate.modelData ? 0.5 : 1
                     anchors.fill: parent
                 }
 
-                MouseArea {
-                    id: mouseArea
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    drag.target: dragItem
-                    drag.axis: Drag.XAndYAxis
-                    drag.threshold: 5
+                TrayItemDrag {
+                    modelData: delegate.modelData
+                    rootRef: delegate.rootRef
+                    dragKey: "tray-item"
 
-                    onClicked: {
-                        delegate.modelData.clicked();
-                    }
+                    onClicked: delegate.modelData.clicked()
 
-                    onPressedChanged: {
-                        if (!pressed) {
-                            if (root.draggedItem === delegate.modelData) {
-                                dragItem.Drag.drop();
-                                root.draggedItem = null;
-                            }
-
-                            dragItem.x = 0;
-                            dragItem.y = 0;
-                        }
-                    }
-                }
-
-                // Draggable visual
-                Item {
-                    id: dragItem
-                    width: delegate.width
-                    height: delegate.height
-                    visible: root.draggedItem === delegate.modelData
-
-                    Drag.active: root.draggedItem === delegate.modelData
-                    Drag.keys: ["tray-item"]
-                    Drag.hotSpot.x: width / 2
-                    Drag.hotSpot.y: height / 2
-
-                    onXChanged: {
-                        if (mouseArea.pressed && mouseArea.drag.active && root.draggedItem === null) {
-                            root.draggedItem = delegate.modelData;
-                        }
-                    }
-
-                    Item {
-                        opacity: 0.55
-                        anchors.fill: parent
-
-                        Loader {
-                            active: delegate.modelData.icon
-                            sourceComponent: delegate.modelData.icon
-                            anchors.fill: parent
-                            anchors.margins: 2
-                        }
+                    onDragComplete: function(action, item) {
+                        delegate.rootRef.moveItem(item.trayId, delegate.index);
                     }
                 }
 
                 property PopupItem menu: PopupItem {
                     owner: delegate
-                    popup: root.bar.popup
+                    popup: delegate.rootRef.bar.popup
                     show: delegate.showMenu
                     onClosed: delegate.showMenu = false
 
@@ -268,7 +226,7 @@ Rectangle {
                         target: delegate.modelData
 
                         function onClicked() {
-                            if (!delegate.isDragging) {
+                            if (delegate.rootRef.draggedItem !== delegate.modelData) {
                                 delegate.showMenu = !delegate.showMenu;
                             }
                         }
