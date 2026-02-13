@@ -9,15 +9,15 @@ import qs
 import qs.widgets
 import qs.services.gsr
 
-import qs.bar
 import qs.bar.tray
 
 TrayBacker {
     id: root
 
     trayId: "gsr"
+    icon: Quickshell.iconPath("media-record")
 
-    icon: StyledMouseArea {
+    button: StyledMouseArea {
         onClicked: root.clicked()
 
         GsrIcon {

@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Widgets
 import Quickshell.Services.UPower
+
 import qs.widgets
 import qs
 
@@ -8,6 +10,7 @@ Item {
     id: root
 
     required property UPowerDevice device
+    required property string icon
 
     function formatTime(seconds) {
         if (seconds <= 0 || !isFinite(seconds))
@@ -38,8 +41,8 @@ Item {
         spacing: 8
         anchors.fill: parent
 
-        BatteryIcon {
-            device: root.device
+        IconImage {
+            source: root.icon
             Layout.preferredWidth: this.height
             Layout.fillHeight: true
             Layout.margins: 4

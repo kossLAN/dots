@@ -30,14 +30,11 @@ Item {
     // Drop area to unpin items
     DropArea {
         id: unpinDropArea
-        anchors.fill: parent
         keys: ["tray-item"]
+        anchors.fill: parent
 
-        onDropped: (drop) => {
-            if (root.tray.draggedItem) {
-                root.tray.unpinItem(root.tray.draggedItem.trayId);
-            }
-
+        onDropped: drop => {
+            root.tray.unpinItem(drop.text);
             root.tray.draggedItem = null;
         }
     }
@@ -49,10 +46,8 @@ Item {
         enabled: root.model.length > 0
         onClicked: {
             if (root.selectedTray) {
-                // If there's an active tray menu, go back to grid
                 root.selectedTray = null;
             } else {
-                // If showing grid or closed, toggle menu
                 root.showMenu = !root.showMenu;
             }
         }
@@ -117,23 +112,14 @@ Item {
                 implicitWidth: grid.implicitWidth + (2 * gridMargins)
                 implicitHeight: grid.implicitHeight + (2 * gridMargins)
 
-                // Drop area for pinning items from this popup
+                // Drop area for pinning items to the popup
                 DropArea {
                     id: gridDropArea
                     anchors.fill: parent
                     keys: ["tray-item"]
 
-                    Rectangle {
-                        anchors.fill: parent
-                        color: ShellSettings.colors.active.highlight
-                        opacity: gridDropArea.containsDrag ? 0.2 : 0
-                        radius: 4
-                    }
-
-                    onDropped: (drop) => {
-                        if (root.tray.draggedItem) {
-                            root.tray.unpinItem(root.tray.draggedItem.trayId);
-                        }
+                    onDropped: drop => {
+                        root.tray.unpinItem(drop.text);
                         root.tray.draggedItem = null;
                     }
                 }
@@ -165,19 +151,31 @@ Item {
                             Loader {
                                 id: gridIconLoader
                                 anchors.fill: parent
-                                sourceComponent: gridDelegate.modelData.icon
+                                sourceComponent: gridDelegate.modelData.button
                                 opacity: gridDelegate.isDragging ? 0.5 : 1
                             }
 
-                            TrayItemDrag {
-                                modelData: gridDelegate.modelData
-                                rootRef: root.tray
-                                dragKey: "tray-item-unpin"
+                            Drag.dragType: Drag.Automatic
+                            Drag.supportedActions: Qt.MoveAction
+                            Drag.imageSource: modelData.icon
+                            Drag.imageSourceSize: Qt.size(20, 20)
+                            Drag.active: dragHandler.active
+                            Drag.mimeData: {
+                                "text/plain": gridDelegate.modelData.trayId,
+                                "tray-item": "true"
+                            }
 
-                                onClicked: root.selectedTray = gridDelegate.modelData
+                            DragHandler {
+                                id: dragHandler
+                                target: null 
+                                onActiveChanged: {
+                                    parent.Drag.active = active
 
-                                onDragComplete: function(action, item) {
-                                    root.tray.pinItem(item.trayId, -1);
+                                    if (active) {
+                                        root.tray.draggedItem = gridDelegate.modelData
+                                    } else {
+                                        root.tray.draggedItem = null
+                                    }
                                 }
                             }
                         }

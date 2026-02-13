@@ -5,8 +5,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Bluetooth
+
 import qs.widgets
-import qs.bar
 import qs.bar.tray
 import qs
 
@@ -16,18 +16,20 @@ TrayBacker {
     trayId: "bluetooth"
     enabled: ShellSettings.settings.bluetoothEnabled
 
-    icon: StyledMouseArea {
+    icon: {
+        if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled) {
+            return Quickshell.iconPath("bluetooth-online");
+        } else {
+            return Quickshell.iconPath("bluetooth-offline");
+        }
+    }
+
+    button: StyledMouseArea {
         onClicked: root.clicked()
 
         IconImage {
             anchors.fill: parent
-            source: {
-                if (Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled) {
-                    return Quickshell.iconPath("bluetooth-online");
-                } else {
-                    return Quickshell.iconPath("bluetooth-offline");
-                }
-            }
+            source: root.icon
         }
     }
 

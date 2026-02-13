@@ -9,7 +9,7 @@ These "dots" are just my niri related config files, seperated into its own flake
 ## TODO List 
 - [x] Add gpu-screen-recorder support
 - [x] Add shell notifications to the notification center 
-- [ ] Add system tray menu like kde/windows with pinning etc.
+- [x] Add system tray menu like kde/windows with pinning etc.
 - [ ] (Waiting on quickshell pull request) Finish Wifi Systray Widget
 - [x]  LLM Chat Launcher Widget
 - [ ] KDL Generator, with niri flake source

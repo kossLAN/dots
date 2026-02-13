@@ -14,7 +14,8 @@ Scope {
         return false;
     }
 
-    property Component icon: Item {}
+    property string icon: "settings"
+    property Component button: Item {}
     property Component menu: null
 
     signal clicked

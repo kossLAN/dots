@@ -55,12 +55,15 @@ Rectangle {
 
     function pinItem(trayId: string, atIndex: int) {
         draggedItem = null;
+
         let items = (ShellSettings.settings.pinnedTray ?? []).filter(id => id !== trayId);
+
         if (atIndex < 0 || atIndex >= items.length) {
             items.push(trayId);
         } else {
             items.splice(atIndex, 0, trayId);
         }
+
         ShellSettings.settings.pinnedTray = items;
     }
 
@@ -71,8 +74,18 @@ Rectangle {
 
     function moveItem(trayId: string, toIndex: int) {
         draggedItem = null;
-        let items = (ShellSettings.settings.pinnedTray ?? []).filter(id => id !== trayId);
-        items.splice(toIndex, 0, trayId);
+
+        let items = ShellSettings.settings.pinnedTray ?? [];
+        const fromIndex = items.indexOf(trayId);
+
+        if (fromIndex === -1 || fromIndex === toIndex)
+            return;
+
+        items = items.filter(id => id !== trayId);
+
+        const adjustedIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
+        items.splice(adjustedIndex, 0, trayId);
+
         ShellSettings.settings.pinnedTray = items;
     }
 
@@ -85,11 +98,11 @@ Rectangle {
             item: modelData
         }
 
-        onObjectAdded: function(index, object) {
+        onObjectAdded: function (index, object) {
             root.sysTrayItems = root.sysTrayItems.concat([object]);
         }
 
-        onObjectRemoved: function(index, object) {
+        onObjectRemoved: function (index, object) {
             root.sysTrayItems = root.sysTrayItems.filter(x => x !== object);
         }
     }
@@ -147,39 +160,14 @@ Rectangle {
                         visible: dropArea.containsDrag
                     }
 
-                    onDropped: function(drop) {
-                        if (delegate.rootRef.draggedItem && delegate.rootRef.draggedItem.trayId !== delegate.modelData.trayId) {
-                            delegate.rootRef.moveItem(delegate.rootRef.draggedItem.trayId, delegate.index);
-                        }
+                    onDropped: drop => {
+                        const trayId = drop.text;
+                        const isPinned = (ShellSettings.settings.pinnedTray ?? []).includes(trayId);
 
-                        delegate.rootRef.draggedItem = null;
-                    }
-                }
-
-                // Drop area for right side of last item
-                DropArea {
-                    id: dropAreaRight
-                    width: parent.width / 2
-                    z: 1
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-
-                    keys: ["tray-item"]
-                    visible: delegate.index === delegate.rootRef.pinnedModel.length - 1
-
-                    Rectangle {
-                        visible: dropAreaRight.containsDrag
-                        color: ShellSettings.colors.active.highlight
-                        width: 2
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                    }
-
-                    onDropped: function(drop) {
-                        if (delegate.rootRef.draggedItem) {
-                            delegate.rootRef.moveItem(delegate.rootRef.draggedItem.trayId, delegate.index + 1);
+                        if (isPinned) {
+                            delegate.rootRef.moveItem(trayId, delegate.index);
+                        } else {
+                            delegate.rootRef.pinItem(trayId, delegate.index);
                         }
 
                         delegate.rootRef.draggedItem = null;
@@ -188,21 +176,32 @@ Rectangle {
 
                 Loader {
                     id: iconLoader
-                    active: delegate.modelData.icon
-                    sourceComponent: delegate.modelData.icon
+                    sourceComponent: delegate.modelData.button
                     opacity: delegate.rootRef.draggedItem === delegate.modelData ? 0.5 : 1
                     anchors.fill: parent
-                }
 
-                TrayItemDrag {
-                    modelData: delegate.modelData
-                    rootRef: delegate.rootRef
-                    dragKey: "tray-item"
+                    Drag.dragType: Drag.Automatic
+                    Drag.supportedActions: Qt.MoveAction
+                    Drag.imageSource: delegate.modelData.icon
+                    Drag.imageSourceSize: Qt.size(20, 20)
+                    Drag.active: dragHandler.active
+                    Drag.mimeData: {
+                        "text/plain": delegate.modelData.trayId,
+                        "tray-item": "true"
+                    }
 
-                    onClicked: delegate.modelData.clicked()
+                    DragHandler {
+                        id: dragHandler
+                        target: null
+                        onActiveChanged: {
+                            parent.Drag.active = active;
 
-                    onDragComplete: function(action, item) {
-                        delegate.rootRef.moveItem(item.trayId, delegate.index);
+                            if (active) {
+                                delegate.rootRef.draggedItem = delegate.modelData;
+                            } else {
+                                delegate.rootRef.draggedItem = null;
+                            }
+                        }
                     }
                 }
 

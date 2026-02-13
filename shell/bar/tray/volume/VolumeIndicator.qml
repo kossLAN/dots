@@ -7,7 +7,6 @@ import Quickshell
 import Quickshell.Widgets
 import Quickshell.Services.Pipewire
 import qs.widgets
-import qs.bar
 import qs.bar.tray
 
 TrayBacker {
@@ -15,23 +14,32 @@ TrayBacker {
 
     trayId: "volume"
 
+    icon: Quickshell.iconPath(getIcon(root.sink)) 
+
+    function getIcon(node) {
+        if (!root.sink)
+            return "audio-volume-low";
+
+        if (root.sink.audio?.muted) {
+            return "audio-volume-muted";
+        } else if (root.sink.audio && root.sink.audio.volume > 0.66) {
+            return "audio-volume-high";
+        } else if (root.sink.audio && root.sink.audio.volume > 0.33) {
+            return "audio-volume-medium";
+        } else {
+            return "audio-volume-low";
+        }
+    }
+
     property PwNode sink: Pipewire.defaultAudioSink
 
-    icon: StyledMouseArea {
+    button: StyledMouseArea {
         onClicked: root.clicked()
 
         IconImage {
             id: icon
             anchors.fill: parent
-            source: if (root.sink?.audio?.muted) {
-                return Quickshell.iconPath("audio-volume-muted");
-            } else if (root.sink?.audio && root.sink.audio.volume > 0.66) {
-                return Quickshell.iconPath("audio-volume-high");
-            } else if (root.sink?.audio && root.sink.audio.volume > 0.33) {
-                return Quickshell.iconPath("audio-volume-medium");
-            } else {
-                return Quickshell.iconPath("audio-volume-low");
-            }
+            source: root.icon
         }
     }
 
@@ -68,15 +76,7 @@ TrayBacker {
 
                     IconImage {
                         anchors.fill: parent
-                        source: if (root.sink?.audio?.muted) {
-                            return Quickshell.iconPath("audio-volume-muted");
-                        } else if (root.sink?.audio && root.sink.audio.volume > 0.66) {
-                            return Quickshell.iconPath("audio-volume-high");
-                        } else if (root.sink?.audio && root.sink.audio.volume > 0.33) {
-                            return Quickshell.iconPath("audio-volume-medium");
-                        } else {
-                            return Quickshell.iconPath("audio-volume-low");
-                        }
+                        source: root.icon 
                     }
                 }
             }

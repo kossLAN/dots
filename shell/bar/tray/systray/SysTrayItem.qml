@@ -12,10 +12,11 @@ TrayBacker {
 
     required property SystemTrayItem item
 
-    trayId: "systray-" + (item?.id ?? "unknown")
     enabled: item !== null
+    trayId: "systray-" + (item?.id ?? "unknown")
+    icon: item?.icon ?? ""
 
-    icon: StyledMouseArea {
+    button: StyledMouseArea {
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
         onClicked: event => {
@@ -31,14 +32,14 @@ TrayBacker {
         }
 
         IconImage {
+            source: root.icon
+
             property bool iconFromTheme: {
                 if (root.item?.icon.startsWith("image://icon/"))
                     return true;
 
                 return false;
             }
-
-            source: root.item?.icon ?? ""
 
             anchors {
                 fill: parent
