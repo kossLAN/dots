@@ -152,7 +152,16 @@ Item {
                                 id: gridIconLoader
                                 anchors.fill: parent
                                 sourceComponent: gridDelegate.modelData.button
-                                opacity: gridDelegate.isDragging ? 0.5 : 1
+                            }
+
+                            Connections {
+                                target: gridDelegate.modelData
+
+                                function onClicked() {
+                                    if (root.tray.draggedItem !== gridDelegate.modelData) {
+                                        root.selectedTray = gridDelegate.modelData;
+                                    }
+                                }
                             }
 
                             Drag.dragType: Drag.Automatic

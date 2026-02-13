@@ -177,7 +177,6 @@ Rectangle {
                 Loader {
                     id: iconLoader
                     sourceComponent: delegate.modelData.button
-                    opacity: delegate.rootRef.draggedItem === delegate.modelData ? 0.5 : 1
                     anchors.fill: parent
 
                     Drag.dragType: Drag.Automatic

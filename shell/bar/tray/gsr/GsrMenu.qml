@@ -43,7 +43,7 @@ TrayBacker {
 
             anchors {
                 fill: parent
-                margins: 4
+                margins: 8
             }
 
             RowLayout {
