@@ -10,4 +10,6 @@ in {
     withPam = true;
     withHyprland = false;
   };
+
+  nixiutils = final.callPackage ../utils {};
 })

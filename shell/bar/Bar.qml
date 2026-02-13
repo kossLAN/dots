@@ -100,6 +100,7 @@ Variants {
                     }
 
                     TimeDisplay {
+                        Layout.preferredWidth: 60
                         Layout.fillHeight: true
                     }
                 }

@@ -1,11 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
-import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 
 import qs
-import qs.widgets
 
 import qs.bar
 import qs.bar.tray
@@ -152,12 +149,15 @@ Rectangle {
                     keys: ["tray-item"]
 
                     Rectangle {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
                         width: 2
                         color: ShellSettings.colors.active.highlight
                         visible: dropArea.containsDrag
+
+                        anchors {
+                            left: parent.left
+                            top: parent.top
+                            bottom: parent.bottom
+                        }
                     }
 
                     onDropped: drop => {

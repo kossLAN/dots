@@ -30,6 +30,9 @@ in
           kdePackages.qqc2-desktop-style
           kdePackages.kirigami.unwrapped
           kdePackages.sonnet
+
+          # custom utils
+          nixiutils
         ]
         ++ optionals config.programs.gpu-screen-recorder.enable [
           gpu-screen-recorder # recording

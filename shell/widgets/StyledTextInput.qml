@@ -35,7 +35,7 @@ StyledRectangle {
     }
 
     Item {
-        clip: true
+        // clip: true
 
         anchors {
             fill: parent
@@ -46,6 +46,7 @@ StyledRectangle {
         TextInput {
             id: textInput
             color: ShellSettings.colors.active.text
+            clip: true
             focus: true 
             verticalAlignment: TextInput.AlignVCenter
             echoMode: root.isSensitive ? TextInput.Password : TextInput.Normal

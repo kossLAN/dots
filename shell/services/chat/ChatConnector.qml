@@ -20,7 +20,7 @@ Singleton {
     property list<ChatProvider> providers: [
         OllamaProvider {},
         AnthropicProvider {},
-        MinimaxProvider {},
+        // MinimaxProvider {},
         GitHubCopilotProvider {}
     ]
 

@@ -33,6 +33,7 @@
     packages = forEachSystem (system: pkgs: rec {
       default = nixi;
       nixi = pkgs.callPackage ./nix/package.nix {};
+      utils = pkgs.callPackage ./utils {};
     });
   };
 }

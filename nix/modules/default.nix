@@ -10,7 +10,6 @@ in {
   imports = [
     ./shell.nix
     ./greeter.nix
-    ./niri.nix
     ./theme.nix
 
     inputs.qtengine.nixosModules.default

@@ -7,14 +7,16 @@ import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
-import Quickshell.Io
+
+import NixiUtils
 
 import qs
 import qs.widgets
-import qs.services.chat
 
 StyledRectangle {
     id: root
+
+    // NixiUtils { id: utils }
 
     clip: true
     radius: 8
@@ -40,7 +42,6 @@ StyledRectangle {
     implicitHeight: Math.min(maxHeight, Math.max(minHeight, contentAreaHeight + 16 + imageRowHeight))
     height: implicitHeight
 
-
     function forceActiveFocus() {
         textInput.forceActiveFocus();
     }
@@ -53,56 +54,18 @@ StyledRectangle {
     FileDialog {
         id: imageDialog
         title: "Select Image"
-        nameFilters: ["Image files (*.png *.jpg *.jpeg *.gif *.webp)", "All files (*)"]
+        nameFilters: ["Image files (*.png *.jpg *.jpeg *.gif)", "All files (*)"]
         popupType: Popup.Item
 
         onAccepted: {
-            let filePath = selectedFile.toString().replace("file://", "");
-            // Detect media type from file extension
-            let ext = filePath.split('.').pop().toLowerCase();
-            let mediaType = "image/jpeg"; // default
-            if (ext === "png") mediaType = "image/png";
-            else if (ext === "jpg" || ext === "jpeg") mediaType = "image/jpeg";
-            else if (ext === "gif") mediaType = "image/gif";
-            else if (ext === "webp") mediaType = "image/webp";
+            let newImages = root.pendingImages.slice();
 
-            imageReader.path = filePath;
-            imageReader.mediaType = mediaType;
-            imageReader.reload();
-        }
-    }
+            newImages.push({
+                base64: NixiUtils.fileToBase64(selectedFile),
+                mediaType: NixiUtils.getMimeType(selectedFile)
+            });
 
-    // Read selected image file and convert to base64
-    Process {
-        id: imageReader
-
-        property string path: ""
-        property string mediaType: "image/jpeg"
-
-        command: ["base64", "-w", "0", path]
-        running: false
-
-        stdout: SplitParser {
-            onRead: data => {
-                let newImages = root.pendingImages.slice();
-                newImages.push({
-                    base64: data.trim(),
-                    mediaType: imageReader.mediaType
-                });
-                root.pendingImages = newImages;
-            }
-        }
-
-        onRunningChanged: {
-            if (!running && path !== "") {
-                // Start the process when path is set
-            }
-        }
-
-        function reload() {
-            if (path !== "") {
-                running = true;
-            }
+            root.pendingImages = newImages;
         }
     }
 
@@ -111,7 +74,7 @@ StyledRectangle {
         anchors.margins: 8
         spacing: 6
 
-        // Image preview 
+        // Image preview
         Flow {
             visible: root.pendingImages.length > 0
             spacing: 6
@@ -146,7 +109,7 @@ StyledRectangle {
                     IconButton {
                         width: 16
                         height: 16
-                        radius: height / 2 
+                        radius: height / 2
                         source: Quickshell.iconPath("window-close")
                         color: ShellSettings.colors.active.light
                         hoverColor: ShellSettings.colors.extra.close
@@ -194,6 +157,22 @@ StyledRectangle {
                     rightPadding: 0
                     topPadding: Math.max(0, (flickable.height - contentHeight) / 2)
                     bottomPadding: 0
+
+                    Keys.onPressed: event => {
+                        if (event.modifiers === Qt.ControlModifier && event.key === Qt.Key_V) {
+                            let base64 = NixiUtils.clipboardImage();
+                            if (base64 === "") return;
+
+                            let newImages = root.pendingImages.slice();
+
+                            newImages.push({
+                                base64: base64,
+                                mediaType: "image/png"
+                            });
+
+                            root.pendingImages = newImages;
+                        }
+                    }
 
                     Keys.onReturnPressed: event => {
                         if (text.trim() !== "" && !root.busy) {
@@ -244,8 +223,8 @@ StyledRectangle {
                     ColorOverlay {
                         source: stopIcon
                         anchors.fill: stopIcon
-                        color:  {
-                            if (stopButton.containsMouse) 
+                        color: {
+                            if (stopButton.containsMouse)
                                 return ShellSettings.colors.active.highlight;
 
                             return ShellSettings.colors.active.text;
@@ -276,10 +255,10 @@ StyledRectangle {
                         anchors.fill: imageIcon
                         source: imageIcon
                         color: {
-                            if (imageButton.containsMouse)  
-                                return ShellSettings.colors.active.highlight 
+                            if (imageButton.containsMouse)
+                                return ShellSettings.colors.active.highlight;
 
-                            return ShellSettings.colors.active.text
+                            return ShellSettings.colors.active.text;
                         }
                     }
                 }

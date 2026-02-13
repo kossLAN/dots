@@ -62,7 +62,7 @@ StyledRectangle {
                 visible: root.flow.isResponseRequired
                 spacing: 4
 
-                Layout.preferredWidth: 300
+                Layout.preferredWidth: 325
                 Layout.preferredHeight: 32
 
                 StyledTextInput {
@@ -100,6 +100,8 @@ StyledRectangle {
                 }
 
                 StyledButton {
+                    color: ShellSettings.colors.active.mid
+
                     Layout.preferredWidth: height
                     Layout.fillHeight: true
 
@@ -116,6 +118,8 @@ StyledRectangle {
                 }
 
                 StyledButton {
+                    color: ShellSettings.colors.active.mid
+
                     Layout.preferredWidth: height
                     Layout.fillHeight: true
 

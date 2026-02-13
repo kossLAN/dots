@@ -1,1 +1,5 @@
 shell/.qmlls.ini
+
+utils/.cache/
+utils/.direnv/
+utils/.envrc

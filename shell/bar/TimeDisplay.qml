@@ -11,8 +11,6 @@ StyledText {
     font.pointSize: 11
     verticalAlignment: Text.AlignVCenter
 
-    width: contentWidth
-
     property string ap: sysClock.hours >= 12 ? "PM" : "AM"
     property string minutes: sysClock.minutes.toString().padStart(2, '0')
     property string hours: {
