@@ -18,7 +18,7 @@ Item {
     property alias currentIndex: switcher.currentIndex
 
     RowLayout {
-        spacing: 8
+        spacing: 0
         anchors.fill: parent
 
         ColumnLayout {
@@ -38,6 +38,7 @@ Item {
 
                 Layout.preferredWidth: 24
                 Layout.fillHeight: true
+                Layout.margins: 8
 
                 model: root.enabledModel.map(x => x.icon)
 
@@ -72,6 +73,7 @@ Item {
         }
 
         ColumnLayout {
+            spacing: 0
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -79,7 +81,7 @@ Item {
                 text: root.enabledModel[root.currentIndex].summary
                 font.pointSize: 9
                 font.weight: Font.Medium
-                Layout.topMargin: 8
+                Layout.margins: 8
             }
 
             Separator {
@@ -94,7 +96,6 @@ Item {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.margins: 4
 
                 onSourceComponentChanged: opacityAnim.restart()
 

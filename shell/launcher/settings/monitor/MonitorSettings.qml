@@ -10,6 +10,7 @@ import qs.services.niri
 
 SettingsBacker {
     icon: "cs-screen"
+    summary: "Monitor Settings"
 
     content: Item {
         id: container
@@ -99,7 +100,11 @@ SettingsBacker {
         ColumnLayout {
             id: root
             spacing: 12
-            anchors.fill: parent
+
+            anchors {
+                fill: parent
+                margins: 8
+            }
 
             MonitorPreview {
                 outputs: container.outputs

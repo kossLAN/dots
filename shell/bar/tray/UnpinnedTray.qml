@@ -174,18 +174,17 @@ Item {
                                 "tray-item": "true"
                             }
 
+                            Drag.onDragStarted: {
+                                root.tray.draggedItem = gridDelegate.modelData;
+                            }
+
+                            Drag.onDragFinished: {
+                                root.tray.draggedItem = null;
+                            }
+
                             DragHandler {
                                 id: dragHandler
-                                target: null 
-                                onActiveChanged: {
-                                    parent.Drag.active = active
-
-                                    if (active) {
-                                        root.tray.draggedItem = gridDelegate.modelData
-                                    } else {
-                                        root.tray.draggedItem = null
-                                    }
-                                }
+                                target: null
                             }
                         }
                     }

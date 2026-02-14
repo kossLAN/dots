@@ -120,6 +120,36 @@ Rectangle {
             Layout.fillHeight: true
         }
 
+        // Drop target when no pinned items exist
+        Item {
+            visible: root.draggedItem !== null && root.pinnedModel.length === 0
+
+            Layout.preferredWidth: height
+            Layout.fillHeight: true
+
+            DropArea {
+                anchors.fill: parent
+                keys: ["tray-item"]
+
+                Rectangle {
+                    width: 2
+                    color: ShellSettings.colors.active.highlight
+                    visible: parent.containsDrag
+
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                }
+
+                onDropped: drop => {
+                    root.pinItem(drop.text, 0);
+                    root.draggedItem = null;
+                }
+            }
+        }
+
         Repeater {
             id: pinnedRepeater
             model: root.pinnedModel
@@ -189,18 +219,17 @@ Rectangle {
                         "tray-item": "true"
                     }
 
+                    Drag.onDragStarted: {
+                        delegate.rootRef.draggedItem = delegate.modelData;
+                    }
+
+                    Drag.onDragFinished: {
+                        delegate.rootRef.draggedItem = null;
+                    }
+
                     DragHandler {
                         id: dragHandler
                         target: null
-                        onActiveChanged: {
-                            parent.Drag.active = active;
-
-                            if (active) {
-                                delegate.rootRef.draggedItem = delegate.modelData;
-                            } else {
-                                delegate.rootRef.draggedItem = null;
-                            }
-                        }
                     }
                 }
 

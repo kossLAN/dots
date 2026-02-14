@@ -25,7 +25,7 @@ LauncherBacker {
         SettingsManager {
             anchors {
                 fill: parent
-                margins: 8
+                // margins: 8
             }
 
             model: [

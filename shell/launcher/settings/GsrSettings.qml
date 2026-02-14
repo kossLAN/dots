@@ -21,7 +21,11 @@ SettingsBacker {
 
         ColumnLayout {
             spacing: 8
-            anchors.fill: parent
+
+            anchors {
+                fill: parent
+                margins: 8
+            }
 
             SettingsCard {
                 title: "Capture"

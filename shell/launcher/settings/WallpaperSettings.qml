@@ -17,7 +17,11 @@ SettingsBacker {
     content: Item {
         ColumnLayout {
             spacing: 4
-            anchors.fill: parent
+
+            anchors {
+                fill: parent
+                margins: 8
+            }
 
             Item {
                 Layout.preferredWidth: 160 * 2.3

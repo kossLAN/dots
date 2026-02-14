@@ -19,7 +19,7 @@ SettingsBacker {
         property real cardHeight: 36
 
         ColumnLayout {
-            spacing: 8
+            spacing: 0
             anchors.fill: parent
 
             SettingsCard {
@@ -51,12 +51,13 @@ SettingsBacker {
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
                             anchors.fill: parent
-                        } 
+                        }
                     }
                 }
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: menu.cardHeight
+                Layout.margins: 8
             }
 
             Separator {
@@ -80,6 +81,7 @@ SettingsBacker {
                         spacing: 8
                         Layout.fillWidth: true
                         Layout.preferredHeight: menu.cardHeight
+                        Layout.margins: 8
 
                         ProviderCard {
                             provider: providerSection.modelData
@@ -104,6 +106,8 @@ SettingsBacker {
                         sourceComponent: providerSection.modelData.settings
 
                         Layout.fillWidth: true
+                        Layout.leftMargin: 8
+                        Layout.rightMargin: 8
                     }
 
                     Separator {
