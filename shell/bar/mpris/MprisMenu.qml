@@ -10,6 +10,7 @@ import qs
 import qs.bar
 import qs.widgets
 import qs.services.mpris
+import NixiUtils
 
 StyledMouseArea {
     id: root
@@ -107,7 +108,6 @@ StyledMouseArea {
         implicitWidth: 525
         implicitHeight: 150
 
-        // GET RID OF THIS WHENEVER POSSIBLE ITS BAD!
         CachedImage {
             id: artCache
 

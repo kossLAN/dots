@@ -2,6 +2,7 @@
 
 #include <QtQml>
 
+#include "cachedimage.h"
 #include "clipboard.h"
 
 void UtilsPlugin::registerTypes(const char* uri) {
@@ -16,4 +17,6 @@ void UtilsPlugin::registerTypes(const char* uri) {
 		    return new ClipboardUtils();
 	    }
 	);
+
+	qmlRegisterType<CachedImage>(uri, 1, 0, "CachedImage");
 }
