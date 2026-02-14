@@ -12,4 +12,5 @@ These "dots" are just my niri related config files, seperated into its own flake
 - [x] Add system tray menu like kde/windows with pinning etc.
 - [ ] (Waiting on quickshell pull request) Finish Wifi Systray Widget
 - [x]  LLM Chat Launcher Widget
-- [ ] Make a custom file picker, to replace the default one
+- [x] Make a custom file picker, to replace the default one
+- [ ] Finish Settings & Lockscreen Redesign

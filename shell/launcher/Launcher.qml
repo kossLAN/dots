@@ -47,7 +47,7 @@ Singleton {
 
             WlrLayershell.namespace: "shell:launcher"
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
             mask: Region {
                 item: view
@@ -75,20 +75,28 @@ Singleton {
                 implicitWidth: manager.implicitWidth
                 implicitHeight: manager.implicitHeight
 
-                x: manager.centerX - (view.width / 2)
+                x: Math.max(0, Math.min(manager.centerX - (view.width / 2), panel.width - view.width))
 
                 y: {
+                    let pos;
                     if (ShellSettings.sizing.launcherPosition.y === -1)
-                        return (panel.screen.height / 2) - 325;
+                        pos = (panel.screen.height / 2) - 325;
+                    else
+                        pos = ShellSettings.sizing.launcherPosition.y;
 
-                    return ShellSettings.sizing.launcherPosition.y;
+                    return Math.max(0, Math.min(pos, panel.height - view.height));
                 }
 
                 function setPositon() {
+                    view.x = Math.max(0, Math.min(view.x, panel.width - view.width));
+                    view.y = Math.max(0, Math.min(view.y, panel.height - view.height));
+
                     manager.centerX = view.x + view.width / 2;
+
                     ShellSettings.sizing.launcherPosition.centerX = manager.centerX;
                     ShellSettings.sizing.launcherPosition.y = view.y;
-                    view.x = Qt.binding(() => manager.centerX - (view.width / 2));
+
+                    view.x = Qt.binding(() => Math.max(0, Math.min(manager.centerX - (view.width / 2), panel.width - view.width)));
                 }
 
                 Item {
@@ -107,6 +115,11 @@ Singleton {
                         id: handler
                         target: view
 
+                        xAxis.minimum: 0
+                        xAxis.maximum: panel.width - view.width
+                        yAxis.minimum: 0
+                        yAxis.maximum: panel.height - view.height
+
                         onActiveChanged: {
                             if (!active) {
                                 view.setPositon();
@@ -118,7 +131,12 @@ Singleton {
                 LauncherManager {
                     id: manager
 
-                    property real centerX: ShellSettings.sizing.launcherPosition.centerX === -1 ? panel.screen.width / 2 : ShellSettings.sizing.launcherPosition.centerX
+                    property real centerX: { 
+                        if (ShellSettings.sizing.launcherPosition.centerX === -1)
+                            return panel.screen.width / 2 
+                        else 
+                            return ShellSettings.sizing.launcherPosition.centerX
+                    }
 
                     model: [
                         ApplicationLauncher {

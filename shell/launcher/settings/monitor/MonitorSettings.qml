@@ -3,9 +3,13 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
+import Quickshell
+import Quickshell.Widgets
+
 import qs
 import qs.launcher.settings
 import qs.widgets
+import qs.notifications
 import qs.services.niri
 
 SettingsBacker {
@@ -31,12 +35,60 @@ SettingsBacker {
             return `${make} ${model}${serial ? ` ${serial}` : ""}`.trim();
         }
 
+        property var pendingConfig: null
+        property string pendingMonitorId: ""
+        property string pendingOutputName: ""
+        property var activeConfirmNotification: null
+
         // Request a save after the next output refresh
         function requestSave() {
             pendingSave = true;
         }
 
-        // Save current output configuration to system config
+        function confirmSave() {
+            if (!pendingConfig || !pendingMonitorId)
+                return;
+
+            const newOutputs = Object.assign({}, ShellSettings.outputs ?? {});
+            newOutputs[pendingMonitorId] = pendingConfig;
+            ShellSettings.outputs = newOutputs;
+
+            console.log("Monitor config saved for", pendingMonitorId);
+            pendingConfig = null;
+            pendingMonitorId = "";
+            pendingOutputName = "";
+            activeConfirmNotification = null;
+        }
+
+        function revertConfig() {
+            if (!pendingMonitorId || !pendingOutputName) {
+                activeConfirmNotification = null;
+                return;
+            }
+
+            const outputName = pendingOutputName;
+            const oldConfig = (ShellSettings.outputs ?? {})[pendingMonitorId];
+
+            pendingConfig = null;
+            pendingMonitorId = "";
+            pendingOutputName = "";
+            activeConfirmNotification = null;
+
+            if (oldConfig) {
+                if (oldConfig.mode)
+                    Niri.setOutputMode(outputName, oldConfig.mode);
+                if (oldConfig.scale !== undefined)
+                    Niri.setOutputScale(outputName, oldConfig.scale);
+                if (oldConfig.transform !== undefined)
+                    Niri.setOutputTransform(outputName, oldConfig.transform);
+                if (oldConfig.vrr !== undefined)
+                    Niri.setOutputVrr(outputName, oldConfig.vrr);
+            }
+
+            console.log("Monitor config reverted for", outputName);
+        }
+
+        // Build config from current output state and show confirmation notification
         function saveCurrentConfig() {
             if (!selectedOutput || !selectedOutputData)
                 return;
@@ -68,11 +120,16 @@ SettingsBacker {
                 };
             }
 
-            const newOutputs = Object.assign({}, ShellSettings.outputs ?? {});
-            newOutputs[monitorId] = config;
+            if (activeConfirmNotification)
+                activeConfirmNotification.discard();
 
-            ShellSettings.outputs = newOutputs;
-            console.log("Monitor config saved for", monitorId, ":", JSON.stringify(ShellSettings.outputs));
+            pendingConfig = config;
+            pendingMonitorId = monitorId;
+            pendingOutputName = selectedOutput;
+
+            const notif = savedNotification.createObject(null);
+            activeConfirmNotification = notif;
+            Notifications.addNotification(notif);
         }
 
         Connections {
@@ -95,6 +152,63 @@ SettingsBacker {
 
         Component.onCompleted: {
             Niri.refreshOutputs();
+        }
+
+        property Component savedNotification: NotificationBacker {
+            id: toast
+
+            property int countdown: 15
+
+            summary: "Keep display settings?"
+
+            Timer {
+                interval: 1000
+                repeat: true
+                running: true
+                onTriggered: {
+                    toast.countdown--;
+                    if (toast.countdown <= 0) {
+                        stop();
+                        container.revertConfig();
+                        toast.discard();
+                    }
+                }
+            }
+
+            body: Text {
+                color: ShellSettings.colors.active.text.darker(1.25)
+                font.pixelSize: 12
+                text: `Reverting in ${toast.countdown}s...`
+            }
+
+            icon: IconImage {
+                source: Quickshell.iconPath("cs-screen")
+                implicitSize: 36
+            }
+
+            buttons: RowLayout {
+                spacing: 8
+
+                IconButton {
+                    color: ShellSettings.colors.active.light
+                    source: Quickshell.iconPath("dialog-ok-apply")
+                    implicitSize: 16
+                    onClicked: {
+                        container.confirmSave();
+                        toast.discard();
+                    }
+                }
+
+                IconButton {
+                    color: ShellSettings.colors.active.light
+                    source: Quickshell.iconPath("window-close")
+                    implicitSize: 16
+                    onClicked: {
+                        container.revertConfig();
+                        toast.discard();
+                    }
+                }
+            }
         }
 
         ColumnLayout {

@@ -152,7 +152,6 @@ Item {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: {
-                            root.currentValue = itemDelegate.modelData.value;
                             root.selected(itemDelegate.modelData.value);
                             dropdownOverlay.visible = false;
                         }

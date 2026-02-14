@@ -2,8 +2,8 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Dialogs
 import QtQuick.Controls
+
 import Qt5Compat.GraphicalEffects
 import Quickshell
 import Quickshell.Widgets
@@ -12,11 +12,10 @@ import NixiUtils
 
 import qs
 import qs.widgets
+import qs.filepicker
 
 StyledRectangle {
     id: root
-
-    // NixiUtils { id: utils }
 
     clip: true
     radius: 8
@@ -51,11 +50,10 @@ StyledRectangle {
         pendingImages = [];
     }
 
-    FileDialog {
+    FilePicker {
         id: imageDialog
         title: "Select Image"
         nameFilters: ["Image files (*.png *.jpg *.jpeg *.gif)", "All files (*)"]
-        popupType: Popup.Item
 
         onAccepted: {
             let newImages = root.pendingImages.slice();
