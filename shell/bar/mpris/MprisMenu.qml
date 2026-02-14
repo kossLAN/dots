@@ -129,6 +129,30 @@ StyledMouseArea {
             rescaleSize: 64
         }
 
+        function luminance(c: color): real {
+            return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+        }
+
+        property color adjustedWaveColor: {
+            let colors = colorQuantizer.colors;
+            if (!colors || colors.length < 6)
+                return Qt.rgba(0.4, 0.3, 0.5, 1);
+
+            let wave = colors[5];
+            let bgLum = (luminance(colors[0]) + luminance(colors[1])
+                       + luminance(colors[2]) + luminance(colors[3])) / 4;
+            let waveLum = luminance(wave);
+
+            if (Math.abs(waveLum - bgLum) < 0.2) {
+                if (bgLum > 0.5)
+                    return Qt.darker(wave, 2.0);
+                else
+                    return Qt.lighter(wave, 2.0);
+            }
+
+            return wave;
+        }
+
         // Cava-based audio visualization
         property var cavaData: []
         property real cavaPeak: {
@@ -191,7 +215,7 @@ StyledMouseArea {
                 property color color1: colorQuantizer.colors[1] ?? Qt.rgba(0.2, 0.1, 0.3, 1)
                 property color color2: colorQuantizer.colors[2] ?? Qt.rgba(0.1, 0.2, 0.3, 1)
                 property color color3: colorQuantizer.colors[3] ?? Qt.rgba(0.15, 0.15, 0.25, 1)
-                property color waveColor: colorQuantizer.colors[5] ?? Qt.rgba(0.4, 0.3, 0.5, 1)
+                property color waveColor: menu.adjustedWaveColor
                 property real animTime: 0
                 property vector4d params: Qt.vector4d(animTime, 0, 0, 0)
 

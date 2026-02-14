@@ -19,32 +19,24 @@ layout(std140, binding = 0) uniform buf {
 } ubuf;
 
 float getBarValue(int index) {
-    if (index < 4) {
-        if (index == 0) return ubuf.bars0.x;
-        if (index == 1) return ubuf.bars0.y;
-        if (index == 2) return ubuf.bars0.z;
-        return ubuf.bars0.w;
-    } else if (index < 8) {
-        if (index == 4) return ubuf.bars1.x;
-        if (index == 5) return ubuf.bars1.y;
-        if (index == 6) return ubuf.bars1.z;
-        return ubuf.bars1.w;
-    } else if (index < 12) {
-        if (index == 8) return ubuf.bars2.x;
-        if (index == 9) return ubuf.bars2.y;
-        if (index == 10) return ubuf.bars2.z;
-        return ubuf.bars2.w;
-    } else if (index < 16) {
-        if (index == 12) return ubuf.bars3.x;
-        if (index == 13) return ubuf.bars3.y;
-        if (index == 14) return ubuf.bars3.z;
-        return ubuf.bars3.w;
-    } else {
-        if (index == 16) return ubuf.bars4.x;
-        if (index == 17) return ubuf.bars4.y;
-        if (index == 18) return ubuf.bars4.z;
-        return ubuf.bars4.w;
-    }
+    int group = index / 4;
+    int comp = index - group * 4;
+
+    vec4 bar;
+    if (group == 0) bar = ubuf.bars0;
+    else if (group == 1) bar = ubuf.bars1;
+    else if (group == 2) bar = ubuf.bars2;
+    else if (group == 3) bar = ubuf.bars3;
+    else bar = ubuf.bars4;
+
+    return bar[comp];
+}
+
+float avgBars(int from, int to) {
+    float sum = 0.0;
+    for (int i = from; i <= to; i++)
+        sum += getBarValue(i);
+    return sum / float(to - from + 1);
 }
 
 // Sample bar values with interpolation at position x (0-1)
@@ -68,13 +60,10 @@ void main() {
     
     vec2 uv = coord;
     
-    // Sample multiple frequency bands for wave modulation
-    float lowFreq = (ubuf.bars0.x + ubuf.bars0.y + ubuf.bars0.z + ubuf.bars0.w + 
-                    ubuf.bars1.x + ubuf.bars1.y) / 6.0;
-    float midFreq = (ubuf.bars1.z + ubuf.bars1.w + ubuf.bars2.x + ubuf.bars2.y + 
-                    ubuf.bars2.z + ubuf.bars2.w) / 6.0;
-    float highFreq = (ubuf.bars3.x + ubuf.bars3.y + ubuf.bars3.z + ubuf.bars3.w +
-                     ubuf.bars4.x + ubuf.bars4.y + ubuf.bars4.z + ubuf.bars4.w) / 8.0;
+    // Sample frequency bands for wave modulation
+    float lowFreq = avgBars(0, 5);
+    float midFreq = avgBars(6, 11);
+    float highFreq = avgBars(12, 19);
     
     // Overall peak for base height
     float peak = max(max(lowFreq, midFreq), highFreq);

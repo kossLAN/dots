@@ -16,90 +16,50 @@ Loader {
     property int totalCount: 1
     property var colors: []
 
-    // Since we are using colorQuantizer to get colors to use in the background,
-    // we can end up in situations where the foreground elements do not constrast well.
-    // This is a luminance equation I ripped from the internet to help contrast elements. Not a perfect solution, but better than not being able to read elements.
-    readonly property bool isLightBackground: {
+    function luminance(c: color): real {
+        return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+    }
+
+    readonly property real bgLuminance: {
         if (!colors || colors.length < 4)
-            return false;
+            return 0;
 
         const c0 = colors[0], c1 = colors[1], c2 = colors[2], c3 = colors[3];
-
         if (!c0 || !c1 || !c2 || !c3)
-            return false;
+            return 0;
 
-        const avgR = (c0.r + c1.r + c2.r + c3.r) / 4;
-        const avgG = (c0.g + c1.g + c2.g + c3.g) / 4;
-        const avgB = (c0.b + c1.b + c2.b + c3.b) / 4;
-        const luminance = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
-
-        return luminance > 0.5;
+        return luminance(Qt.rgba(
+            (c0.r + c1.r + c2.r + c3.r) / 4,
+            (c0.g + c1.g + c2.g + c3.g) / 4,
+            (c0.b + c1.b + c2.b + c3.b) / 4, 1
+        ));
     }
+
+    readonly property bool isLightBackground: bgLuminance > 0.5
+
+    readonly property color textColor: isLightBackground
+        ? Qt.rgba(0, 0, 0, 0.87)
+        : Qt.rgba(1, 1, 1, 0.93)
 
     readonly property color accentColor: {
         if (!colors || colors.length < 5 || !colors[4])
             return Qt.color("purple");
 
-        // Use color[4] for accent (different from text which uses color[6])
         let accent = colors[4];
-        let accentLum = 0.299 * accent.r + 0.587 * accent.g + 0.114 * accent.b;
+        let lum = luminance(accent);
 
-        if (isLightBackground) {
-            // For light bg, want a rich saturated accent in mid-dark range
-            if (accentLum > 0.5) {
-                return Qt.darker(accent, 2.0);
-            }
-            return Qt.darker(accent, 1.4);
-        } else {
-            // For dark bg, want accent to be vibrant but not white
-            // Keep it in the mid-brightness range (0.4-0.7) so it stands out from white text
-            if (accentLum < 0.25) {
-                return Qt.lighter(accent, 2.2);
-            } else if (accentLum > 0.7) {
-                return Qt.darker(accent, 1.5);
-            }
-            return Qt.lighter(accent, 1.5);
-        }
+        if (isLightBackground)
+            return Qt.darker(accent, lum > 0.5 ? 2.0 : 1.4);
+
+        if (lum < 0.25)
+            return Qt.lighter(accent, 2.2);
+
+        return Qt.lighter(accent, lum > 0.7 ? 1.0 : 1.5);
     }
 
-    readonly property color railColor: {
-        if (isLightBackground) {
-            return Qt.rgba(0, 0, 0, 0.55);
-        }
-
-        return Qt.rgba(1, 1, 1, 0.35);
-    }
-
-    readonly property color textColor: {
-        if (!colors || colors.length < 7 || !colors[6])
-            return isLightBackground ? Qt.rgba(0, 0, 0, 0.85) : Qt.rgba(1, 1, 1, 0.95);
-
-        // Use a quantizer color as base
-        let baseColor = colors[6];
-        let baseLuminance = 0.299 * baseColor.r + 0.587 * baseColor.g + 0.114 * baseColor.b;
-
-        if (isLightBackground) {
-            let darkened = Qt.darker(baseColor, 1.5);
-            let darkLum = 0.299 * darkened.r + 0.587 * darkened.g + 0.114 * darkened.b;
-
-            // If still too light, blend with black
-            if (darkLum > 0.3) {
-                return Qt.rgba(darkened.r * 0.3, darkened.g * 0.3, darkened.b * 0.3, 0.9);
-            }
-
-            return Qt.rgba(darkened.r, darkened.g, darkened.b, 0.9);
-        } else {
-            let lightened = Qt.lighter(baseColor, 2.0);
-            let lightLum = 0.299 * lightened.r + 0.587 * lightened.g + 0.114 * lightened.b;
-
-            // If still too dark, blend with white
-            if (lightLum < 0.7) {
-                return Qt.rgba(0.7 + lightened.r * 0.3, 0.7 + lightened.g * 0.3, 0.7 + lightened.b * 0.3, 0.95);
-            }
-
-            return Qt.rgba(lightened.r, lightened.g, lightened.b, 0.95);
-        }
-    }
+    readonly property color railColor: isLightBackground
+        ? Qt.rgba(0, 0, 0, 0.55)
+        : Qt.rgba(1, 1, 1, 0.35)
 
     active: player !== null
 
@@ -157,9 +117,21 @@ Loader {
             Layout.rightMargin: 12
 
             ColumnLayout {
-                anchors.centerIn: parent
-                width: parent.width
+                anchors.fill: parent
                 spacing: 6
+
+                FontMetrics {
+                    id: titleMetrics
+                    font.pointSize: 11
+                    font.bold: true
+                }
+
+                FontMetrics {
+                    id: artistMetrics
+                    font.pointSize: 9
+                }
+
+                Item { Layout.fillHeight: true }
 
                 StyledText {
                     text: root.player?.trackTitle || "Unknown Title"
@@ -170,6 +142,7 @@ Loader {
                     textColor: root.textColor
 
                     Layout.fillWidth: true
+                    Layout.preferredHeight: titleMetrics.height
                     Layout.alignment: Qt.AlignHCenter
                 }
 
@@ -181,6 +154,7 @@ Loader {
                     font.pointSize: 9
 
                     Layout.fillWidth: true
+                    Layout.preferredHeight: artistMetrics.height
                     Layout.alignment: Qt.AlignHCenter
 
                     text: {
@@ -188,6 +162,12 @@ Loader {
                         const album = root.player?.trackAlbum || "";
                         return album ? artist + " - " + album : artist;
                     }
+                }
+
+                TextMetrics {
+                    id: timeMetrics
+                    text: "00:00"
+                    font.pointSize: 8
                 }
 
                 RowLayout {
@@ -200,6 +180,8 @@ Loader {
                         font.pointSize: 8
                         opacity: 0.7
                         textColor: root.textColor
+                        horizontalAlignment: Text.AlignRight
+                        Layout.minimumWidth: timeMetrics.advanceWidth
                     }
 
                     StyledSlider {
@@ -226,6 +208,8 @@ Loader {
                         font.pointSize: 8
                         opacity: 0.7
                         textColor: root.textColor
+                        horizontalAlignment: Text.AlignLeft
+                        Layout.minimumWidth: timeMetrics.advanceWidth
                     }
                 }
 
@@ -238,8 +222,10 @@ Loader {
                         iconColor: root.textColor
                         source: Quickshell.iconPath("media-playlist-shuffle")
                         implicitSize: 18
-                        opacity: root.player?.shuffle ? 1.0 : 0.4
-                        visible: root.player?.shuffleSupported ?? false
+                        opacity: (root.player?.shuffleSupported ?? false)
+                            ? (root.player?.shuffle ? 1.0 : 0.4)
+                            : 0
+                        enabled: root.player?.shuffleSupported ?? false
                         onClicked: {
                             if (root.player?.canControl && root.player?.shuffleSupported) {
                                 root.player.shuffle = !root.player.shuffle;
@@ -290,8 +276,10 @@ Loader {
                         hoverColor: root.accentColor
                         iconColor: root.textColor
                         implicitSize: 18
-                        opacity: root.player?.loopState !== MprisLoopState.None ? 1.0 : 0.4
-                        visible: root.player?.loopSupported ?? false
+                        opacity: (root.player?.loopSupported ?? false)
+                            ? (root.player?.loopState !== MprisLoopState.None ? 1.0 : 0.4)
+                            : 0
+                        enabled: root.player?.loopSupported ?? false
 
                         source: {
                             if (root.player?.loopState === MprisLoopState.Track) {
@@ -314,6 +302,8 @@ Loader {
                         }
                     }
                 }
+
+                Item { Layout.fillHeight: true }
             }
 
             Row {
