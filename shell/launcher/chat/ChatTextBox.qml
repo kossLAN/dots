@@ -52,7 +52,6 @@ StyledRectangle {
 
     FilePicker {
         id: imageDialog
-        title: "Select Image"
         nameFilters: ["Image files (*.png *.jpg *.jpeg *.gif)", "All files (*)"]
 
         onAccepted: {
@@ -64,7 +63,10 @@ StyledRectangle {
             });
 
             root.pendingImages = newImages;
+            textInput.forceActiveFocus();
         }
+
+        onRejected: textInput.forceActiveFocus()
     }
 
     ColumnLayout {

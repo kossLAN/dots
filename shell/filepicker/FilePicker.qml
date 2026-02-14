@@ -7,7 +7,6 @@ import Quickshell.Wayland
 Item {
     id: root
 
-    property string title: "Select File"
     property var nameFilters: []
     property bool folderMode: false
     property url selectedFile: ""

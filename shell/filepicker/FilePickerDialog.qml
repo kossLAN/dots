@@ -35,14 +35,6 @@ Item {
                 margins: 12
             }
 
-
-            StyledText {
-                text: root.picker.title
-                font.pixelSize: 16
-                font.weight: Font.Normal
-                Layout.fillWidth: true
-            }
-
             FilePickerNavBar {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 28
