@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Quickshell.Wayland
 
 Item {
     id: root
@@ -161,43 +162,55 @@ Item {
         return (bytes / 1073741824).toFixed(1) + " GB";
     }
 
-    function _findRoot(): var {
-        let p = root.parent;
-        while (p && p.parent)
-            p = p.parent;
-        return p;
-    }
-
-    Loader {
-        id: overlayLoader
+    LazyLoader {
         active: root.visible
 
-        sourceComponent: Item {
-            parent: root._findRoot()
-            anchors.fill: parent
-            z: 9999
+        PanelWindow {
+            id: panel
+            visible: true
+            color: "transparent"
+            exclusiveZone: 0
 
-            Shortcut {
-                sequences: [StandardKey.Cancel]
-                onActivated: root._cancel()
+            WlrLayershell.namespace: "shell:filepicker"
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+
+            mask: Region {
+                item: filePicker
             }
 
-            FilePickerDialog {
-                id: filePicker
-                picker: root
-                width: Math.min(parent.width - 40, 800)
-                height: Math.min(parent.height - 40, 520)
-                x: (parent.width - width) / 2
-                y: (parent.height - height) / 2
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
 
-                DragHandler {
-                    id: handler
-                    target: filePicker
+            Item {
+                anchors.fill: parent
 
-                    xAxis.minimum: 0
-                    xAxis.maximum: filePicker.parent.width - filePicker.width
-                    yAxis.minimum: 0
-                    yAxis.maximum: filePicker.parent.height - filePicker.height
+                Shortcut {
+                    sequences: [StandardKey.Cancel]
+                    onActivated: root._cancel()
+                }
+
+                FilePickerDialog {
+                    id: filePicker
+                    picker: root
+                    width: Math.min(panel.width - 40, 800)
+                    height: Math.min(panel.height - 40, 520)
+                    x: (panel.width / 2) - (filePicker.width / 2)
+                    y: (panel.height / 2) - (filePicker.height / 2)
+
+                    DragHandler {
+                        id: handler
+                        target: filePicker
+
+                        xAxis.minimum: 0
+                        xAxis.maximum: panel.width - filePicker.width
+                        yAxis.minimum: 0
+                        yAxis.maximum: panel.height - filePicker.height
+                    }
                 }
             }
         }

@@ -47,11 +47,7 @@ Singleton {
 
             WlrLayershell.namespace: "shell:launcher"
             WlrLayershell.layer: WlrLayer.Overlay
-            WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-
-            mask: Region {
-                item: view
-            }
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
             anchors {
                 top: true
