@@ -3,12 +3,31 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
+import Quickshell
+import Quickshell.Widgets
+import Quickshell.Io
+
+import qs
+import qs.widgets
+import qs.services.mpris
 
 Item {
     id: root
     required property LockState state
     required property string wallpaper
+
+    property string hostname: ""
+
+    Process {
+        id: hostnameProc
+        command: ["hostname"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => root.hostname = data.trim()
+        }
+    }
 
     Item {
         anchors.fill: parent
@@ -100,88 +119,378 @@ Item {
         }
     }
 
-    // login section
-    ColumnLayout {
+    // Floating login card
+    Item {
+        id: cardContainer
         visible: Window.active
         anchors.centerIn: parent
-        spacing: 30
+        width: cardContent.implicitWidth + 24
+        height: cardContent.implicitHeight + 24
 
-        Rectangle {
-            id: profileImage
-            Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 120
-            Layout.preferredHeight: 120
-
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: Rectangle {
-                    width: profileImage.width
-                    height: profileImage.height
-                    radius: width / 2
-                    color: "black"
-                }
-            }
-
-            Image {
-                source: "root:resources/general/pfp.png"
-                anchors.fill: parent
-            }
+        RectangularShadow {
+            anchors.fill: card
+            radius: card.radius
+            blur: 16
+            spread: 2
+            offset: Qt.vector2d(0, 4)
+            color: Qt.rgba(0, 0, 0, 0.5)
         }
 
-        LoginField {
-            id: passwordBox
-            enabled: !root.state.unlockInProgress
+        StyledRectangle {
+            id: card
+            anchors.fill: parent
 
-            Layout.preferredWidth: 250
-            Layout.preferredHeight: 30
-            Layout.maximumHeight: 30
-            Layout.alignment: Qt.AlignHCenter
+            ColumnLayout {
+                id: cardContent
+                anchors {
+                    fill: parent
+                    margins: 12
+                }
+                spacing: 8
 
-            onTextChanged: root.state.currentText = this.text
-            onAccepted: root.state.tryUnlock()
+                // User info row
+                RowLayout {
+                    spacing: 16
+                    Layout.alignment: Qt.AlignLeft
 
-            Connections {
-                target: root.state
+                    ClippingRectangle {
+                        id: profileImage
+                        Layout.preferredWidth: 64
+                        Layout.preferredHeight: 64
 
-                function onCurrentTextChanged() {
-                    if (!passwordBox.shaking) {
-                        passwordBox.text = root.state.currentText;
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Rectangle {
+                                width: profileImage.width
+                                height: profileImage.height
+                                radius: width / 2
+                                color: "black"
+                            }
+                        }
+
+                        Image {
+                            source: ShellSettings.profilePicture
+                            anchors.fill: parent
+                        }
+                    }
+
+                    ColumnLayout {
+                        spacing: 2
+
+                        StyledText {
+                            text: "koss" 
+                            font.pointSize: 14
+                            font.bold: true
+                        }
+
+                        StyledText {
+                            text: root.hostname
+                            font.pointSize: 10
+                            opacity: 0.6
+                        }
                     }
                 }
 
-                function onShowFailureChanged() {
-                    if (root.state.showFailure && !passwordBox.shaking) {
-                        passwordBox.shaking = true;
+                // Login field with inlaid button
+                Item {
+                    Layout.preferredWidth: 320
+                    Layout.preferredHeight: 38
+
+                    Rectangle {
+                        id: fieldBackground
+                        anchors.fill: parent
+                        radius: 12
+                        color: ShellSettings.colors.active.alternateBase
+                        border.width: 1
+                        border.color: ShellSettings.colors.active.light
+                        scale: passwordBox.activeFocus ? 1.02 : 1.0
+
+                        Behavior on scale {
+                            NumberAnimation {
+                                duration: 200
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+
+                        transform: Translate {
+                            id: shakeTransform
+                            x: 0
+                        }
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 0
+                            spacing: 0
+
+                            TextInput {
+                                id: passwordBox
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                verticalAlignment: Text.AlignVCenter
+                                color: ShellSettings.colors.active.windowText
+                                echoMode: TextInput.Password
+                                inputMethodHints: Qt.ImhSensitiveData
+                                font.pointSize: 11
+                                focus: true
+                                clip: true
+                                enabled: !root.state.unlockInProgress
+
+                                Text {
+                                    anchors.fill: parent
+                                    verticalAlignment: Text.AlignVCenter
+                                    text: "Password"
+                                    color: ShellSettings.colors.active.windowText
+                                    opacity: 0.4
+                                    font.pointSize: 11
+                                    visible: passwordBox.text.length === 0 && !passwordBox.activeFocus
+                                    renderType: Text.NativeRendering
+                                }
+
+                                onTextChanged: root.state.currentText = text
+                                onAccepted: root.state.tryUnlock()
+
+                                Connections {
+                                    target: root.state
+
+                                    function onCurrentTextChanged() {
+                                        if (!shakeAnimation.running) {
+                                            passwordBox.text = root.state.currentText;
+                                        }
+                                    }
+
+                                    function onShowFailureChanged() {
+                                        if (root.state.showFailure && !shakeAnimation.running) {
+                                            shakeAnimation.start();
+                                        }
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.preferredWidth: 1
+                                Layout.fillHeight: true
+                                color: ShellSettings.colors.active.light
+                            }
+
+                            Item {
+                                Layout.preferredWidth: 38
+                                Layout.fillHeight: true
+                                clip: true
+
+                                Rectangle {
+                                    anchors.fill: parent
+                                    // extend left to cover parent's right radius
+                                    anchors.leftMargin: -fieldBackground.radius
+                                    color: ShellSettings.colors.active.mid
+                                    radius: fieldBackground.radius
+                                    border.width: 1
+                                    border.color: ShellSettings.colors.active.light
+                                }
+
+                                MouseArea {
+                                    id: submitButton
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    enabled: !root.state.unlockInProgress && passwordBox.text.length > 0
+                                    onClicked: root.state.tryUnlock()
+
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        anchors.leftMargin: -fieldBackground.radius
+                                        radius: fieldBackground.radius
+                                        color: ShellSettings.colors.active.highlight
+                                        visible: submitButton.containsMouse
+                                    }
+
+                                    IconButton {
+                                        anchors.centerIn: parent
+                                        implicitSize: 20
+                                        source: Quickshell.iconPath("go-next")
+                                        iconColor: ShellSettings.colors.active.buttonText
+                                        hoverColor: "transparent"
+                                        opacity: passwordBox.text.length > 0 ? 1.0 : 0.3
+
+                                        Behavior on opacity {
+                                            NumberAnimation { duration: 150 }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    SequentialAnimation {
+                        id: shakeAnimation
+
+                        NumberAnimation {
+                            target: shakeTransform; property: "x"
+                            to: -8; duration: 50
+                            easing.type: Easing.OutQuad
+                        }
+                        NumberAnimation {
+                            target: shakeTransform; property: "x"
+                            to: 8; duration: 100
+                            easing.type: Easing.InOutQuad
+                        }
+                        NumberAnimation {
+                            target: shakeTransform; property: "x"
+                            to: -6; duration: 80
+                            easing.type: Easing.InOutQuad
+                        }
+                        NumberAnimation {
+                            target: shakeTransform; property: "x"
+                            to: 6; duration: 80
+                            easing.type: Easing.InOutQuad
+                        }
+                        NumberAnimation {
+                            target: shakeTransform; property: "x"
+                            to: -3; duration: 60
+                            easing.type: Easing.InOutQuad
+                        }
+
+                        onFinished: {
+                            passwordBox.text = "";
+                        }
                     }
                 }
+
             }
         }
     }
 
-    // hint text
-    Text {
-        text: "Press Enter to unlock"
-        color: Qt.rgba(1, 1, 1, 0.5)
-        font.pointSize: 12
-        horizontalAlignment: Text.AlignHCenter
-        opacity: passwordBox.text.length > 0 ? 1.0 : 0.0
+    // Floating MPRIS player card
+    Item {
+        id: mprisContainer
+        visible: Mpris.trackedPlayer !== null && Window.active
+        width: cardContent.implicitWidth + 24
+        height: mprisContent.implicitHeight + 24
 
         anchors {
+            top: cardContainer.bottom
+            topMargin: 12
             horizontalCenter: parent.horizontalCenter
-            bottom: parent.bottom
-            bottomMargin: 60
         }
 
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 300
+        RectangularShadow {
+            anchors.fill: mprisCard
+            radius: mprisCard.radius
+            blur: 16
+            spread: 2
+            offset: Qt.vector2d(0, 4)
+            color: Qt.rgba(0, 0, 0, 0.5)
+        }
+
+        StyledRectangle {
+            id: mprisCard
+            anchors.fill: parent
+
+            RowLayout {
+                id: mprisContent
+                anchors {
+                    fill: parent
+                    margins: 12
+                }
+                spacing: 12
+
+                Item {
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 48
+
+                    Image {
+                        id: miniAlbumArt
+                        source: Qt.resolvedUrl(Mpris.trackedPlayer?.trackArtUrl ?? "")
+                        fillMode: Image.PreserveAspectCrop
+                        anchors.fill: parent
+
+                        sourceSize {
+                            width: 96
+                            height: 96
+                        }
+
+                        layer.enabled: true
+                        layer.effect: OpacityMask {
+                            maskSource: Rectangle {
+                                width: miniAlbumArt.width
+                                height: miniAlbumArt.height
+                                radius: 6
+                                color: "black"
+                            }
+                        }
+                    }
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 2
+
+                    StyledText {
+                        text: Mpris.trackedPlayer?.trackTitle || "Unknown"
+                        font.pointSize: 9
+                        font.bold: true
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: 160
+                    }
+
+                    StyledText {
+                        text: Mpris.trackedPlayer?.trackArtist || "Unknown"
+                        font.pointSize: 8
+                        opacity: 0.6
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: 160
+                    }
+                }
+
+                RowLayout {
+                    spacing: 8
+                    Layout.alignment: Qt.AlignVCenter
+
+                    IconButton {
+                        iconColor: ShellSettings.colors.active.windowText
+                        hoverColor: ShellSettings.colors.active.accent
+                        source: Quickshell.iconPath("media-skip-backward")
+                        implicitSize: 18
+                        opacity: Mpris.trackedPlayer?.canGoPrevious ? 1.0 : 0.4
+                        onClicked: {
+                            if (Mpris.trackedPlayer?.canGoPrevious)
+                                Mpris.trackedPlayer.previous();
+                        }
+                    }
+
+                    IconButton {
+                        iconColor: ShellSettings.colors.active.windowText
+                        hoverColor: ShellSettings.colors.active.accent
+                        source: Quickshell.iconPath(Mpris.trackedPlayer?.isPlaying ? "media-playback-pause" : "media-playback-start")
+                        implicitSize: 22
+                        opacity: Mpris.trackedPlayer?.canTogglePlaying ? 1.0 : 0.4
+                        onClicked: {
+                            if (Mpris.trackedPlayer?.canTogglePlaying)
+                                Mpris.trackedPlayer.togglePlaying();
+                        }
+                    }
+
+                    IconButton {
+                        iconColor: ShellSettings.colors.active.windowText
+                        hoverColor: ShellSettings.colors.active.accent
+                        source: Quickshell.iconPath("media-skip-forward")
+                        implicitSize: 18
+                        opacity: Mpris.trackedPlayer?.canGoNext ? 1.0 : 0.4
+                        onClicked: {
+                            if (Mpris.trackedPlayer?.canGoNext)
+                                Mpris.trackedPlayer.next();
+                        }
+                    }
+                }
             }
         }
     }
 
     // testing button
     Button {
-        visible: ShellSettings.settings.debugEnabled 
+        visible: ShellSettings.settings.debugEnabled
         text: "Emergency Unlock"
         onClicked: root.state.unlocked()
 

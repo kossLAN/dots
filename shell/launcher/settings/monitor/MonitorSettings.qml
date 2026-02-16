@@ -13,8 +13,9 @@ import qs.notifications
 import qs.services.niri
 
 SettingsBacker {
-    icon: "cs-screen"
+    icon: "preferences-desktop-display-randr"
     summary: "Monitor Settings"
+    label: "Monitors"
 
     content: Item {
         id: container

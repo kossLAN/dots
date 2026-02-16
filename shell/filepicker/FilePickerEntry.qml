@@ -36,7 +36,7 @@ MouseArea {
     signal entryClicked
     signal entryDoubleClicked
 
-    implicitHeight: root._isImage === true ? 40 : 32
+    implicitHeight: 40
     height: implicitHeight
     hoverEnabled: true
     cursorShape: Qt.PointingHandCursor
@@ -93,11 +93,17 @@ MouseArea {
             }
         }
 
-        IconImage {
+        Item {
             visible: !root._isImage
-            source: Quickshell.iconPath(root.fileIsDir ? "folder" : "text-x-generic")
-            Layout.preferredWidth: 20
-            Layout.preferredHeight: 20
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
+
+            IconImage {
+                anchors.centerIn: parent
+                source: Quickshell.iconPath(root.fileIsDir ? "folder" : "text-x-generic")
+                width: 20
+                height: 20
+            }
         }
 
         StyledText {

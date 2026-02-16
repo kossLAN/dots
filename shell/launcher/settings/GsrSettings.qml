@@ -8,11 +8,12 @@ import qs.widgets
 import qs.services.gsr
 
 SettingsBacker {
-    icon: "record-desktop"
+    icon: "simplescreenrecorder-panel"
 
     enabled: ShellSettings.settings.gsrEnabled
 
     summary: "Screen Recording"
+    label: "Recording"
 
     content: Item {
         id: menu
@@ -21,10 +22,39 @@ SettingsBacker {
 
         ColumnLayout {
             spacing: 8
+            anchors.fill: parent
 
-            anchors {
-                fill: parent
-                margins: 8
+            StyledText {
+                text: "Capture"
+                font.pointSize: 10
+                font.weight: Font.DemiBold
+                opacity: 0.7
+                Layout.leftMargin: 4
+                Layout.topMargin: 1
+            }
+
+            SettingsCard {
+                title: "Show Cursor"
+                summary: "Include cursor in recording"
+
+                controls: ToggleSwitch {
+                    checked: GpuScreenRecord.config.cursor
+
+                    anchors {
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                        rightMargin: 12
+                    }
+
+                    onCheckedChanged: {
+                        if (GpuScreenRecord.config.cursor !== checked) {
+                            GpuScreenRecord.config.cursor = checked;
+                        }
+                    }
+                }
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: menu.cardHeight
             }
 
             SettingsCard {
@@ -85,30 +115,19 @@ SettingsBacker {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: menu.cardHeight
+            } 
+
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
             }
 
-            SettingsCard {
-                title: "Show Cursor"
-                summary: "Include cursor in recording"
-
-                controls: ToggleSwitch {
-                    checked: GpuScreenRecord.config.cursor
-
-                    anchors {
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        rightMargin: 12
-                    }
-
-                    onCheckedChanged: {
-                        if (GpuScreenRecord.config.cursor !== checked) {
-                            GpuScreenRecord.config.cursor = checked;
-                        }
-                    }
-                }
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: menu.cardHeight
+            StyledText {
+                text: "Encoding"
+                font.pointSize: 10
+                font.weight: Font.DemiBold
+                opacity: 0.7
+                Layout.leftMargin: 4
             }
 
             SettingsCard {
@@ -235,6 +254,19 @@ SettingsBacker {
                 Layout.preferredHeight: menu.cardHeight
             }
 
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
+
+            StyledText {
+                text: "Replay Buffer"
+                font.pointSize: 10
+                font.weight: Font.DemiBold
+                opacity: 0.7
+                Layout.leftMargin: 4
+            }
+
             SettingsCard {
                 title: "Buffer Size"
                 summary: "Replay buffer duration in seconds (0 = recording mode)"
@@ -313,6 +345,19 @@ SettingsBacker {
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: menu.cardHeight
+            }
+
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
+
+            StyledText {
+                text: "Audio"
+                font.pointSize: 10
+                font.weight: Font.DemiBold
+                opacity: 0.7
+                Layout.leftMargin: 4
             }
 
             SettingsCard {

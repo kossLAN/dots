@@ -12,7 +12,10 @@ Item {
     property Component controls: Item {}
 
     RowLayout {
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            margins: 8
+        }
 
         ColumnLayout {
             spacing: 2

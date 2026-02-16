@@ -9,6 +9,11 @@
 
   cfg = config.programs.nixi.greeter;
 in (mkIf cfg.enable {
+  users.users.greeter = {
+    home = "/home/greeter";
+    createHome = true;
+  };
+
   services.greetd = {
     enable = true;
 
@@ -16,7 +21,7 @@ in (mkIf cfg.enable {
       user = "greeter";
 
       command = "${getExe' pkgs.niri "niri"} --config ${pkgs.writeText "greetd-quickshell" ''
-        spawn-sh-at-startup "${getExe' pkgs.quickshell "qs"} -p ${../../shell}/greeter.qml && pkill niri"
+        spawn-sh-at-startup "${getExe' pkgs.quickshell "qs"} -p ${../../shell}/greeter.qml >& qslog.txt && pkill niri"
 
         hotkey-overlay {
           skip-at-startup

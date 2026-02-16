@@ -12,11 +12,10 @@ SettingsBacker {
     icon: "applications-chat-panel"
     enabled: ShellSettings.settings.chatEnabled
     summary: "Chat Settings"
+    label: "Chat"
 
     content: Item {
         id: menu
-
-        property real cardHeight: 36
 
         ColumnLayout {
             spacing: 0
@@ -26,9 +25,11 @@ SettingsBacker {
                 title: "Conversation History"
                 summary: `${ChatConnector.conversations.length} saved conversations`
 
+                Layout.fillWidth: true
+                Layout.preferredHeight: 48
+
                 controls: Item {
                     implicitWidth: 100
-                    implicitHeight: 32
 
                     StyledMouseArea {
                         radius: 4
@@ -54,10 +55,6 @@ SettingsBacker {
                         }
                     }
                 }
-
-                Layout.fillWidth: true
-                Layout.preferredHeight: menu.cardHeight
-                Layout.margins: 8
             }
 
             Separator {
@@ -74,27 +71,31 @@ SettingsBacker {
                     required property var modelData
                     required property int index
 
-                    spacing: 8
+                    spacing: 4
                     Layout.fillWidth: true
 
-                    RowLayout {
-                        spacing: 8
+                    Item {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: menu.cardHeight
+                        Layout.preferredHeight: 24 
                         Layout.margins: 8
 
-                        ProviderCard {
-                            provider: providerSection.modelData
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: menu.cardHeight
-                        }
+                        RowLayout {
+                            spacing: 0
+                            anchors.fill: parent
 
-                        ToggleSwitch {
-                            checked: providerSection.modelData.enabled
+                            ProviderCard {
+                                provider: providerSection.modelData
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true 
+                            }
 
-                            onCheckedChanged: {
-                                if (providerSection.modelData.enabled !== checked) {
-                                    ChatConnector.setProviderEnabled(providerSection.modelData.providerId, checked);
+                            ToggleSwitch {
+                                checked: providerSection.modelData.enabled
+
+                                onCheckedChanged: {
+                                    if (providerSection.modelData.enabled !== checked) {
+                                        ChatConnector.setProviderEnabled(providerSection.modelData.providerId, checked);
+                                    }
                                 }
                             }
                         }
@@ -106,13 +107,12 @@ SettingsBacker {
                         sourceComponent: providerSection.modelData.settings
 
                         Layout.fillWidth: true
-                        Layout.leftMargin: 8
-                        Layout.rightMargin: 8
                     }
 
                     Separator {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 1
+                        Layout.topMargin: 4
                     }
                 }
             }

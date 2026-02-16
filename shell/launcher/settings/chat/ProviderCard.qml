@@ -16,8 +16,8 @@ Item {
     property string errorMessage: provider?.errorMessage ?? ""
 
     RowLayout {
-        anchors.fill: parent
         spacing: 12
+        anchors.fill: parent
 
         Image {
             source: root.providerIcon

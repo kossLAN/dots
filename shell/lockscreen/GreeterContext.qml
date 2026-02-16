@@ -5,7 +5,6 @@ import qs.lockscreen
 
 Scope {
     id: root
-    signal launch
 
     property LockState state: LockState {
         onTryUnlock: {
@@ -14,6 +13,8 @@ Scope {
             Greetd.createSession(Quickshell.env("GREETER_USER") || "koss");
         }
     }
+
+    signal launch
 
     Connections {
         target: Greetd

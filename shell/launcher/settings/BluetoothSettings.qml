@@ -11,16 +11,21 @@ import qs
 import qs.widgets
 
 SettingsBacker {
-    icon: "bluetooth"
+    icon: "bluetooth-online"
 
-    enabled: ShellSettings.settings.bluetoothEnabled 
+    enabled: ShellSettings.settings.bluetoothEnabled
 
     summary: "Bluetooth Settings"
+    label: "Bluetooth"
 
     content: Item {
         ColumnLayout {
             spacing: 6
-            anchors.fill: parent
+
+            anchors {
+                fill: parent
+                margins: 8
+            }
 
             StyledRectangle {
                 id: adapterCard
@@ -272,9 +277,9 @@ SettingsBacker {
                                         if (!deviceCard.modelData)
                                             return ShellSettings.colors.active.dark;
                                         if (deviceCard.modelData.connected)
-                                            return "#4CAF50";
+                                            return ShellSettings.colors.extra.open; 
                                         if (deviceCard.modelData.paired)
-                                            return "#2196F3";
+                                            return ShellSettings.colors.active.highlight;
 
                                         return ShellSettings.colors.active.dark;
                                     }

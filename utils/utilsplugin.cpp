@@ -4,6 +4,7 @@
 
 #include "cachedimage.h"
 #include "clipboard.h"
+#include "latexrenderer.h"
 
 void UtilsPlugin::registerTypes(const char* uri) {
 	qmlRegisterSingletonType<ClipboardUtils>(
@@ -19,4 +20,5 @@ void UtilsPlugin::registerTypes(const char* uri) {
 	);
 
 	qmlRegisterType<CachedImage>(uri, 1, 0, "CachedImage");
+	qmlRegisterType<LatexRenderer>(uri, 1, 0, "LatexRenderer");
 }

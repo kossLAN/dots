@@ -5,8 +5,6 @@ import Quickshell
 import Quickshell.Widgets
 import qs
 
-// Oh my god, the code for this previously was REALLY bad, what the fuck
-// was I doing when I wrote it.
 StyledRectangle {
     id: root
 
@@ -58,6 +56,7 @@ StyledRectangle {
 
             property bool checked: ListView.isCurrentItem
 
+            hoverColor: "transparent"
             radius: root.radius - (root.spacing / 2)
             width: (ListView.view.width - (root.spacing * (root.model.length - 1))) / root.model.length
             height: ListView.view.height

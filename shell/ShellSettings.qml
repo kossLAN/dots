@@ -20,6 +20,8 @@ Singleton {
     property alias sizing: userAdapter.sizing
 
     property alias outputs: systemAdapter.outputs
+    property alias greeterWallpaper: systemAdapter.greeterWallpaper
+    property alias profilePicture: systemAdapter.profilePicture
 
     property QtObject colors: QtObject {
         property SystemPalette active: SystemPalette {
@@ -53,11 +55,11 @@ Singleton {
                 property string wallpaperUrl: ""
                 property string wallpapersPath: `${root.homeDir}/.wallpapers`
 
-                property bool bluetoothEnabled: true
-                property bool searchEnabled: true
-                property bool debugEnabled: true
-                property bool gsrEnabled: true
-                property bool chatEnabled: true
+                property bool bluetoothEnabled: false
+                property bool searchEnabled: false
+                property bool debugEnabled: false
+                property bool gsrEnabled: false
+                property bool chatEnabled: false
 
                 property list<string> pinnedTray: ["power", "volume", "wifi", "bluetooth"]
             }
@@ -84,11 +86,14 @@ Singleton {
         watchChanges: true
         onAdapterUpdated: writeAdapter()
         blockLoading: true
+        onLoadFailed: writeAdapter()
 
         JsonAdapter {
             id: systemAdapter
 
             property var outputs: ({})
+            property string greeterWallpaper: ""
+            property string profilePicture: ""
         }
     }
 }

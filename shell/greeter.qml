@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Greetd
+import qs
 import qs.lockscreen
 import qs.services.niri
 
@@ -27,8 +28,7 @@ ShellRoot {
         WlSessionLockSurface {
             LockSurface {
                 state: context.state
-
-                wallpaper: Quickshell.env("GREETER_WALLPAPER") || "root:resources/wallpapers/wallhaven-96y9qk.jpg"
+                wallpaper: ShellSettings.greeterWallpaper
                 anchors.fill: parent
             }
         }

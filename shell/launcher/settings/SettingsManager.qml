@@ -21,48 +21,52 @@ Item {
         spacing: 0
         anchors.fill: parent
 
-        ColumnLayout {
-            spacing: 4
-            Layout.preferredWidth: 24
+        ListView {
+            id: switcher
+            spacing: 6
+            interactive: false
+
+            Layout.preferredWidth: 140
             Layout.fillHeight: true
+            Layout.margins: 8
 
-            ListView {
-                id: switcher
-                spacing: 4
-                interactive: false
-                highlightFollowsCurrentItem: true
-                highlightMoveVelocity: -1
-                highlightMoveDuration: 200
-                highlightRangeMode: ListView.ApplyRange
-                snapMode: ListView.SnapToItem
+            model: root.enabledModel.map(x => ({
+                        icon: x.icon,
+                        label: x.label
+                    }))
 
-                Layout.preferredWidth: 24
-                Layout.fillHeight: true
-                Layout.margins: 8
+            delegate: StyledMouseArea {
+                id: delegateButton
 
-                model: root.enabledModel.map(x => x.icon)
+                required property var modelData
+                required property var index
 
-                delegate: StyledMouseArea {
-                    id: delegateButton
+                radius: 6
+                implicitWidth: ListView.view.width
+                implicitHeight: 28
+                color: delegateButton.ListView.isCurrentItem ? ShellSettings.colors.inactive.highlight : "transparent"
+                hoverColor: ShellSettings.colors.active.highlight
 
-                    required property var modelData
-                    required property var index
+                onClicked: root.currentIndex = index
 
-                    radius: 4
-                    implicitWidth: ListView.view.width
-                    implicitHeight: ListView.view.width
-
-                    onClicked: root.currentIndex = index
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 6
+                    anchors.rightMargin: 6
+                    spacing: 6
 
                     IconImage {
-                        source: Quickshell.iconPath(delegateButton.modelData)
-                        anchors.fill: parent
+                        source: Quickshell.iconPath(delegateButton.modelData.icon)
+                        Layout.preferredWidth: 18
+                        Layout.preferredHeight: 18
                     }
-                }
 
-                highlight: Rectangle {
-                    color: ShellSettings.colors.active.light
-                    radius: 4
+                    StyledText {
+                        text: delegateButton.modelData.label
+                        font.pointSize: 9
+                        elide: Text.ElideRight
+                        Layout.fillWidth: true
+                    }
                 }
             }
         }
@@ -81,7 +85,7 @@ Item {
                 text: root.enabledModel[root.currentIndex].summary
                 font.pointSize: 9
                 font.weight: Font.Medium
-                Layout.margins: 8
+                Layout.margins: 12
             }
 
             Separator {

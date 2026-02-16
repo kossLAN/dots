@@ -10,6 +10,7 @@ import org.kde.syntaxhighlighting
 import qs
 import qs.widgets
 import qs.services.chat
+import NixiUtils
 
 Item {
     id: root
@@ -23,14 +24,7 @@ Item {
     implicitHeight: contentColumn.implicitHeight
 
     function preprocessMarkdown(content) {
-        let result = content;
-        
-        // Convert markdown headers to bold text to avoid oversized headings
-        result = result.replace(/^(#{1,6})\s+(.+)$/gm, "**$2**");
-        
-        // Convert single newlines to hard line breaks
-        result = result.replace(/\n/g, "  \n");
-        
+        var result = content.replace(/\n/g, '\n\n').replace(/\n{3,}/g, '\n\n');
         return result;
     }
 
@@ -67,41 +61,60 @@ Item {
                 values: {
                     let result = [];
                     let content = root.text;
-                    let codeBlockRegex = /```(\w*)\n([\s\S]*?)```/g;
+                    let blockRegex = /```(\w*)\s*\n([\s\S]*?)```|\$\$([\s\S]*?)\$\$|\\\[([\s\S]*?)\\\]|\\\((.+?)\\\)|\$([^\$\s\n]+)\$/g;
                     let lastIndex = 0;
                     let match;
                     let segmentId = 0;
-                    
-                    function addMarkdownSegments(text) {
-                        let paragraphs = text.split(/\n\n+/);
 
-                        for (let i = 0; i < paragraphs.length; i++) {
-                            let para = paragraphs[i];
-
-                            if (para.trim()) {
-                                result.push({
-                                    id: segmentId++,
-                                    type: "markdown",
-                                    content: para
-                                });
-                            }
-                        }
-                    }
-
-                    while ((match = codeBlockRegex.exec(content)) !== null) {
+                    while ((match = blockRegex.exec(content)) !== null) {
                         if (match.index > lastIndex) {
                             let textBefore = content.substring(lastIndex, match.index);
                             if (textBefore.trim()) {
-                                addMarkdownSegments(textBefore);
+                                result.push({
+                                    id: segmentId++,
+                                    type: "markdown",
+                                    content: textBefore
+                                });
                             }
                         }
 
-                        result.push({
-                            id: segmentId++,
-                            type: "code",
-                            language: match[1] || "",
-                            content: match[2]
-                        });
+                        if (match[2] !== undefined) {
+                            // code block
+                            result.push({
+                                id: segmentId++,
+                                type: "code",
+                                language: match[1] || "",
+                                content: match[2]
+                            });
+                        } else if (match[3] !== undefined) {
+                            // $$ display math
+                            result.push({
+                                id: segmentId++,
+                                type: "math",
+                                content: match[3].trim()
+                            });
+                        } else if (match[4] !== undefined) {
+                            // \[...\] display math
+                            result.push({
+                                id: segmentId++,
+                                type: "math",
+                                content: match[4].trim()
+                            });
+                        } else if (match[5] !== undefined) {
+                            // \(...\) inline math
+                            result.push({
+                                id: segmentId++,
+                                type: "inline-math",
+                                content: match[5].trim()
+                            });
+                        } else if (match[6] !== undefined) {
+                            // $...$ inline math
+                            result.push({
+                                id: segmentId++,
+                                type: "inline-math",
+                                content: match[6].trim()
+                            });
+                        }
 
                         lastIndex = match.index + match[0].length;
                     }
@@ -109,7 +122,11 @@ Item {
                     if (lastIndex < content.length) {
                         let remaining = content.substring(lastIndex);
                         if (remaining.trim()) {
-                            addMarkdownSegments(remaining);
+                            result.push({
+                                id: segmentId++,
+                                type: "markdown",
+                                content: remaining
+                            });
                         }
                     }
 
@@ -134,12 +151,23 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: item ? item.height : 0
 
-                sourceComponent: modelData.type === "code" ? codeBlockComponent : markdownComponent
+                sourceComponent: {
+                    switch (modelData.type) {
+                    case "code":
+                        return codeBlockComponent;
+                    case "math":
+                        return mathComponent;
+                    case "inline-math":
+                        return inlineMathComponent;
+                    default:
+                        return markdownComponent;
+                    }
+                }
 
                 Component {
                     id: markdownComponent
 
-                    TextEdit {
+                    TextArea {
                         width: root.width
                         color: root.textColor
                         text: root.preprocessMarkdown(segmentLoader.modelData.content)
@@ -150,6 +178,12 @@ Item {
                         selectByMouse: true
                         selectedTextColor: root.selectedTextColor
                         selectionColor: root.selectionColor
+                        background: null
+                        padding: 0
+                        leftPadding: 0
+                        rightPadding: 0
+                        topPadding: 0
+                        bottomPadding: 0
                     }
                 }
 
@@ -302,7 +336,9 @@ Item {
                                     "diff": "Diff",
                                     "patch": "Diff",
                                     "nix": "Nix",
-                                    "zig": "Zig"
+                                    "zig": "Zig",
+                                    "latex": "LaTeX",
+                                    "tex": "LaTeX"
                                 };
 
                                 let lang = codeBlock.language.toLowerCase();
@@ -310,6 +346,41 @@ Item {
                             }
 
                             theme: Repository.defaultTheme(Repository.DarkTheme)
+                        }
+                    }
+                }
+
+                Component {
+                    id: mathComponent
+
+                    Item {
+                        width: root.width
+                        implicitHeight: mathRenderer.implicitHeight + 16
+
+                        LatexRenderer {
+                            id: mathRenderer
+                            formula: segmentLoader.modelData.content
+                            fontSize: root.fontSize + 2
+                            color: root.textColor
+                            anchors.centerIn: parent
+                        }
+                    }
+                }
+
+                Component {
+                    id: inlineMathComponent
+
+                    Item {
+                        width: root.width
+                        implicitHeight: inlineMathRenderer.implicitHeight + 4
+
+                        LatexRenderer {
+                            id: inlineMathRenderer
+                            formula: segmentLoader.modelData.content
+                            fontSize: root.fontSize
+                            color: root.textColor
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
                         }
                     }
                 }

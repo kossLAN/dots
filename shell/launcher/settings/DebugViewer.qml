@@ -11,6 +11,7 @@ SettingsBacker {
     enabled: ShellSettings.settings.debugEnabled
 
     summary: "Debug Viewer"
+    label: "Debug"
 
     content: Item {
         ColumnLayout {

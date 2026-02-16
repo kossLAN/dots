@@ -9,9 +9,9 @@ import qs.widgets
 import qs.launcher.settings
 
 SettingsBacker {
-    icon: "multimedia-volume-control"
-
+    icon: "audio-volume-high"
     summary: "Volume Settings"
+    label: "Volume"
 
     content: Item {
         id: container
@@ -41,7 +41,11 @@ SettingsBacker {
         ColumnLayout {
             id: root
             spacing: 8
-            anchors.fill: parent
+
+            anchors {
+                fill: parent
+                margins: 8
+            }
 
             // Tab Bar
             TopBar {

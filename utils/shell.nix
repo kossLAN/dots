@@ -1,10 +1,16 @@
-{pkgs ? import <nixpkgs> {}}:
+{
+  pkgs ? import <nixpkgs> {},
+  microtex ? pkgs.callPackage ./microtex.nix {},
+}:
 pkgs.mkShell {
   buildInputs = with pkgs; [
     cmake
     ninja
+    pkg-config
     qt6.qtbase
     qt6.qtdeclarative
+    microtex
+    tinyxml-2
   ];
 
   nativeBuildInputs = with pkgs; [

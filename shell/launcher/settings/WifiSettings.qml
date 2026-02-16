@@ -13,6 +13,7 @@ SettingsBacker {
     icon: "network-wireless"
 
     summary: "Network Settings"
+    label: "Network"
 
     content: Item {
         id: container
@@ -48,7 +49,10 @@ SettingsBacker {
             id: root
             spacing: 6
 
-            anchors.fill: parent
+            anchors {
+                fill: parent
+                margins: 8
+            }
 
             // Adapter Section
             StyledRectangle {
@@ -261,9 +265,9 @@ SettingsBacker {
                                         if (!networkCard.modelData)
                                             return ShellSettings.colors.active.dark;
                                         if (networkCard.modelData.connected)
-                                            return "#4CAF50";
+                                            return ShellSettings.colors.extra.open;
                                         if (networkCard.modelData.known)
-                                            return "#2196F3";
+                                            return ShellSettings.colors.active.highlight;
 
                                         return ShellSettings.colors.active.dark;
                                     }

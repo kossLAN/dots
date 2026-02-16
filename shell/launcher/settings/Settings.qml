@@ -19,8 +19,8 @@ LauncherBacker {
 
     content: Item {
         id: menu
-        implicitWidth: 800
-        implicitHeight: 600
+        implicitWidth: 900
+        implicitHeight: 650
 
         SettingsManager {
             anchors {
@@ -49,8 +49,8 @@ LauncherBacker {
 
             anchors {
                 right: parent.right
-                bottom: parent.bottom
-                margins: 16
+                top: parent.top
+                margins: 4
             }
 
             Item {
